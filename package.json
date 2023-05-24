@@ -1,0 +1,22 @@
+{
+  "name": "out-and-about-repo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mobileappdevhm23/app-app-37.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mobileappdevhm23/app-app-37/issues"
+  },
+  "homepage": "https://github.com/mobileappdevhm23/app-app-37#readme",
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}
