@@ -6,28 +6,14 @@ const ActivitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  type: {
-    type: String,
-    required: true,
-  },
-  items: {
-    type: [String],
-    required: false,
-  },
-  organizers: {
-    type: [
-      {
-        _id: String,
-        first_name: String,
-        last_name: String,
-        email: String,
-        show_email: Boolean,
-        phone_number: String,
-        show_phone_number: Boolean,
-      },
-    ],
-    required: true,
-  },
+  categories: [{ type: String, ref: "Category" }],
+  date: { type: Number, required: true },
+  active: { type: Boolean, default: true },
+  information_text: { type: String, trim: true },
+  /* TODO: GeoJSON muss hier hin, type: String ist nur placeholder */
+  location: { type: String },
+  organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+  maximum_participants: Number,
   only_logged_in: { type: Boolean, default: false },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
 });

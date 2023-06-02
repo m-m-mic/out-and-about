@@ -3,10 +3,7 @@ import { authenticatedRequest, authenticateJWT } from "../middleware/authenticat
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import { AccountType } from "../interfaces";
-import { getAccountListById } from "../scripts/accountScripts";
 import { denyChangeRequests, secretToken } from "../index";
-import { Activity } from "../models/activities";
 
 export const accountRoutes = express.Router();
 
@@ -66,11 +63,16 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
   if (mongoose.Types.ObjectId.isValid(id)) {
     try {
       // Accountdaten des Nutzers werden in der Collection gesucht. id, password, type und tier werden nicht mitgegeben
-      const requestedAccount = await Account.findOne({ _id: id }, { _id: false, password: false }).populate({
-        path: "activities",
-        select: "id name type",
-      });
-
+      const requestedAccount = await Account.findOne({ _id: id }, { _id: false, password: false })
+        .populate({
+          path: "saved_activities",
+          select: "id name categories date",
+        })
+        .populate({
+          path: "planned_activities",
+          select: "id name categories date",
+        })
+        .populate("categories", "id name");
       if (!requestedAccount) {
         res.status(404).send("Account not found");
       }
@@ -102,17 +104,6 @@ accountRoutes.patch("/account/info", authenticateJWT, async (req: Request, res: 
         if (!updated) {
           return res.status(404).send("Account not found");
         }
-        // Da Trainer Einträge nicht Mongoose-Referenzen benutzen, werden diese hier separat aktualisiert
-        await Activity.updateMany(
-          { "trainers._id": id },
-          {
-            $set: {
-              "organizers.$.first_name": updated.first_name,
-              "organizers.$.last_name": updated.last_name,
-              "organizers.$.phone_number": updated.phone_number,
-            },
-          }
-        );
         return res.send(updated);
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
