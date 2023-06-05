@@ -1,5 +1,17 @@
 import { ActivityType } from "../interfaces";
 
+/* Für später um nahe ereignisse zu suchen:
+{
+  location:{
+    $nearSphere:{
+      $geometry:{
+        type: "Point",
+        coordinates: [20,20]
+      }
+    }
+  }
+} 
+*/
 export function searchActivities(searchQuery: string, activities: ActivityType[]) {
   const searchResult: ActivityType[] = [];
   // Iteriert über das gegebene activities-Array und überprüft, ob der Name, Verein oder die Sportart einer Aktivität den Suchbegriff enthält.

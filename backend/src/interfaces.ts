@@ -8,6 +8,7 @@ export interface ActivityType {
   active: boolean;
   maximum_participants: number;
   information_text: string;
+  location: GeoType;
   only_logged_in: boolean;
   organizer: AccountType[];
   participants: AccountType[];
@@ -22,4 +23,9 @@ export interface AccountType {
 interface PreselectOption {
   _id: string;
   name: string;
+}
+
+interface GeoType {
+  type: string;
+  coordinates: number[];
 }

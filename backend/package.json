@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "../../activee-backend/node_modules/.bin/tsc",
-    "serve": "../../activee-backend/node_modules/.bin/tsc && node build/index.js",
+    "compile": "tsc",
+    "serve": "tsc && node build/index.js",
     "start": "node build/index.js",
-    "dev": "../../activee-backend/node_modules/.bin/nodemon src/index.ts",
-    "lint": "../../activee-backend/node_modules/.bin/eslint . --ext .ts --ext .js",
-    "lint-fix": "../../activee-backend/node_modules/.bin/eslint . --ext .ts --ext .js --fix"
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint . --ext .ts --ext .js",
+    "lint-fix": "eslint . --ext .ts --ext .js --fix"
   },
   "engines": {
     "node": "16 || 18"
