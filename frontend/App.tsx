@@ -11,15 +11,10 @@ import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import ChoosePreferences from "./pages/ChoosePreferences";
 import Login from "./pages/Login";
-import { LogBox } from "react-native";
 import { createContext, useEffect, useMemo, useReducer } from "react";
 import EditActivity from "./pages/EditActivity";
 import Participants from "./pages/Participants";
-
-LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
-
-// @ts-ignore
-export const AuthContext = createContext();
+import { getItemAsync, setItemAsync } from "expo-secure-store";
 
 const OverviewStack = createStackNavigator();
 
@@ -46,7 +41,7 @@ function SearchStackScreen() {
 
 const ProfileStack = createStackNavigator();
 
-function ProfileStackScreen(setUserToken: any) {
+function ProfileStackScreen() {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
@@ -93,6 +88,14 @@ function loggedOutStack() {
   );
 }
 
+interface AuthType {
+  signIn: Function;
+  signOut: Function;
+  signUp: Function;
+}
+
+export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
+
 export default function App() {
   const [state, dispatch] = useReducer(
     (prevState: any, action: { type?: any; token?: any }) => {
@@ -131,7 +134,7 @@ export default function App() {
 
       try {
         // Restore token stored in `SecureStore` or any other encrypted storage
-        // userToken = await SecureStore.getItemAsync('userToken');
+        userToken = await getItemAsync("userToken");
       } catch (e) {
         // Restoring token failed
       }
@@ -146,15 +149,12 @@ export default function App() {
     bootstrapAsync();
   }, []);
 
-  const authContext = useMemo(
+  const authContext: AuthType = useMemo(
     () => ({
       signIn: async () => {
-        // In a production app, we need to send some data (usually username, password) to server and get a token
-        // We will also need to handle errors if sign in failed
-        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
-        // In the example, we'll use a dummy token
-        console.log("Sign in");
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+        const token: string = "dummy-auth-token-2";
+        await setItemAsync("userToken", token);
+        dispatch({ type: "SIGN_IN", token: token });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       signUp: async () => {
