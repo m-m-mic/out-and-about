@@ -12,12 +12,14 @@ import Register from "./pages/Register";
 import ChoosePreferences from "./pages/ChoosePreferences";
 import Login from "./pages/Login";
 import { LogBox } from "react-native";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useReducer } from "react";
 import EditActivity from "./pages/EditActivity";
 import Participants from "./pages/Participants";
-import Loading from "./components/Loading";
 
 LogBox.ignoreLogs(["Non-serializable values were found in the navigation state"]);
+
+// @ts-ignore
+export const AuthContext = createContext();
 
 const OverviewStack = createStackNavigator();
 
@@ -25,7 +27,7 @@ function OverviewStackScreen() {
   return (
     <OverviewStack.Navigator>
       <OverviewStack.Screen name="Overview" component={Overview} options={{ headerShown: false }} />
-      <OverviewStack.Screen name="Activity" component={ActivityStackScreen} options={{ headerShown: false }} />
+      <OverviewStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
       <OverviewStack.Screen name="CreateActivity" component={CreateActivity} options={{ headerShown: false }} />
     </OverviewStack.Navigator>
   );
@@ -37,7 +39,7 @@ function SearchStackScreen() {
   return (
     <SearchStack.Navigator>
       <SearchStack.Screen name="Search" component={Search} options={{ headerShown: false }} />
-      <SearchStack.Screen name="Activity" component={ActivityStackScreen} options={{ headerShown: false }} />
+      <SearchStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
     </SearchStack.Navigator>
   );
 }
@@ -47,8 +49,8 @@ const ProfileStack = createStackNavigator();
 function ProfileStackScreen(setUserToken: any) {
   return (
     <ProfileStack.Navigator>
-      <ProfileStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} initialParams={setUserToken} />
-      <ProfileStack.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="ActivityStack" component={Activity} options={{ headerShown: false }} />
       <ProfileStack.Screen name="CreateActivity" component={CreateActivity} options={{ headerShown: false }} />
     </ProfileStack.Navigator>
   );
@@ -67,55 +69,109 @@ function ActivityStackScreen() {
 
 const Tab = createBottomTabNavigator();
 
-function loggedInStack(setUserToken: any) {
+function loggedInStack() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Overview" component={OverviewStackScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Search" component={SearchStackScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={ProfileStackScreen(setUserToken)} options={{ headerShown: false }} />
+      <Tab.Screen name="OverviewStack" component={OverviewStackScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="SearchStack" component={SearchStackScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="ProfileStack" component={ProfileStackScreen} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }
 
 const LoggedOutStack = createStackNavigator();
 
-function loggedOutStack(setUserToken: any) {
+function loggedOutStack() {
   return (
     <LoggedOutStack.Navigator>
       <LoggedOutStack.Screen name="LandingPage" component={LandingPage} options={{ headerShown: false }} />
       <LoggedOutStack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <LoggedOutStack.Screen name="ChoosePreferences" component={ChoosePreferences} options={{ headerShown: false }} />
-      <LoggedOutStack.Screen name="Login" component={Login} options={{ headerShown: false }} initialParams={{ setUserToken }} />
+      <LoggedOutStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <LoggedOutStack.Screen name="Overview" component={Overview} options={{ headerShown: false }} />
     </LoggedOutStack.Navigator>
   );
 }
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userToken, setUserToken] = useState(null);
-
-  const getUserToken = async () => {
-    // testing purposes
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-    try {
-      // custom logic
-      await sleep(100);
-      const token = null;
-      setUserToken(token);
-    } finally {
-      setIsLoading(false);
+  const [state, dispatch] = useReducer(
+    (prevState: any, action: { type?: any; token?: any }) => {
+      switch (action.type) {
+        case "RESTORE_TOKEN":
+          return {
+            ...prevState,
+            userToken: action.token,
+            isLoading: false,
+          };
+        case "SIGN_IN":
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
+        case "SIGN_OUT":
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+          };
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
     }
-  };
+  );
 
   useEffect(() => {
-    getUserToken();
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+
+      try {
+        // Restore token stored in `SecureStore` or any other encrypted storage
+        // userToken = await SecureStore.getItemAsync('userToken');
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({ type: "RESTORE_TOKEN", token: userToken });
+    };
+
+    bootstrapAsync();
   }, []);
 
-  if (isLoading) {
-    // We haven't finished checking for the token yet
-    return <Loading />;
-  }
+  const authContext = useMemo(
+    () => ({
+      signIn: async () => {
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
+        // In the example, we'll use a dummy token
+        console.log("Sign in");
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+      },
+      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signUp: async () => {
+        // In a production app, we need to send user data to server and get a token
+        // We will also need to handle errors if sign up failed
+        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
+        // In the example, we'll use a dummy token
 
-  return <NavigationContainer>{userToken ? loggedInStack(setUserToken) : loggedOutStack(setUserToken)}</NavigationContainer>;
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+      },
+    }),
+    []
+  );
+
+  return (
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
+    </AuthContext.Provider>
+  );
 }
