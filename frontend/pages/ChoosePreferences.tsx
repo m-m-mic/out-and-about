@@ -1,8 +1,10 @@
-import { Button, Text, View, StyleSheet } from "react-native";
+import { Button, Text, View } from "react-native";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { AuthContext } from "../App";
 import { backendUrl } from "../scripts/backendConnection";
+import { ChoosePreferencesStyles as styles } from "../styles/ChoosePreferencesStyles";
+import { Category } from "../scripts/types";
 
 // @ts-ignore
 export default function ChoosePreferences({ route, navigation }) {
@@ -10,15 +12,11 @@ export default function ChoosePreferences({ route, navigation }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const { signUp } = React.useContext(AuthContext);
 
-  type Category = {
-    id: string;
-    name: string;
-  };
-
   useEffect(() => {
     getCategories();
   }, []);
 
+  // Adds or removes category from user preferences
   const handleCategoryPress = (category: Category) => {
     let userCategories = registrationData.categories;
     if (userCategories.includes(category)) {
@@ -33,6 +31,7 @@ export default function ChoosePreferences({ route, navigation }) {
     setRegistrationData({ ...registrationData, categories: userCategories });
   };
 
+  // Fetches available categories from backend
   const getCategories = () => {
     const url = backendUrl + "/category";
     const requestOptions = {
@@ -45,28 +44,6 @@ export default function ChoosePreferences({ route, navigation }) {
       }
     });
   };
-
-  const styles = StyleSheet.create({
-    categoryContainer: {
-      padding: 5,
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 15,
-    },
-    unselectedCategory: {
-      backgroundColor: "grey",
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-      borderRadius: 4,
-    },
-    selectedCategory: {
-      backgroundColor: "blue",
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-      borderRadius: 4,
-    },
-  });
 
   return (
     <View>
