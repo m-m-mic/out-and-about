@@ -7,6 +7,7 @@ export default function LandingPage({ navigation }) {
     <View>
       <Text style={{ textAlign: "center", marginTop: 300 }}>Startseite</Text>
       <Button title="Go to Register" onPress={() => navigation.navigate("Register")} />
+      <Text>Login</Text>
       <Button title="Go to Login" onPress={() => navigation.navigate("Login")} />
     </View>
   );

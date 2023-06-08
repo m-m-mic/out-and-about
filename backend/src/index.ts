@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { activityRoutes } from "./routes/activityRoutes";
 import { accountRoutes } from "./routes/accountRoutes";
+import { categoryRoutes } from "./routes/categoryRoutes";
 
 const app = express();
 const port = 3033;
@@ -43,3 +44,4 @@ app.use("/health-check", (req, res) => {
 // ROUTES Importe für die verschiedene Collections
 app.use(accountRoutes);
 app.use(activityRoutes);
+app.use(categoryRoutes);

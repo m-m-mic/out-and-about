@@ -7,4 +7,4 @@ const CategorySchema = new mongoose.Schema({
   activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
 });
 
-export const Category = mongoose.model("Sport", CategorySchema);
+export const Category = mongoose.model("Category", CategorySchema);

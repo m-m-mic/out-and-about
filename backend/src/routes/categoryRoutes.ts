@@ -24,9 +24,9 @@ categoryRoutes.post("/category/", async (req, res) => {
 });
 
 // GET-Request for all categories
-categoryRoutes.get("/category/", authenticateJWT, async (req, res) => {
+categoryRoutes.get("/category/", async (req, res) => {
   try {
-    const categories = await Category.find().sort({ name: 1 });
+    const categories = await Category.find({}, { activities: false, __v: false }).sort({ name: 1 });
     return res.send(categories);
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

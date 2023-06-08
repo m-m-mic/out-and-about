@@ -15,6 +15,7 @@ import { createContext, useEffect, useMemo, useReducer } from "react";
 import EditActivity from "./pages/EditActivity";
 import Participants from "./pages/Participants";
 import { getItemAsync, setItemAsync } from "expo-secure-store";
+import { backendUrl } from "./scripts/backendConnection";
 
 const OverviewStack = createStackNavigator();
 
@@ -98,12 +99,13 @@ export const AuthContext: React.Context<AuthType> = createContext({} as AuthType
 
 export default function App() {
   const [state, dispatch] = useReducer(
-    (prevState: any, action: { type?: any; token?: any }) => {
+    (prevState: any, action: { type?: any; token?: string; id?: string }) => {
       switch (action.type) {
-        case "RESTORE_TOKEN":
+        case "RESTORE_DATA":
           return {
             ...prevState,
             userToken: action.token,
+            userId: action.id,
             isLoading: false,
           };
         case "SIGN_IN":
@@ -111,19 +113,21 @@ export default function App() {
             ...prevState,
             isSignout: false,
             userToken: action.token,
+            userId: action.id,
           };
         case "SIGN_OUT":
           return {
             ...prevState,
             isSignout: true,
             userToken: null,
+            userId: null,
           };
       }
     },
     {
-      isLoading: true,
       isSignout: false,
       userToken: null,
+      userId: null,
     }
   );
 
@@ -131,10 +135,12 @@ export default function App() {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
+      let userId;
 
       try {
         // Restore token stored in `SecureStore` or any other encrypted storage
         userToken = await getItemAsync("userToken");
+        userId = await getItemAsync("userId");
       } catch (e) {
         // Restoring token failed
       }
@@ -143,7 +149,7 @@ export default function App() {
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken });
+      dispatch({ type: "RESTORE_DATA", token: userToken as string, id: userId as string });
     };
 
     bootstrapAsync();
@@ -151,19 +157,52 @@ export default function App() {
 
   const authContext: AuthType = useMemo(
     () => ({
-      signIn: async () => {
-        const token: string = "dummy-auth-token-2";
-        await setItemAsync("userToken", token);
-        dispatch({ type: "SIGN_IN", token: token });
+      signIn: async (data: any) => {
+        const url = backendUrl + "/account/login";
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email, password: data.password }),
+        };
+        fetch(url, requestOptions).then((response) => {
+          if (response.status === 404) {
+            // Error-Handling für falsche E-Mail
+            console.log("Wrong E-Mail");
+            return;
+          } else if (response.status === 403) {
+            // Error-Handling für falsche Password
+            console.log("Wrong password");
+            return;
+          }
+          response.json().then(async (data) => {
+            await setItemAsync("userToken", data.token);
+            await setItemAsync("userId", data.id);
+            dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
+          });
+        });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
-      signUp: async () => {
-        // In a production app, we need to send user data to server and get a token
-        // We will also need to handle errors if sign up failed
-        // After getting token, we need to persist the token using `SecureStore` or any other encrypted storage
-        // In the example, we'll use a dummy token
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+      signUp: async (data: Object) => {
+        const url = backendUrl + "/account/register";
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        };
+        fetch(url, requestOptions).then((response) => {
+          if (response.status === 201) {
+            response.json().then(async (data) => {
+              await setItemAsync("userToken", data.token);
+              await setItemAsync("userId", data.id);
+              dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
+            });
+          } else if (response.status === 503) {
+            // TODO: Error handling for no change requests
+          } else {
+            console.log("Generic error");
+            // TODO: Generic error handling
+          }
+        });
       },
     }),
     []

@@ -7,6 +7,29 @@ import { denyChangeRequests, secretToken } from "../index";
 
 export const accountRoutes = express.Router();
 
+// POST-Request um E-Mail zu überprüfen
+accountRoutes.post("/account/check-email", async (req, res) => {
+  if (denyChangeRequests === "true") {
+    return res.status(503).send("Change requests are disabled");
+  } else {
+    try {
+      const email = req.body.email;
+      console.log(email);
+      // Neuer Account wird erstellt und gespeichert
+      const account = await Account.findOne({ email: email });
+      if (!account) {
+        res.status(200).end();
+      } else {
+        res.status(403).send("Email already in use");
+      }
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return res.status(400).send(error.message);
+    }
+  }
+});
+
 // POST-Request für Registrierung/Neuerstellung eines Accounts
 accountRoutes.post("/account/register", async (req, res) => {
   if (denyChangeRequests === "true") {
@@ -24,6 +47,8 @@ accountRoutes.post("/account/register", async (req, res) => {
       });
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      console.log(error.message);
       // @ts-ignore
       return res.status(400).send(error.message);
     }
