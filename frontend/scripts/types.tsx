@@ -1,4 +1,4 @@
-export type AuthState = "RESTORE_DATA" | "SIGN_IN" | "SIGN_OUT";
+export type AuthState = "RESTORE_CREDENTIALS" | "SIGN_IN" | "SIGN_OUT";
 
 export interface AuthType {
   signIn: Function;

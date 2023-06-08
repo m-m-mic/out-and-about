@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createContext, useEffect, useMemo, useReducer } from "react";
-import { getItemAsync, setItemAsync } from "expo-secure-store";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { backendUrl } from "./scripts/backendConnection";
 import { AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
@@ -14,7 +14,7 @@ export default function App() {
   const [state, dispatch] = useReducer(
     (prevState: any, action: { type?: AuthState; token?: string; id?: string }) => {
       switch (action.type) {
-        case "RESTORE_DATA":
+        case "RESTORE_CREDENTIALS":
           return {
             ...prevState,
             userToken: action.token,
@@ -49,14 +49,15 @@ export default function App() {
     const getStorageToken = async () => {
       let userToken;
       let userId;
-
       try {
         userToken = await getItemAsync("userToken");
         userId = await getItemAsync("userId");
       } catch (e) {
+        await deleteItemAsync("userToken");
+        await deleteItemAsync("userId");
         dispatch({ type: "SIGN_OUT" });
       }
-      dispatch({ type: "RESTORE_DATA", token: userToken as string, id: userId as string });
+      dispatch({ type: "RESTORE_CREDENTIALS", token: userToken as string, id: userId as string });
     };
 
     getStorageToken();
@@ -90,7 +91,11 @@ export default function App() {
         });
       },
       // Sign out
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: async () => {
+        await deleteItemAsync("userToken");
+        await deleteItemAsync("userId");
+        dispatch({ type: "SIGN_OUT" });
+      },
       // Sign up fetch request
       signUp: async (data: Object) => {
         const url = backendUrl + "/account/register";
