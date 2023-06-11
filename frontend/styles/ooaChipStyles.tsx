@@ -1,15 +1,14 @@
 import { StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
-export const ooaButtonStyles = StyleSheet.create({
+export const ooaChipStyles = StyleSheet.create({
   wrapper: {
     display: "flex",
-    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 18,
-    height: 50,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
   },
   text: {
     color: appColors.bodyInverted,
@@ -27,8 +26,7 @@ export const ooaButtonStyles = StyleSheet.create({
   outlineText: {
     color: appColors.buttonPrimary,
   },
-  ghost: {},
-  ghostText: {},
+  unselected: { backgroundColor: appColors.buttonInactive },
   disabled: { backgroundColor: appColors.buttonDisabled },
   disabledText: { color: appColors.bodyDisabled },
 });

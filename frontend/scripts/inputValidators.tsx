@@ -12,13 +12,14 @@ export const setEmailInput = (
   data: Account,
   setData: Dispatch<SetStateAction<Account>>,
   validation: object,
-  setValidation: Dispatch<SetStateAction<any>>
+  setValidation: Dispatch<SetStateAction<any>>,
+  setEmailError: Dispatch<SetStateAction<string>>
 ) => {
   if (input.match(emailPattern)) {
     setData({ ...data, email: input });
-    setValidation({ ...validation, email: true });
   } else {
     setValidation({ ...validation, email: false });
+    setEmailError("Eingabe entspricht keiner validen E-Mail.");
   }
 };
 
@@ -30,7 +31,7 @@ export const setUsernameInput = (
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>
 ) => {
-  if (input.length >= 1 && input.length <= 20 && !input.match(specialCharacterPattern)) {
+  if (input.length >= 3 && input.length <= 20 && !input.match(specialCharacterPattern)) {
     setData({ ...data, username: input });
     setValidation({ ...validation, username: true });
   } else {
@@ -46,7 +47,7 @@ export const setPasswordInput = (
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>
 ) => {
-  if (input.length >= 8 && input.length <= 20) {
+  if (input.length >= 8 && input.length <= 30) {
     setData({ ...data, password: input });
     setValidation({ ...validation, password: true, password_repeat: false });
   } else {

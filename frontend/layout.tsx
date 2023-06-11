@@ -1,4 +1,4 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import Overview from "./pages/Overview";
 import CreateActivity from "./pages/CreateActivity";
 import Search from "./pages/Search";
@@ -15,6 +15,17 @@ import * as React from "react";
 import { SafeAreaView } from "react-native";
 
 const OverviewStack = createStackNavigator();
+
+const ActivityStack = createStackNavigator();
+export function ActivityStackScreen() {
+  return (
+    <ActivityStack.Navigator>
+      <ActivityStack.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
+      <ActivityStack.Screen name="EditActivity" component={EditActivity} options={{ headerShown: false }} />
+      <ActivityStack.Screen name="Participants" component={Participants} options={{ headerShown: false }} />
+    </ActivityStack.Navigator>
+  );
+}
 
 export function OverviewStackScreen() {
   return (
@@ -43,20 +54,9 @@ export function ProfileStackScreen() {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-      <ProfileStack.Screen name="ActivityStack" component={Activity} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
       <ProfileStack.Screen name="CreateActivity" component={CreateActivity} options={{ headerShown: false }} />
     </ProfileStack.Navigator>
-  );
-}
-
-const ActivityStack = createStackNavigator();
-export function ActivityStackScreen() {
-  return (
-    <ActivityStack.Navigator>
-      <ActivityStack.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
-      <ActivityStack.Screen name="EditActivity" component={EditActivity} options={{ headerShown: false }} />
-      <ActivityStack.Screen name="Participants" component={Participants} options={{ headerShown: false }} />
-    </ActivityStack.Navigator>
   );
 }
 
@@ -77,11 +77,31 @@ const LoggedOutStack = createStackNavigator();
 export function loggedOutStack() {
   return (
     <LoggedOutStack.Navigator>
-      <LoggedOutStack.Screen name="LandingPage" component={LandingPage} options={{ headerShown: false }} />
-      <LoggedOutStack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-      <LoggedOutStack.Screen name="ChoosePreferences" component={ChoosePreferences} options={{ headerShown: false }} />
-      <LoggedOutStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-      <LoggedOutStack.Screen name="Overview" component={Overview} options={{ headerShown: false }} />
+      <LoggedOutStack.Screen
+        name="LandingPage"
+        component={LandingPage}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
+      />
+      <LoggedOutStack.Screen
+        name="Register"
+        component={Register}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
+      />
+      <LoggedOutStack.Screen
+        name="ChoosePreferences"
+        component={ChoosePreferences}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
+      />
+      <LoggedOutStack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
+      />
+      <LoggedOutStack.Screen
+        name="Overview"
+        component={Overview}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
+      />
     </LoggedOutStack.Navigator>
   );
 }

@@ -8,6 +8,8 @@ import { loggedInStack, loggedOutStack } from "./layout";
 import { useFonts } from "expo-font";
 import { StatusBar } from "react-native";
 import { primary } from "./styles/StyleAttributes";
+import { IconComponentProvider } from "@react-native-material/core";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
 
@@ -135,8 +137,11 @@ export default function App() {
   if (!fontsLoaded) return null;
   return (
     <AuthContext.Provider value={authContext}>
-      <StatusBar backgroundColor={primary["700"]} />
-      <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
+      {/* @ts-ignore */}
+      <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+        <StatusBar backgroundColor={primary["700"]} />
+        <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
+      </IconComponentProvider>
     </AuthContext.Provider>
   );
 }

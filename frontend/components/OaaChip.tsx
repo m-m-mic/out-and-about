@@ -1,16 +1,16 @@
 import { GestureResponderEvent, TouchableOpacity, Text } from "react-native";
 import React from "react";
-import { ooaButtonStyles as styles } from "../styles/ooaButtonStyles";
+import { ooaChipStyles as styles } from "../styles/ooaChipStyles";
 
-type ButtonVariant = "primary" | "disabled" | "ghost" | "caution" | "outline";
+type ChipVariant = "primary" | "disabled" | "unselected" | "caution" | "outline";
 
-interface OoaButtonProps {
+interface OoaChipProps {
   label?: string;
-  variant?: ButtonVariant;
+  variant?: ChipVariant;
   onPress?: (event: GestureResponderEvent) => void;
 }
 
-export function OaaButton({ label, variant = "primary", onPress }: OoaButtonProps) {
+export function OaaChip({ label, variant = "primary", onPress }: OoaChipProps) {
   const getStyles = (component: string) => {
     let wrapperStyles: any = [styles.wrapper];
     let textStyles: any = [styles.text];
@@ -21,9 +21,8 @@ export function OaaButton({ label, variant = "primary", onPress }: OoaButtonProp
       case "caution":
         wrapperStyles.push(styles.caution);
         break;
-      case "ghost":
-        wrapperStyles.push(styles.ghost);
-        textStyles.push(styles.ghostText);
+      case "unselected":
+        wrapperStyles.push(styles.unselected);
         break;
       case "disabled":
         wrapperStyles.push(styles.disabled);

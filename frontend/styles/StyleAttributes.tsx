@@ -13,10 +13,13 @@ export const primary = {
 
 export const appColors = {
   body: "#12121C",
+  bodyInverted: "#F5F5F5",
   background: "#F5F5F5",
   placeholder: "#646464",
   caution: "#FF630C",
   bodyDisabled: "#AFAFAF",
+  valid: "#10B50D",
+  error: "#ED4848",
   hero: primary["700"],
   h1: primary["700"],
   buttonPrimary: primary["700"],
@@ -34,29 +37,26 @@ export const typefaces = {
     fontFamily: "NunitoSansBold",
     size: 24,
     color: appColors.h1,
-    fontWeight: "700",
     letterSpacing: -0.5,
   },
   h2: {
     fontFamily: "NunitoSansBold",
     size: 20,
-    fontWeight: "700",
     letterSpacing: -0.5,
+    color: appColors.body,
   },
   body: {
     fontFamily: "NunitoSansRegular",
     size: 16,
-    fontWeight: "400",
+    color: appColors.body,
   },
   button: {
     fontFamily: "NunitoSansBold",
     size: 16,
-    fontWeight: "700",
   },
   emphasis: {
     fontFamily: "NunitoSansBoldItalic",
     size: 16,
     color: primary["400"],
-    fontWeight: "700",
   },
 };

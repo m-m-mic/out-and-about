@@ -8,10 +8,10 @@ export const registrationTemplate = {
 };
 
 export const registrationValidationTemplate = {
-  username: false,
-  email: false,
-  emailUnique: false,
-  password: false,
+  username: null,
+  email: null,
+  password: null,
+  password_repeat: null,
   categories: true,
   saved_activities: true,
   planned_activities: true,
