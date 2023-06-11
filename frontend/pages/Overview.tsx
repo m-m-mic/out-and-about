@@ -8,6 +8,7 @@ export default function Overview({ navigation }) {
       <Text style={{ textAlign: "center", marginTop: 300 }}>Übersicht</Text>
       <Button title="Go to Activity" onPress={() => navigation.navigate("ActivityStack")} />
       <Button title="Go to CreateActivity" onPress={() => navigation.navigate("CreateActivity")} />
+      <Button title="Go to specific Activity" onPress={() => navigation.navigate("ActivityStack", {id: "647e03848e6a1f6e9fdc586a"} )} />
     </View>
   );
 }

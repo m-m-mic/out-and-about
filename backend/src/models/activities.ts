@@ -21,7 +21,6 @@ const ActivitySchema = new mongoose.Schema({
   date: { type: Number, required: true },
   active: { type: Boolean, default: true },
   information_text: { type: String, trim: true },
-  /* TODO: GeoJSON muss hier hin, type: String ist nur placeholder */
   location: GeoSchema,
   organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
   maximum_participants: Number,
