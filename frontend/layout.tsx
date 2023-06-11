@@ -77,11 +77,7 @@ const LoggedOutStack = createStackNavigator();
 export function loggedOutStack() {
   return (
     <LoggedOutStack.Navigator>
-      <LoggedOutStack.Screen
-        name="LandingPage"
-        component={LandingPage}
-        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
-      />
+      <LoggedOutStack.Screen name="LandingPage" component={LandingPage} options={{ headerShown: false }} />
       <LoggedOutStack.Screen
         name="Register"
         component={Register}
