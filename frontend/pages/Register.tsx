@@ -5,6 +5,7 @@ import { backendUrl } from "../scripts/backendConnection";
 import { registrationTemplate, registrationValidationTemplate } from "../scripts/templates";
 import { setEmailInput, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
 import { Account } from "../scripts/types";
+import { PageStyles } from "../styles/PageStyles";
 
 // @ts-ignore TODO
 export default function Register({ navigation }) {
@@ -52,7 +53,7 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <View>
+    <View style={PageStyles.page}>
       <Text style={{ textAlign: "center", marginTop: 300 }}>Registrieren</Text>
       <Text>Nutzername</Text>
       <TextInput

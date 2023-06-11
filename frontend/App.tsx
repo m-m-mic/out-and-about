@@ -5,11 +5,20 @@ import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { backendUrl } from "./scripts/backendConnection";
 import { AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
+import { useFonts } from "expo-font";
+import { StatusBar } from "react-native";
+import { primary } from "./styles/StyleAttributes";
 
 export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
 
 export default function App() {
   // Auth logic from here: https://reactnavigation.org/docs/auth-flow
+  let [fontsLoaded] = useFonts({
+    NunitoSansRegular: require("./assets/fonts/NunitoSans-Regular.ttf"),
+    NunitoSansBoldItalic: require("./assets/fonts/NunitoSans-BoldItalic.ttf"),
+    NunitoSansBold: require("./assets/fonts/NunitoSans-Bold.ttf"),
+    Righteous: require("./assets/fonts/Righteous-Regular.ttf"),
+  });
 
   const [state, dispatch] = useReducer(
     (prevState: any, action: { type?: AuthState; token?: string; id?: string }) => {
@@ -123,8 +132,10 @@ export default function App() {
     []
   );
 
+  if (!fontsLoaded) return null;
   return (
     <AuthContext.Provider value={authContext}>
+      <StatusBar backgroundColor={primary["700"]} />
       <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
     </AuthContext.Provider>
   );

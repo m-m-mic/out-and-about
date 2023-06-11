@@ -5,6 +5,7 @@ import { AuthContext } from "../App";
 import { backendUrl } from "../scripts/backendConnection";
 import { ChoosePreferencesStyles as styles } from "../styles/ChoosePreferencesStyles";
 import { Category } from "../scripts/types";
+import { PageStyles } from "../styles/PageStyles";
 
 // @ts-ignore
 export default function ChoosePreferences({ route, navigation }) {
@@ -46,7 +47,7 @@ export default function ChoosePreferences({ route, navigation }) {
   };
 
   return (
-    <View>
+    <View style={PageStyles.page}>
       <Text style={{ textAlign: "center", marginTop: 300 }}>Präferenzen wählen</Text>
       {categories.length > 0 && (
         <View style={styles.categoryContainer}>

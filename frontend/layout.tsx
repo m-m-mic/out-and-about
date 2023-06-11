@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import ChoosePreferences from "./pages/ChoosePreferences";
 import Login from "./pages/Login";
 import * as React from "react";
+import { SafeAreaView } from "react-native";
 
 const OverviewStack = createStackNavigator();
 
