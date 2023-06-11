@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import { ActivityType } from "../scripts/types";
-//import { LoadingAnimation } from "../components/LoadingAnimation";
 
 //@ts-ignore
 export default function Activity({ route, navigate }) {
@@ -44,7 +43,7 @@ export default function Activity({ route, navigate }) {
     if (data.organizer.id === userId) {
       setOwner(true);
     } else {
-      if(data.participants.includes(userId)) {
+      if (data.participants.includes(userId)) {
         setParticipant(true);
       } else {
         setParticipant(false);
@@ -52,16 +51,71 @@ export default function Activity({ route, navigate }) {
     }
   };
 
-export default function Activity() {
-  const [token, setToken] = useState<string | null>(null);
+  const changeParticipantSub = async () => {
+    const url = backendUrl + "/activity/" + id + "/save";
+    const token = await getItemAsync("userToken");
+    let requestOptions;
+    if (token) {
+      requestOptions = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(url, requestOptions).then((response) => {
+        if (response.status === 200) {
+          getActivityInfo();
+        } else {
+          console.log("error 404: activity not found");
+        }
+      });
+    } else {
+      console.log("no token");
+      //requestOptions = {method: "PATCH"};
+    }
+  };
+
+  const handleButtonPress = async () => {
+    if (isOwner) {
+      navigate("Participants", { data: activityInfo });
+    } else {
+      await changeParticipantSub();
+      await getActivityInfo();
+    }
+  };
 
   useEffect(() => {
-    getItemAsync("userToken").then((token) => setToken(token));
+    getItemAsync("userId")
+      .then((userId) => setUserId(userId))
+      .then(() => getActivityInfo());
   }, []);
+
+  if (!activityInfo) {
+    return <Text> loading... </Text>;
+  }
   return (
     <View>
-      <Text style={{ textAlign: "center", marginTop: 300 }}>Aktivität</Text>
-      {token && <Text>{token}</Text>}
+      <Text style={{ textAlign: "center", marginTop: 300 }}> {activityInfo.name} </Text>
+      <Text> organisiert von {activityInfo.organizer.username}</Text>
+      <View>
+        {activityInfo.categories.map((category, key) => (
+          <Text style={{ color: "blue", margin: 5 }}>{category.name}</Text>
+        ))}
+      </View>
+      <Text> Wann? </Text>
+      <Text> {activityInfo.date} </Text>
+      <Text> Wo? </Text>
+      <Text> {activityInfo.location.coordinates} </Text>
+      <Text> Wie viele? </Text>
+      <Text> {activityInfo.participants.length} </Text>
+      {activityInfo.information_text && (
+        <>
+          <Text> Weitere Informationen </Text>
+          <Text> {activityInfo.information_text} </Text>
+        </>
+      )}
+      <Button title={isOwner ? "Zusagenliste ansehen" : isParticipant ? "Absagen" : "Zusagen"} onPress={handleButtonPress} />
     </View>
   );
 }
