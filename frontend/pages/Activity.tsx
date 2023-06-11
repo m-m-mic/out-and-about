@@ -44,10 +44,10 @@ export default function Activity({ route, navigate }) {
     if (data.organizer.id === userId) {
       setOwner(true);
     } else {
-      for (const participant of data.participants) {
-        if (participant.id === userId) {
-          setParticipant(true);
-        }
+      if(data.participants.includes(userId)) {
+        setParticipant(true);
+      } else {
+        setParticipant(false);
       }
     }
   };
