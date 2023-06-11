@@ -7,10 +7,10 @@ export const PageStyles = StyleSheet.create({
     marginHorizontal: 12,
     display: "flex",
     flexDirection: "column",
+    gap: 16,
   },
   spaceBetween: {
     flex: 1,
-    gap: 20,
     justifyContent: "space-between",
   },
   hero: {

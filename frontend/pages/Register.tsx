@@ -3,7 +3,7 @@ import * as React from "react";
 import { useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
 import { registrationTemplate, registrationValidationTemplate } from "../scripts/templates";
-import { setEmailInput, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
+import { emailPattern, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
 import { Account } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
@@ -21,6 +21,10 @@ export default function Register({ navigation }) {
     console.log(input);
     if (input.length == 0) {
       setEmailError("Bitte geben sie eine E-Mail an.");
+      setRegistrationValidator({ ...registrationValidator, email: false });
+      return;
+    } else if (!input.match(emailPattern)) {
+      setEmailError("Eingabe entspricht keiner validen E-Mail.");
       setRegistrationValidator({ ...registrationValidator, email: false });
       return;
     }

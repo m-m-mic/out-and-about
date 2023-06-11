@@ -7,7 +7,7 @@ import { AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
 import { useFonts } from "expo-font";
 import { StatusBar } from "react-native";
-import { primary } from "./styles/StyleAttributes";
+import { appColors, primary } from "./styles/StyleAttributes";
 import { IconComponentProvider } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
@@ -139,7 +139,7 @@ export default function App() {
     <AuthContext.Provider value={authContext}>
       {/* @ts-ignore */}
       <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        <StatusBar backgroundColor={primary["700"]} />
+        <StatusBar barStyle="dark-content" backgroundColor={appColors.background} />
         <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
       </IconComponentProvider>
     </AuthContext.Provider>

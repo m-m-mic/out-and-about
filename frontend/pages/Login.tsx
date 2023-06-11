@@ -14,7 +14,7 @@ export default function Login({ navigation }: any) {
   const { signIn } = React.useContext(AuthContext);
 
   const runValidators = () => {
-    return email.length === 0 && password.length === 0;
+    return email.length === 0 || password.length === 0;
   };
 
   return (
