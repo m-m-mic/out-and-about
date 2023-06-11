@@ -3,13 +3,13 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
-import { Activity } from "../scripts/types";
+import { ActivityType } from "../scripts/types";
 //import { LoadingAnimation } from "../components/LoadingAnimation";
 
 //@ts-ignore
 export default function Activity(route, navigate) {
   const [token, setToken] = useState<string | null>(null);
-  const [activityInfo, setActivityInfo] = useState<Activity | null>(null);
+  const [activityInfo, setActivityInfo] = useState<ActivityType | null>(null);
   const [isOwner, setOwner] = useState(false);
   const [isParticipant, setParticipant] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);

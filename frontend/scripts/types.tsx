@@ -20,7 +20,7 @@ export type Category = {
   name: string;
 };
 
-export type Activity = {
+export type ActivityType = {
   name: string
   categories: Category[],
   date: number,
