@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import { ActivityType } from "../scripts/types";
-//import { LoadingAnimation } from "../components/LoadingAnimation";
 
 //@ts-ignore
 export default function Activity({ route, navigate }) {
@@ -44,7 +43,7 @@ export default function Activity({ route, navigate }) {
     if (data.organizer.id === userId) {
       setOwner(true);
     } else {
-      if(data.participants.includes(userId)) {
+      if (data.participants.includes(userId)) {
         setParticipant(true);
       } else {
         setParticipant(false);
@@ -66,6 +65,7 @@ export default function Activity({ route, navigate }) {
       };
       fetch(url, requestOptions).then((response) => {
         if (response.status === 200) {
+          getActivityInfo();
         } else {
           console.log("error 404: activity not found");
         }

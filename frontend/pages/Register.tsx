@@ -1,39 +1,47 @@
-import { Button, Text, TextInput, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
 import { registrationTemplate, registrationValidationTemplate } from "../scripts/templates";
 import { setEmailInput, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
 import { Account } from "../scripts/types";
+import { PageStyles } from "../styles/PageStyles";
+import { OaaInput } from "../components/OaaInput";
+import { OaaButton } from "../components/OaaButton";
+import { OaaIconButton } from "../components/OaaIconButton";
 
 // @ts-ignore TODO
 export default function Register({ navigation }) {
   const [registrationData, setRegistrationData] = useState<Account>(registrationTemplate);
-  const [registrationValidator, setRegistrationValidator] = useState(registrationValidationTemplate);
-  const [isDisclaimerVisible, setIsDisclaimerVisible] = useState<boolean>(false);
-  const [disclaimer, setDisclaimer] = useState<string>("Error");
+  const [registrationValidator, setRegistrationValidator] = useState<any>(registrationValidationTemplate);
+  const [emailError, setEmailError] = useState<string>("Eingabe entspricht keiner validen E-Mail.");
 
   // Checks if entered email is available
-  const checkForExistingEmail = () => {
+  const verifyEmail = (input: string) => {
+    console.log(input);
+    if (input.length == 0) {
+      setEmailError("Bitte geben sie eine E-Mail an.");
+      setRegistrationValidator({ ...registrationValidator, email: false });
+      return;
+    }
     const url = backendUrl + "/account/check-email";
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: registrationData.email }),
+      body: JSON.stringify({ email: input }),
     };
     fetch(url, requestOptions)
       .then((response) => {
+        console.log(response.status);
         if (response.status === 200) {
-          setIsDisclaimerVisible(false);
-          setRegistrationValidator({ ...registrationValidator, emailUnique: true });
+          setRegistrationData({ ...registrationData, email: input });
+          setRegistrationValidator({ ...registrationValidator, email: true });
         } else if (response.status === 403) {
-          setDisclaimer("E-Mail wird bereits verwendet");
-          setIsDisclaimerVisible(true);
-          setRegistrationValidator({ ...registrationValidator, emailUnique: false });
+          setEmailError("E-Mail wird bereits verwendet.");
+          setRegistrationValidator({ ...registrationValidator, email: false });
         } else {
-          setDisclaimer("E-Mail konnte nicht überprüft werden");
-          setIsDisclaimerVisible(true);
-          setRegistrationValidator({ ...registrationValidator, emailUnique: false });
+          setEmailError("Es ist ein unerwarteter Fehler aufgetreten.");
+          setRegistrationValidator({ ...registrationValidator, email: false });
         }
       })
       .catch(function (error) {
@@ -50,43 +58,65 @@ export default function Register({ navigation }) {
     }
     return false;
   };
+  console.log(registrationData);
+  console.log(registrationValidator.email);
 
   return (
-    <View>
-      <Text style={{ textAlign: "center", marginTop: 300 }}>Registrieren</Text>
-      <Text>Nutzername</Text>
-      <TextInput
-        placeholder="Benutzername..."
-        onChangeText={(text) =>
-          setUsernameInput(text, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
-        }
-      />
-      <Text>E-Mail</Text>
-      <TextInput
-        placeholder="E-Mail..."
-        onChangeText={(text) =>
-          setEmailInput(text, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
-        }
-        onEndEditing={() => checkForExistingEmail()}
-      />
-      <Text>Passwort</Text>
-      {isDisclaimerVisible && <Text>{disclaimer}</Text>}
-      <TextInput
-        placeholder="Passwort..."
-        onChangeText={(text) =>
-          setPasswordInput(text, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
-        }
-      />
-      <Text>Passwort wiederholen...</Text>
-      <TextInput
-        placeholder="Passwort wiederholen..."
-        onChangeText={(text) => setPasswordRepeatInput(text, registrationData, registrationValidator, setRegistrationValidator)}
-      />
-      <Button
-        title="Registrieren"
-        disabled={runValidators()}
-        onPress={() => navigation.navigate("ChoosePreferences", { data: registrationData })}
-      />
-    </View>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={[PageStyles.page, PageStyles.spaceBetween]}>
+        <View style={{ display: "flex", gap: 16 }}>
+          <OaaIconButton name="arrow-left" onPress={() => navigation.goBack()} />
+          <Text style={PageStyles.hero}>REGISTRIEREN</Text>
+        </View>
+        <View style={{ display: "flex", gap: 12 }}>
+          <Text style={PageStyles.h2}>Nutzername</Text>
+          <OaaInput
+            placeholder="Benutzername..."
+            onChangeText={(value: string) =>
+              setUsernameInput(value, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
+            }
+            isError={registrationValidator.username === false}
+            isValid={registrationValidator.username}
+            errorMessage="Nutzername muss 3 bis 20 Zeichen lang sein."
+          />
+          <Text style={PageStyles.h2}>E-Mail</Text>
+          <OaaInput
+            placeholder="E-Mail..."
+            keyboardType="email-address"
+            onChangeText={(value: string) => verifyEmail(value)}
+            isError={registrationValidator.email === false}
+            isValid={registrationValidator.email}
+            errorMessage={emailError}
+          />
+          <Text style={PageStyles.h2}>Passwort</Text>
+          <OaaInput
+            placeholder="Passwort..."
+            secureTextEntry={true}
+            onChangeText={(value: string) =>
+              setPasswordInput(value, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
+            }
+            isError={registrationValidator.password === false}
+            isValid={registrationValidator.password}
+            errorMessage="Password muss 8 bis 30 Zeichen lang sein."
+          />
+          <Text style={PageStyles.h2}>Passwort wiederholen...</Text>
+          <OaaInput
+            placeholder="Passwort wiederholen..."
+            secureTextEntry={true}
+            onChangeText={(value: string) =>
+              setPasswordRepeatInput(value, registrationData, registrationValidator, setRegistrationValidator)
+            }
+            isError={registrationValidator.password_repeat === false}
+            isValid={registrationValidator.password_repeat}
+            errorMessage="Passwörter stimmen nicht miteinander überein."
+          />
+        </View>
+        <OaaButton
+          label="Weiter"
+          variant={runValidators() ? "disabled" : "primary"}
+          onPress={() => navigation.navigate("ChoosePreferences", { data: registrationData })}
+        />
+      </View>
+    </ScrollView>
   );
 }
