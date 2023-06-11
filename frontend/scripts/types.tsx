@@ -19,3 +19,22 @@ export type Category = {
   id: string;
   name: string;
 };
+
+export type ActivityType = {
+  name: string
+  categories: Category[],
+  date: number,
+  active: boolean,
+  information_text: string,
+  location: GeoType,
+  organizer: Account,
+  maximum_participants: number,
+  only_logged_in: boolean,
+  participants: Account[],
+}
+
+
+type GeoType = {
+  type: string,
+  coordinates: number[],
+}
