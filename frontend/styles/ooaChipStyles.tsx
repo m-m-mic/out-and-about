@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
 export const ooaChipStyles = StyleSheet.create({
-  wrapper: {
+  container: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

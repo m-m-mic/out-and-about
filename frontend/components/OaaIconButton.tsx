@@ -17,7 +17,7 @@ export function OaaIconButton({ name, size = 24, variant = "ghost", onPress }: O
   const [color, setColor] = useState(variant === "transparent" ? appColors.bodyInverted : appColors.body);
 
   const getStyles = () => {
-    let ButtonStyles: any = [styles.wrapper];
+    let ButtonStyles: any = [styles.container];
     switch (variant) {
       case "ghost":
         ButtonStyles.push(styles.ghost);

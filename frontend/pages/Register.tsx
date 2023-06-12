@@ -36,7 +36,6 @@ export default function Register({ navigation }) {
     };
     fetch(url, requestOptions)
       .then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
           setRegistrationData({ ...registrationData, email: input });
           setRegistrationValidator({ ...registrationValidator, email: true });
@@ -62,8 +61,6 @@ export default function Register({ navigation }) {
     }
     return false;
   };
-  console.log(registrationData);
-  console.log(registrationValidator.email);
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -75,7 +72,7 @@ export default function Register({ navigation }) {
         <View style={{ display: "flex", gap: 12 }}>
           <Text style={PageStyles.h2}>Nutzername</Text>
           <OaaInput
-            placeholder="Benutzername..."
+            placeholder="Nutzername..."
             onChangeText={(value: string) =>
               setUsernameInput(value, registrationData, setRegistrationData, registrationValidator, setRegistrationValidator)
             }

@@ -12,7 +12,7 @@ interface OoaChipProps {
 
 export function OaaChip({ label, variant = "primary", onPress }: OoaChipProps) {
   const getStyles = (component: string) => {
-    let wrapperStyles: any = [styles.wrapper];
+    let wrapperStyles: any = [styles.container];
     let textStyles: any = [styles.text];
     switch (variant) {
       case "primary":

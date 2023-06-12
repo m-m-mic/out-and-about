@@ -2,8 +2,10 @@ import { StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
 export const ooaButtonStyles = StyleSheet.create({
-  wrapper: {
+  container: {
     display: "flex",
+    flexDirection: "row",
+    gap: 8,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
@@ -28,7 +30,7 @@ export const ooaButtonStyles = StyleSheet.create({
     color: appColors.buttonPrimary,
   },
   ghost: {},
-  ghostText: {},
+  ghostText: { color: appColors.body },
   disabled: { backgroundColor: appColors.buttonDisabled },
   disabledText: { color: appColors.bodyDisabled },
 });

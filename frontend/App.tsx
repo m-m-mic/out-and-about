@@ -77,29 +77,26 @@ export default function App() {
   const authContext: AuthType = useMemo(
     () => ({
       // Sign In fetch request
-      signIn: async (data: any) => {
+      signIn: async (data: any): Promise<number> => {
         const url = backendUrl + "/account/login";
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: data.email, password: data.password }),
         };
-        fetch(url, requestOptions).then((response) => {
-          if (response.status === 404) {
-            // Error-Handling für falsche E-Mail
-            console.log("Wrong E-Mail");
-            return;
-          } else if (response.status === 403) {
-            // Error-Handling für falsche Password
-            console.log("Wrong password");
-            return;
+        await fetch(url, requestOptions).then((response) => {
+          if (response.status === 200) {
+            response.json().then(async (data) => {
+              await setItemAsync("userToken", data.token);
+              await setItemAsync("userId", data.id);
+              dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
+              return response.status;
+            });
+          } else {
+            return response.status;
           }
-          response.json().then(async (data) => {
-            await setItemAsync("userToken", data.token);
-            await setItemAsync("userId", data.id);
-            dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
-          });
         });
+        return 500;
       },
       // Sign out
       signOut: async () => {

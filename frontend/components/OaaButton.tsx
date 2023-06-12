@@ -1,6 +1,8 @@
 import { GestureResponderEvent, TouchableOpacity, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ooaButtonStyles as styles } from "../styles/ooaButtonStyles";
+import { Icon } from "@react-native-material/core";
+import { appColors } from "../styles/StyleAttributes";
 
 type ButtonVariant = "primary" | "disabled" | "ghost" | "caution" | "outline";
 
@@ -8,12 +10,14 @@ interface OoaButtonProps {
   label?: string;
   variant?: ButtonVariant;
   onPress?: (event: GestureResponderEvent) => void;
+  icon?: string;
 }
 
-export function OaaButton({ label, variant = "primary", onPress }: OoaButtonProps) {
+export function OaaButton({ label, variant = "primary", onPress, icon }: OoaButtonProps) {
   const getStyles = (component: string) => {
-    let wrapperStyles: any = [styles.wrapper];
+    let wrapperStyles: any = [styles.container];
     let textStyles: any = [styles.text];
+    let iconColor = appColors.bodyInverted;
     switch (variant) {
       case "primary":
         wrapperStyles.push(styles.primary);
@@ -24,20 +28,25 @@ export function OaaButton({ label, variant = "primary", onPress }: OoaButtonProp
       case "ghost":
         wrapperStyles.push(styles.ghost);
         textStyles.push(styles.ghostText);
+        iconColor = appColors.body;
         break;
       case "disabled":
         wrapperStyles.push(styles.disabled);
         textStyles.push(styles.disabledText);
+        iconColor = appColors.bodyDisabled;
         break;
       case "outline":
         wrapperStyles.push(styles.outline);
         textStyles.push(styles.outlineText);
+        iconColor = appColors.buttonPrimary;
         break;
     }
     if (component === "wrapper") {
       return wrapperStyles;
-    } else {
+    } else if (component === "text") {
       return textStyles;
+    } else if (component === "icon") {
+      return iconColor;
     }
   };
 
@@ -47,6 +56,7 @@ export function OaaButton({ label, variant = "primary", onPress }: OoaButtonProp
       style={getStyles("wrapper")}
       disabled={variant === "disabled"}
       onPress={onPress}>
+      {icon && <Icon name={icon} size={24} color={getStyles("icon")} />}
       {label && <Text style={getStyles("text")}>{label}</Text>}
     </TouchableOpacity>
   );

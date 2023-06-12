@@ -7,7 +7,6 @@ export default function Search({ navigation }: any) {
     <ScrollView style={{ flex: 1 }}>
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Suche</Text>
-        <Button title="Go to CreateActivity" onPress={() => navigation.navigate("Activity")} />
       </View>
     </ScrollView>
   );
