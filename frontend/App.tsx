@@ -84,19 +84,14 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: data.email, password: data.password }),
         };
-        await fetch(url, requestOptions).then((response) => {
-          if (response.status === 200) {
-            response.json().then(async (data) => {
-              await setItemAsync("userToken", data.token);
-              await setItemAsync("userId", data.id);
-              dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
-              return response.status;
-            });
-          } else {
-            return response.status;
-          }
-        });
-        return 500;
+        const response = await fetch(url, requestOptions);
+        if (response.status === 200) {
+          const credentials = await response.json();
+          await setItemAsync("userToken", credentials.token);
+          await setItemAsync("userId", credentials.id);
+          dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+        }
+        return response.status;
       },
       // Sign out
       signOut: async () => {
@@ -112,20 +107,14 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         };
-        fetch(url, requestOptions).then((response) => {
-          if (response.status === 201) {
-            response.json().then(async (data) => {
-              await setItemAsync("userToken", data.token);
-              await setItemAsync("userId", data.id);
-              dispatch({ type: "SIGN_IN", token: data.token, id: data.id });
-            });
-          } else if (response.status === 503) {
-            // TODO: Error handling for no change requests
-          } else {
-            console.log("Generic error");
-            // TODO: Generic error handling
-          }
-        });
+        const response = await fetch(url, requestOptions);
+        if (response.status === 201) {
+          const credentials = await response.json();
+          await setItemAsync("userToken", credentials.token);
+          await setItemAsync("userId", credentials.id);
+          dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+        }
+        return response.status;
       },
     }),
     []
