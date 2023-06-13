@@ -19,6 +19,11 @@ export const PageStyles = StyleSheet.create({
     color: typefaces.hero.color,
     textTransform: "uppercase",
   },
+  subtitle: {
+    fontFamily: typefaces.subtitle.fontFamily,
+    fontSize: typefaces.subtitle.size,
+    color: typefaces.subtitle.color,
+  },
   h1: {
     fontFamily: typefaces.h1.fontFamily,
     fontSize: typefaces.h1.size,
@@ -29,5 +34,11 @@ export const PageStyles = StyleSheet.create({
     fontFamily: typefaces.h2.fontFamily,
     fontSize: typefaces.h2.size,
     letterSpacing: typefaces.h2.letterSpacing,
+  },
+  body: {
+    fontFamily: typefaces.body.fontFamily,
+    fontSize: typefaces.body.size,
+    letterSpacing: typefaces.body.letterSpacing,
+    color: typefaces.body.color,
   },
 });

@@ -48,13 +48,14 @@ export const typefaces = {
   body: {
     fontFamily: "NunitoSansRegular",
     size: 16,
+    letterSpacing: -0.5,
     color: appColors.body,
   },
   button: {
     fontFamily: "NunitoSansBold",
     size: 16,
   },
-  emphasis: {
+  subtitle: {
     fontFamily: "NunitoSansBoldItalic",
     size: 16,
     color: primary["400"],

@@ -1,9 +1,12 @@
-import { Button, Text, View } from "react-native";
+import { Button, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import { ActivityType } from "../scripts/types";
+import { PageStyles } from "../styles/PageStyles";
+import { OaaButton } from "../components/OaaButton";
+import { OaaChip } from "../components/OaaChip";
 
 //@ts-ignore
 export default function Activity({ route, navigate }) {
@@ -11,35 +14,34 @@ export default function Activity({ route, navigate }) {
   const [isOwner, setOwner] = useState(false);
   const [isParticipant, setParticipant] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isChangingUserRelation, setIsChangingUserRelation] = useState<boolean>(false);
   const id = route.params.id;
 
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + id;
-    const token = await getItemAsync("userToken");
+    const storedToken = await getItemAsync("userToken");
+    const storedUserId = await getItemAsync("userId");
+    setUserId(storedUserId);
     let requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${storedToken}`,
       },
     };
-    fetch(url, requestOptions).then((response) => {
-      if (response.status === 200) {
-        response.json().then((data) => {
-          setActivityInfo(data);
-          if (token) {
-            setRelations(data);
-          }
-        });
-      } else {
-        console.log("error 404: activity not found");
-        //return navigate("/404");
-      }
-    });
+    const response = await fetch(url, requestOptions);
+    if (response.status === 200) {
+      const data = await response.json();
+      setActivityInfo(data);
+      setRelations(data, storedUserId);
+    } else {
+      console.log("error 404: activity not found");
+    }
   };
 
   // Entscheidet anhand von activityInfo, welches Verhältnis der Nutzer zur aufgerufenen Aktivität hat
   // z.B. ist er als Teilnehmer angemeldet, oder ein Organisator der Aktivität etc.
-  const setRelations = (data: any) => {
+  const setRelations = (data: any, userId: any) => {
     if (data.organizer.id === userId) {
       setOwner(true);
     } else {
@@ -63,16 +65,14 @@ export default function Activity({ route, navigate }) {
           Authorization: `Bearer ${token}`,
         },
       };
-      fetch(url, requestOptions).then((response) => {
-        if (response.status === 200) {
-          getActivityInfo();
-        } else {
-          console.log("error 404: activity not found");
-        }
-      });
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        await getActivityInfo();
+      } else {
+        console.log("error 404: activity not found");
+      }
     } else {
       console.log("no token");
-      //requestOptions = {method: "PATCH"};
     }
   };
 
@@ -80,42 +80,69 @@ export default function Activity({ route, navigate }) {
     if (isOwner) {
       navigate("Participants", { data: activityInfo });
     } else {
+      setIsChangingUserRelation(true);
       await changeParticipantSub();
       await getActivityInfo();
+      setIsChangingUserRelation(false);
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getActivityInfo();
+    setRefreshing(false);
+  };
+
   useEffect(() => {
-    getItemAsync("userId")
-      .then((userId) => setUserId(userId))
-      .then(() => getActivityInfo());
+    getActivityInfo();
   }, []);
 
   if (!activityInfo) {
     return <Text> loading... </Text>;
   }
+
   return (
-    <View>
-      <Text style={{ textAlign: "center", marginTop: 300 }}> {activityInfo.name} </Text>
-      <Text> organisiert von {activityInfo.organizer.username}</Text>
-      <View>
-        {activityInfo.categories.map((category, key) => (
-          <Text style={{ color: "blue", margin: 5 }}>{category.name}</Text>
-        ))}
+    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <View style={PageStyles.page}>
+        <View style={{ display: "flex", gap: 8 }}>
+          <Text style={PageStyles.hero}>{activityInfo.name}</Text>
+          <Text style={PageStyles.subtitle}>Organisiert von {activityInfo.organizer.username}</Text>
+        </View>
+        <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          {activityInfo.categories.map((category, key) => (
+            <OaaChip key={key} label={category.name} size="small" />
+          ))}
+        </View>
+        <Text style={PageStyles.h2}>Wann?</Text>
+        <Text style={PageStyles.body}>{activityInfo.date}</Text>
+        <Text style={PageStyles.h2}>Wo?</Text>
+        <Text style={PageStyles.body}>{activityInfo.location.coordinates}</Text>
+        <Text style={PageStyles.h2}>Wie viele?</Text>
+        <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+          <Text style={PageStyles.body}>
+            {activityInfo.maximum_participants} {activityInfo.maximum_participants === 1 ? "Person" : "Personen"}
+          </Text>
+          {1 - activityInfo.participants.length / activityInfo.maximum_participants <= 0.2 && (
+            <OaaChip
+              label={`Noch ${activityInfo.maximum_participants - activityInfo.participants.length} Plätze frei!`}
+              size="small"
+              variant="caution"
+            />
+          )}
+        </View>
+        {activityInfo.information_text && (
+          <>
+            <Text style={PageStyles.h2}>Weitere Informationen</Text>
+            <Text style={PageStyles.body}>{activityInfo.information_text}</Text>
+          </>
+        )}
+        <OaaButton
+          variant={isChangingUserRelation ? "disabled" : isOwner || !isParticipant ? "primary" : "caution"}
+          icon={isOwner ? "account" : isParticipant ? "close" : "check"}
+          label={isOwner ? "Zusagenliste ansehen" : isParticipant ? "Absagen" : "Zusagen"}
+          onPress={handleButtonPress}
+        />
       </View>
-      <Text> Wann? </Text>
-      <Text> {activityInfo.date} </Text>
-      <Text> Wo? </Text>
-      <Text> {activityInfo.location.coordinates} </Text>
-      <Text> Wie viele? </Text>
-      <Text> {activityInfo.participants.length} </Text>
-      {activityInfo.information_text && (
-        <>
-          <Text> Weitere Informationen </Text>
-          <Text> {activityInfo.information_text} </Text>
-        </>
-      )}
-      <Button title={isOwner ? "Zusagenliste ansehen" : isParticipant ? "Absagen" : "Zusagen"} onPress={handleButtonPress} />
-    </View>
+    </ScrollView>
   );
 }

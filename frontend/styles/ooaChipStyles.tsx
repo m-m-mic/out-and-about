@@ -10,6 +10,14 @@ export const ooaChipStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
   },
+  cSmall: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  tSmall: {
+    fontSize: 12,
+  },
   text: {
     color: appColors.bodyInverted,
     fontFamily: typefaces.button.fontFamily,
@@ -17,7 +25,7 @@ export const ooaChipStyles = StyleSheet.create({
   primary: {
     backgroundColor: appColors.buttonPrimary,
   },
-  caution: {},
+  caution: { backgroundColor: appColors.caution },
   outline: {
     backgroundColor: appColors.background,
     borderColor: appColors.buttonPrimary,

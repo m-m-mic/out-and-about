@@ -20,7 +20,9 @@ export const ooaButtonStyles = StyleSheet.create({
   primary: {
     backgroundColor: appColors.buttonPrimary,
   },
-  caution: {},
+  caution: {
+    backgroundColor: appColors.caution,
+  },
   outline: {
     backgroundColor: appColors.background,
     borderColor: appColors.buttonPrimary,
