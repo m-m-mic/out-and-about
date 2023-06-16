@@ -6,12 +6,21 @@ export const ooaButtonStyles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     gap: 8,
-    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 18,
     height: 50,
     borderRadius: 12,
+  },
+  expand: {
+    width: "100%",
+  },
+  elevation: {
+    shadowColor: "#171717",
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
   },
   text: {
     color: appColors.bodyInverted,

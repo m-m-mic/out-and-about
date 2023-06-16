@@ -23,9 +23,21 @@ const ActivityStack = createStackNavigator();
 export function ActivityStackScreen() {
   return (
     <ActivityStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
-      <ActivityStack.Screen name="Activity" component={Activity} options={{ headerShown: false }} />
-      <ActivityStack.Screen name="EditActivity" component={EditActivity} options={{ headerShown: false }} />
-      <ActivityStack.Screen name="Participants" component={Participants} options={{ headerShown: false }} />
+      <ActivityStack.Screen
+        name="Activity"
+        component={Activity}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <ActivityStack.Screen
+        name="EditActivity"
+        component={EditActivity}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <ActivityStack.Screen
+        name="Participants"
+        component={Participants}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
     </ActivityStack.Navigator>
   );
 }
@@ -34,8 +46,16 @@ export function OverviewStackScreen() {
   return (
     <OverviewStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
       <OverviewStack.Screen name="Overview" component={Overview} options={{ headerShown: false }} />
-      <OverviewStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
-      <OverviewStack.Screen name="CreateActivity" component={CreateActivity} options={{ headerShown: false }} />
+      <OverviewStack.Screen
+        name="ActivityStack"
+        component={ActivityStackScreen}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <OverviewStack.Screen
+        name="CreateActivity"
+        component={CreateActivity}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
     </OverviewStack.Navigator>
   );
 }
@@ -46,7 +66,11 @@ export function SearchStackScreen() {
   return (
     <SearchStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
       <SearchStack.Screen name="Search" component={Search} options={{ headerShown: false }} />
-      <SearchStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
+      <SearchStack.Screen
+        name="ActivityStack"
+        component={ActivityStackScreen}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
     </SearchStack.Navigator>
   );
 }
@@ -57,8 +81,16 @@ export function ProfileStackScreen() {
   return (
     <ProfileStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
       <ProfileStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-      <ProfileStack.Screen name="ActivityStack" component={ActivityStackScreen} options={{ headerShown: false }} />
-      <ProfileStack.Screen name="CreateActivity" component={CreateActivity} options={{ headerShown: false }} />
+      <ProfileStack.Screen
+        name="ActivityStack"
+        component={ActivityStackScreen}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <ProfileStack.Screen
+        name="CreateActivity"
+        component={CreateActivity}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
     </ProfileStack.Navigator>
   );
 }

@@ -11,11 +11,15 @@ interface OoaButtonProps {
   variant?: ButtonVariant;
   onPress?: (event: GestureResponderEvent) => void;
   icon?: string;
+  expand?: boolean;
+  elevation?: boolean;
 }
 
-export function OaaButton({ label, variant = "primary", onPress, icon }: OoaButtonProps) {
+export function OaaButton({ label, variant = "primary", onPress, icon, expand = true, elevation = false }: OoaButtonProps) {
   const getStyles = (component: string) => {
     let wrapperStyles: any = [styles.container];
+    if (expand) wrapperStyles.push(styles.expand);
+    if (elevation) wrapperStyles.push(styles.elevation);
     let textStyles: any = [styles.text];
     let iconColor = appColors.bodyInverted;
     switch (variant) {

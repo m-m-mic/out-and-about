@@ -3,8 +3,8 @@ import { typefaces } from "./StyleAttributes";
 
 export const PageStyles = StyleSheet.create({
   page: {
-    marginVertical: 16,
-    marginHorizontal: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     display: "flex",
     flexDirection: "column",
     gap: 16,
@@ -18,6 +18,7 @@ export const PageStyles = StyleSheet.create({
     fontSize: typefaces.hero.size,
     color: typefaces.hero.color,
     textTransform: "uppercase",
+    lineHeight: typefaces.hero.lineHeight,
   },
   subtitle: {
     fontFamily: typefaces.subtitle.fontFamily,
@@ -40,5 +41,11 @@ export const PageStyles = StyleSheet.create({
     fontSize: typefaces.body.size,
     letterSpacing: typefaces.body.letterSpacing,
     color: typefaces.body.color,
+  },
+  categorySelection: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 16,
   },
 });

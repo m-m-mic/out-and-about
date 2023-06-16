@@ -1,9 +1,8 @@
-import { Button, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { AuthContext } from "../App";
 import { backendUrl } from "../scripts/backendConnection";
-import { ChoosePreferencesStyles as styles } from "../styles/ChoosePreferencesStyles";
 import { Category } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaIconButton } from "../components/OaaIconButton";
@@ -21,16 +20,16 @@ export default function ChoosePreferences({ route, navigation }) {
   }, []);
 
   // Adds or removes category from user preferences
-  const handleCategoryPress = (category: Category) => {
+  const handleCategoryPress = (categoryId: string) => {
     let userCategories = registrationData.categories;
-    if (userCategories.includes(category)) {
+    if (userCategories.includes(categoryId)) {
       for (let i = 0; i < userCategories.length; i++) {
-        if (userCategories[i] === category) {
+        if (userCategories[i] === categoryId) {
           userCategories.splice(i, 1);
         }
       }
     } else {
-      userCategories.push(category);
+      userCategories.push(categoryId);
     }
     setRegistrationData({ ...registrationData, categories: userCategories });
   };
@@ -57,13 +56,13 @@ export default function ChoosePreferences({ route, navigation }) {
           <Text style={PageStyles.hero}>Was spricht dich an?</Text>
         </View>
         {categories.length > 0 && (
-          <View style={styles.categoryContainer}>
+          <View style={PageStyles.categorySelection}>
             {categories.map((category, key) => (
               <OaaChip
                 label={category.name}
-                variant={registrationData.categories.includes(category) ? "primary" : "unselected"}
+                variant={registrationData.categories.includes(category._id) ? "primary" : "unselected"}
                 key={key}
-                onPress={() => handleCategoryPress(category)}
+                onPress={() => handleCategoryPress(category._id)}
               />
             ))}
           </View>

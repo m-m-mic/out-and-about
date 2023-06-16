@@ -96,8 +96,7 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
         .populate({
           path: "planned_activities",
           select: "id name categories date",
-        })
-        .populate("categories", "id name");
+        });
       if (!requestedAccount) {
         res.status(404).send("Account not found");
       }
@@ -121,6 +120,7 @@ accountRoutes.patch("/account/info", authenticateJWT, async (req: Request, res: 
     const id = authReq.account.id;
     const updatedValues = req.body;
     if (mongoose.Types.ObjectId.isValid(id)) {
+      console.log(updatedValues);
       try {
         const updated = await Account.findOneAndUpdate({ _id: id }, updatedValues, {
           new: true,
@@ -129,6 +129,7 @@ accountRoutes.patch("/account/info", authenticateJWT, async (req: Request, res: 
         if (!updated) {
           return res.status(404).send("Account not found");
         }
+        console.log(updated.categories);
         return res.send(updated);
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

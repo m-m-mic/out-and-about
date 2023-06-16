@@ -32,6 +32,7 @@ export const typefaces = {
     fontFamily: "Righteous",
     size: 48,
     color: appColors.hero,
+    lineHeight: 48,
   },
   h1: {
     fontFamily: "NunitoSansBold",

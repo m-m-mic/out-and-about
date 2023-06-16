@@ -18,7 +18,6 @@ export default function Login({ navigation }: any) {
 
   const handleSignIn = () => {
     signIn({ email: email, password: password }).then((response: number) => {
-      console.log(response);
       if (response === 403 || response === 404) {
         setIsDisclaimerVisible(true);
       }
