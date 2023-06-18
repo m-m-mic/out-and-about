@@ -11,6 +11,7 @@ import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaActivityImage } from "../components/OaaActivityImage";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import Loading from "../components/Loading";
+import { useFocusEffect } from "@react-navigation/native";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
@@ -26,6 +27,10 @@ export default function Activity({ route, navigation }) {
   if (route.params.fromCreated) {
     fromCreated = true;
   }
+
+  useFocusEffect(() => {
+    getActivityInfo();
+  });
 
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + id;

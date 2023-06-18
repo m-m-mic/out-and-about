@@ -16,6 +16,10 @@ interface OaaInputProps {
   isError?: boolean;
   errorMessage?: string;
   icon?: string;
+  defaultValue?: string;
+  multiline?: boolean;
+  customHeight?: number;
+  textAlignVertical?: "center" | "bottom" | "top" | "auto";
 }
 
 export function OaaInput({
@@ -29,6 +33,10 @@ export function OaaInput({
   isError = false,
   errorMessage,
   icon,
+  defaultValue,
+  multiline = false,
+  customHeight = 50,
+  textAlignVertical,
 }: OaaInputProps) {
   const [borderColor, setBorderColor] = useState(primary["200"]);
   const [hideTextEntry, setHideTextEntry] = useState(secureTextEntry);
@@ -42,19 +50,22 @@ export function OaaInput({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.wrapper, { borderColor: borderColor }]}>
+      <View style={[styles.wrapper, { borderColor: borderColor, height: customHeight }]}>
         {icon && <Icon name={icon} color={appColors.body} size={24} />}
         <TextInput
+          defaultValue={defaultValue}
           keyboardType={keyboardType}
           secureTextEntry={hideTextEntry}
           style={styles.input}
           placeholderTextColor={primary["200"]}
           value={value}
           placeholder={placeholder}
+          multiline={multiline}
           onBlur={() => setColor()}
           onFocus={() => setColor(true)}
           onChangeText={onChangeText}
           onEndEditing={onEndEditing}
+          textAlignVertical={textAlignVertical}
         />
         {(isValid || isError) && (
           <Icon name={isValid ? "check" : "close"} color={isValid ? appColors.valid : appColors.error} size={24} />

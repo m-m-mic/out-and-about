@@ -13,7 +13,6 @@ import { OaaActivityPreviewCard } from "../components/OaaActivityPreviewCard";
 export default function LandingPage({ navigation }) {
   const [activities, setActivities] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [autoChange, setAutoChange] = useState<boolean>(true);
   const [flatListIndex, setFlatListIndex] = useState<number>(0);
   const width = Dimensions.get("window").width;
   const ref = React.useRef<FlatList>(null);
@@ -23,13 +22,12 @@ export default function LandingPage({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (autoChange) {
-      const interval = setInterval(() => {
-        countUpIndex();
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [autoChange]);
+    const interval = setInterval(() => {
+      countUpIndex();
+      console.log(flatListIndex);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     ref.current?.scrollToIndex({

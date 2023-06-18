@@ -25,7 +25,6 @@ export type ActivityType = {
   name: string;
   categories: Category[];
   date: number;
-  active: boolean;
   information_text: string;
   location: GeoType;
   organizer: Account;
@@ -37,4 +36,13 @@ export type ActivityType = {
 type GeoType = {
   type: string;
   coordinates: number[];
+};
+
+export type ActivityValidatorType = {
+  name: boolean;
+  location: boolean;
+  maximum_participants: boolean;
+  categories: boolean;
+  information_text: boolean;
+  date: boolean;
 };
