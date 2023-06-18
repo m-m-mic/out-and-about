@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Image, StyleSheet } from "react-native";
 import { backendUrl } from "../scripts/backendConnection";
-import { getItemAsync } from "expo-secure-store";
 
 export function OaaActivityImage({ id, blur = 0 }: { id: string; blur: number }) {
   const [imageSrc, setImageSrc] = useState<string>(backendUrl + "/images/activities/" + id + ".jpg");

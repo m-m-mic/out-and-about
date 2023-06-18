@@ -1,6 +1,6 @@
-import { Button, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityType } from "../scripts/types";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
@@ -32,17 +32,15 @@ export default function EditActivity({ route, navigate }) {
     });
   };
 
-
-
   return (
     <View>
       <Text style={{ textAlign: "center", marginTop: 300 }}>Aktivität bearbeiten</Text>
       <Text> Titel </Text>
       <TextInput
-        placeholder = {activityInfo?.name}
-        onChangeText={ (text) => {
+        placeholder={activityInfo?.name}
+        onChangeText={(text) => {
           if (activityInfo) {
-            activityInfo.name = text
+            activityInfo.name = text;
           }
         }}
       />

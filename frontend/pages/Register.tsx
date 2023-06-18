@@ -18,7 +18,6 @@ export default function Register({ navigation }) {
 
   // Checks if entered email is available
   const verifyEmail = (input: string) => {
-    console.log(input);
     if (input.length == 0) {
       setEmailError("Bitte geben sie eine E-Mail an.");
       setRegistrationValidator({ ...registrationValidator, email: false });

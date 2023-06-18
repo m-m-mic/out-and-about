@@ -84,14 +84,18 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: data.email, password: data.password }),
         };
-        const response = await fetch(url, requestOptions);
-        if (response.status === 200) {
-          const credentials = await response.json();
-          await setItemAsync("userToken", credentials.token);
-          await setItemAsync("userId", credentials.id);
-          dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+        try {
+          const response = await fetch(url, requestOptions);
+          if (response.status === 200) {
+            const credentials = await response.json();
+            await setItemAsync("userToken", credentials.token);
+            await setItemAsync("userId", credentials.id);
+            dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+          }
+          return response.status;
+        } catch (error) {
+          return 500;
         }
-        return response.status;
       },
       // Sign out
       signOut: async () => {

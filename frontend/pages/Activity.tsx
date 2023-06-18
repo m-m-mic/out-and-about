@@ -10,6 +10,7 @@ import { OaaChip } from "../components/OaaChip";
 import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaActivityImage } from "../components/OaaActivityImage";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
+import Loading from "../components/Loading";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
@@ -118,7 +119,7 @@ export default function Activity({ route, navigation }) {
   };
 
   if (!activityInfo) {
-    return <Text> loading... </Text>;
+    return <Loading />;
   }
 
   return (

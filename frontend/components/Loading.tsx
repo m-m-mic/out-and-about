@@ -3,8 +3,8 @@ import * as React from "react";
 
 export default function Loading() {
   return (
-    <View>
-      <Text style={{ textAlign: "center", marginTop: 300 }}>Loading</Text>
+    <View style={{ display: "flex", justifyContent: "center", flex: 1, alignItems: "center" }}>
+      <Text style={{ textAlign: "center", marginTop: 300 }}>LOADING</Text>
     </View>
   );
 }

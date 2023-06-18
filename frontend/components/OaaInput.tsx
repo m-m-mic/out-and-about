@@ -2,7 +2,7 @@ import { KeyboardTypeOptions, TextInput, View, Text, TouchableOpacity } from "re
 import * as React from "react";
 import { ooaInputStyles as styles } from "../styles/ooaInputStyles";
 import { appColors, primary } from "../styles/StyleAttributes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@react-native-material/core";
 
 interface OaaInputProps {

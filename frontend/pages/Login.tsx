@@ -1,4 +1,4 @@
-import { Button, ScrollView, Text, TextInput, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { AuthContext } from "../App";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import { Button, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 
