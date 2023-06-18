@@ -14,7 +14,7 @@ export default function EditActivity({ route, navigation }) {
     maximum_participants: true,
     categories: true,
     information_text: true,
-    date: false,
+    date: true,
   };
 
   const [activityInfo, setActivityInfo] = useState<ActivityType>();

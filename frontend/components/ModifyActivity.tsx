@@ -100,11 +100,8 @@ export default function ModifyActivity({
       },
       body: JSON.stringify(activityInfo),
     };
-    console.log("Test");
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
-      const data = await response.json();
-      console.log(data);
       navigation.navigate("Activity", { id: activityInfo._id });
     } else {
       console.log(response);
@@ -112,6 +109,13 @@ export default function ModifyActivity({
   };
 
   const handleConfirmation = async () => {
+    console.log(validation);
+    for (const [key, value] of Object.entries(validation)) {
+      if (value === false) {
+        console.log("No! >:(((((");
+        return;
+      }
+    }
     if (editMode) {
       updateActivity();
     } else {
