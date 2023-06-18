@@ -19,7 +19,6 @@ const ActivitySchema = new mongoose.Schema({
   },
   categories: [{ type: String, ref: "Category" }],
   date: { type: Number, required: true },
-  active: { type: Boolean, default: true },
   information_text: { type: String, trim: true },
   location: GeoSchema,
   organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },

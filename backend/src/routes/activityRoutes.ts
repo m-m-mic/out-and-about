@@ -218,7 +218,6 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
       only_logged_in: false,
       participants: false,
       organizer: false,
-      active: false,
       information_text: false,
       maximum_participants: false,
     }).populate("categories", "id name");
@@ -243,13 +242,13 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
 // Gibt zufällig 8 verschiedene Aktivitäten zurück
 activityRoutes.get("/landing-page/", async (req, res) => {
   try {
+    // TODO: filter inactive activities based on date
     let activities = await Activity.find(
       { only_logged_in: false },
       {
         only_logged_in: false,
         participants: false,
         organizer: false,
-        active: false,
         information_text: false,
         maximum_participants: false,
         date: false,

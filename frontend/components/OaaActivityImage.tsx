@@ -19,15 +19,7 @@ export function OaaActivityImage({ id, blur = 0 }: { id: string; blur: number })
     setImageSrc(backendUrl + "/images/activities/placeholder_large.jpg");
   };
 
-  if (imageSrc) {
-    return (
-      <Image
-        style={styles.image}
-        blurRadius={blur}
-        resizeMode={"cover"}
-        source={{ uri: imageSrc }}
-        onError={() => onFallback()}
-      />
-    );
-  } else return null;
+  return (
+    <Image style={styles.image} blurRadius={blur} resizeMode={"cover"} source={{ uri: imageSrc }} onError={() => onFallback()} />
+  );
 }

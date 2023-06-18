@@ -21,6 +21,7 @@ export type Category = {
 };
 
 export type ActivityType = {
+  _id: string;
   name: string;
   categories: Category[];
   date: number;
