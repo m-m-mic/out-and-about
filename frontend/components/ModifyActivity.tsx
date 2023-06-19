@@ -108,14 +108,17 @@ export default function ModifyActivity({
     }
   };
 
-  const handleConfirmation = async () => {
-    console.log(validation);
+  const runValidators = () => {
     for (const [key, value] of Object.entries(validation)) {
       if (value === false) {
-        console.log("No! >:(((((");
-        return;
+        return false;
       }
     }
+    return true;
+  };
+
+  const handleConfirmation = async () => {
+    runValidators();
     if (editMode) {
       updateActivity();
     } else {
@@ -127,7 +130,11 @@ export default function ModifyActivity({
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
-        <OaaIconButton name="check" onPress={() => handleConfirmation()} />
+        {runValidators() ? (
+          <OaaIconButton name="check" onPress={() => handleConfirmation()} />
+        ) : (
+          <OaaIconButton name="check" disabled={true} />
+        )}
       </View>
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>

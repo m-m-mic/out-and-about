@@ -109,7 +109,6 @@ export default function Activity({ route, navigation }) {
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-    getActivityInfo();
     return () => backHandler.remove();
   }, []);
 

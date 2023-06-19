@@ -24,10 +24,9 @@ export default function LandingPage({ navigation }) {
   useEffect(() => {
     const interval = setInterval(() => {
       countUpIndex();
-      console.log(flatListIndex);
     }, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [activities]);
 
   useEffect(() => {
     ref.current?.scrollToIndex({

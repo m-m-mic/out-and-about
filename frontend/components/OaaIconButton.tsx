@@ -11,11 +11,13 @@ interface OaaIconButtonProps {
   size?: number;
   onPress?: (event: GestureResponderEvent) => void;
   variant?: IconButtonVariant;
+  disabled?: boolean;
 }
 
-export function OaaIconButton({ name, size = 24, variant = "ghost", onPress }: OaaIconButtonProps) {
-  const [color, setColor] = useState(variant === "transparent" ? appColors.bodyInverted : appColors.body);
-
+export function OaaIconButton({ name, size = 24, variant = "ghost", onPress, disabled = false }: OaaIconButtonProps) {
+  const [color, setColor] = useState(
+    disabled ? appColors.bodyDisabled : variant === "transparent" ? appColors.bodyInverted : appColors.body
+  );
   const getStyles = () => {
     let ButtonStyles: any = [styles.container];
     switch (variant) {
@@ -29,7 +31,11 @@ export function OaaIconButton({ name, size = 24, variant = "ghost", onPress }: O
   };
 
   return (
-    <TouchableOpacity activeOpacity={0.8} style={[getStyles(), { width: size + 8, height: size + 8 }]} onPress={onPress}>
+    <TouchableOpacity
+      activeOpacity={disabled ? 1 : 0.8}
+      disabled={disabled}
+      style={[getStyles(), { width: size + 8, height: size + 8 }]}
+      onPress={onPress}>
       <Icon name={name} size={size} color={color} />
     </TouchableOpacity>
   );
