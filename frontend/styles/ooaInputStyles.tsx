@@ -8,8 +8,8 @@ export const ooaInputStyles = StyleSheet.create({
     gap: 5,
   },
   wrapper: {
-    height: 50,
     paddingHorizontal: 12,
+    paddingVertical: 7,
     width: "100%",
     display: "flex",
     flexDirection: "row",

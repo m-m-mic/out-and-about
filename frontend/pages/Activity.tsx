@@ -152,7 +152,7 @@ export default function Activity({ route, navigation }) {
             <Text style={PageStyles.hero}>{activityInfo.name}</Text>
             <Text style={PageStyles.subtitle}>Organisiert von {activityInfo.organizer.username}</Text>
           </View>
-          <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 16 }}>
+          <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {activityInfo.categories.map((category, key) => (
               <OaaChip key={key} label={category.name} size="small" />
             ))}

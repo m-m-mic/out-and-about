@@ -118,3 +118,20 @@ export const setInformationTextInput = (
     return setValidation({ ...validation, information_text: false });
   }
 };
+
+export const setDateInput = (
+  input: Date,
+  data: ActivityType,
+  setData: Dispatch<SetStateAction<ActivityType>>,
+  validation: ActivityValidatorType,
+  setValidation: Dispatch<SetStateAction<ActivityValidatorType>>
+) => {
+  const currentDate = new Date();
+  if (input.valueOf() > currentDate.valueOf()) {
+    setData({ ...data, date: input.valueOf() });
+    return setValidation({ ...validation, date: true });
+  } else {
+    setData({ ...data, date: input.valueOf() });
+    return setValidation({ ...validation, date: false });
+  }
+};

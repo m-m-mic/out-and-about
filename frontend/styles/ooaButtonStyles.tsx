@@ -13,7 +13,7 @@ export const ooaButtonStyles = StyleSheet.create({
     borderRadius: 12,
   },
   expand: {
-    width: "100%",
+    flex: 1,
   },
   elevation: {
     shadowColor: "#171717",

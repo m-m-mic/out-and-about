@@ -111,11 +111,13 @@ export default function Register({ navigation }) {
             errorMessage="Passwörter stimmen nicht miteinander überein."
           />
         </View>
-        <OaaButton
-          label="Weiter"
-          variant={runValidators() ? "disabled" : "primary"}
-          onPress={() => navigation.navigate("ChoosePreferences", { data: registrationData })}
-        />
+        <View>
+          <OaaButton
+            label="Weiter"
+            variant={runValidators() ? "disabled" : "primary"}
+            onPress={() => navigation.navigate("ChoosePreferences", { data: registrationData })}
+          />
+        </View>
       </View>
     </ScrollView>
   );

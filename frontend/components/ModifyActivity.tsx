@@ -5,13 +5,15 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "./OaaInput";
 import { OaaChip } from "./OaaChip";
-import { setInformationTextInput, setMaximumParticipantsInput, setNameInput } from "../scripts/inputValidators";
+import { setDateInput, setInformationTextInput, setMaximumParticipantsInput, setNameInput } from "../scripts/inputValidators";
 import { backendUrl } from "../scripts/backendConnection";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { OaaButton } from "./OaaButton";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import { OaaIconButton } from "./OaaIconButton";
 import { getItemAsync } from "expo-secure-store";
+import { appColors, primary } from "../styles/StyleAttributes";
+import Loading from "./Loading";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -30,8 +32,7 @@ export default function ModifyActivity({
   editMode = false,
   navigation,
 }: ModifyActivityProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [activityCategories, setActivityCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -40,20 +41,19 @@ export default function ModifyActivity({
   }, []);
 
   // Adds or removes category from user preferences
-  const handleCategoryPress = (categoryId: string) => {
-    let updatedCategories = activityCategories;
-    if (updatedCategories?.includes(categoryId)) {
+  const handleCategoryPress = (category: Category) => {
+    let updatedCategories = activityInfo.categories;
+    if (isCategoryIdIncluded(updatedCategories, category)) {
       for (let i = 0; i < updatedCategories.length; i++) {
-        if (updatedCategories[i] === categoryId) {
+        if (updatedCategories[i]._id === category._id) {
           updatedCategories.splice(i, 1);
         }
       }
     } else {
-      updatedCategories?.push(categoryId);
+      updatedCategories?.push(category);
     }
     // @ts-ignore
     setActivityInfo({ ...activityInfo, categories: updatedCategories });
-    setActivityCategories(updatedCategories);
   };
 
   const getCategories = () => {
@@ -126,6 +126,18 @@ export default function ModifyActivity({
     }
   };
 
+  const isCategoryIdIncluded = (categoryList: Category[], category: Category): boolean => {
+    return categoryList.filter((e) => e._id === category._id).length > 0;
+  };
+
+  console.log(categories);
+
+  console.log(activityInfo.categories);
+
+  if (!categories) {
+    return <Loading />;
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
@@ -139,36 +151,77 @@ export default function ModifyActivity({
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>
           <Text style={PageStyles.h1}>{editMode ? "Aktivität bearbeiten" : "Aktivität erstellen"}</Text>
-          <Text style={PageStyles.h2}>Titel</Text>
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Text style={PageStyles.h2}>Titel</Text>
+            <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
+          </View>
           <OaaInput
             defaultValue={activityInfo.name}
             placeholder="Titel..."
             onChangeText={(value: string) => setNameInput(value, activityInfo, setActivityInfo, validation, setValidation)}
             isError={validation.name === false}
             isValid={validation.name}
+            errorMessage="Titel muss 1 bis 30 Zeichen lang sein."
           />
-          <Text style={PageStyles.h2}>Kategorien</Text>
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Text style={PageStyles.h2}>Kategorien</Text>
+            <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
+          </View>
           {categories.length > 0 && (
             <View style={PageStyles.categorySelection}>
               {categories.map((category, key) => (
                 <OaaChip
                   label={category.name}
-                  variant={activityInfo.categories.includes(category) ? "primary" : "unselected"}
+                  variant={
+                    isCategoryIdIncluded(activityInfo.categories, category)
+                      ? "primary"
+                      : activityInfo.categories.length >= 3
+                      ? "disabled"
+                      : "unselected"
+                  }
                   key={key}
-                  onPress={() => handleCategoryPress(category._id)}
+                  onPress={() => handleCategoryPress(category)}
                 />
               ))}
             </View>
           )}
           <Text style={PageStyles.body}>Wähle bis zu drei aus.</Text>
-          <Text style={PageStyles.h2}>Wann?</Text>
-          <OaaButton label="Date" onPress={() => setShowDatePicker(true)} />
-          <OaaButton label="Time" onPress={() => setShowTimePicker(true)} />
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Text style={PageStyles.h2}>Wann?</Text>
+            <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
+          </View>
+          <View style={{ display: "flex", alignItems: "center" }}>
+            <View style={{ display: "flex", flexDirection: "row", gap: 12, maxWidth: 320, width: "100%" }}>
+              <View style={{ flex: 0.6 }}>
+                <OaaButton
+                  label={new Date(activityInfo.date).toLocaleString("de-DE", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                  })}
+                  variant="outline"
+                  onPress={() => setShowDatePicker(true)}
+                />
+              </View>
+              <View style={{ flex: 0.4 }}>
+                <OaaButton
+                  label={new Date(activityInfo.date).toLocaleString("de-DE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  variant="outline"
+                  onPress={() => setShowTimePicker(true)}
+                />
+              </View>
+            </View>
+          </View>
           {showDatePicker && (
             <RNDateTimePicker
               display="spinner"
               mode="date"
               value={new Date(activityInfo.date)}
+              positiveButton={{ label: "Bestätigen" }}
+              negativeButton={{ label: "Abbrechen" }}
               minimumDate={new Date()}
               onChange={(event, date) => {
                 date && setActivityInfo({ ...activityInfo, date: date.valueOf() });
@@ -180,16 +233,25 @@ export default function ModifyActivity({
             <RNDateTimePicker
               display="spinner"
               mode="time"
+              positiveButton={{ label: "Bestätigen" }}
+              negativeButton={{ label: "Abbrechen" }}
               value={new Date(activityInfo.date)}
-              minimumDate={new Date()}
               onChange={(event, date) => {
-                date && setActivityInfo({ ...activityInfo, date: date.valueOf() });
+                date && setDateInput(date, activityInfo, setActivityInfo, validation, setValidation);
                 setShowTimePicker(false);
               }}
             />
           )}
-          <Text style={PageStyles.h2}>Wo?</Text>
-          <Text style={PageStyles.h2}>Wie viele?</Text>
+          {!validation.date && <Text>Datum darf nicht in der Vergangenheit liegen.</Text>}
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Text style={PageStyles.h2}>Wo?</Text>
+            <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
+          </View>
+          <Text>TO DO</Text>
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Text style={PageStyles.h2}>Wie viele?</Text>
+            <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
+          </View>
           <View style={{ display: "flex", flexDirection: "row", gap: 8, alignItems: "center" }}>
             <View style={{ width: 100 }}>
               <OaaInput
@@ -220,11 +282,12 @@ export default function ModifyActivity({
             onChangeText={(value: string) =>
               setInformationTextInput(value, activityInfo, setActivityInfo, validation, setValidation)
             }
-            customHeight={200}
+            numberOfLines={7}
             textAlignVertical="top"
             isError={validation.information_text === false}
             isValid={validation.information_text}
             multiline={true}
+            errorMessage="Weitere Informationen müssen unter 300 Zeichen lang sein."
           />
         </View>
       </ScrollView>

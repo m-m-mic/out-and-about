@@ -18,7 +18,7 @@ interface OaaInputProps {
   icon?: string;
   defaultValue?: string;
   multiline?: boolean;
-  customHeight?: number;
+  numberOfLines?: number;
   textAlignVertical?: "center" | "bottom" | "top" | "auto";
 }
 
@@ -35,7 +35,7 @@ export function OaaInput({
   icon,
   defaultValue,
   multiline = false,
-  customHeight = 50,
+  numberOfLines = 1,
   textAlignVertical,
 }: OaaInputProps) {
   const [borderColor, setBorderColor] = useState(primary["200"]);
@@ -50,13 +50,13 @@ export function OaaInput({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.wrapper, { borderColor: borderColor, height: customHeight }]}>
+      <View style={[styles.wrapper, { borderColor: borderColor }]}>
         {icon && <Icon name={icon} color={appColors.body} size={24} />}
         <TextInput
           defaultValue={defaultValue}
           keyboardType={keyboardType}
           secureTextEntry={hideTextEntry}
-          style={styles.input}
+          style={[styles.input, { height: 30 * numberOfLines }]}
           placeholderTextColor={primary["200"]}
           value={value}
           placeholder={placeholder}
