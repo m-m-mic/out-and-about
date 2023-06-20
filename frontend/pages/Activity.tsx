@@ -1,6 +1,6 @@
 import { BackHandler, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import { ActivityType } from "../scripts/types";
@@ -28,9 +28,11 @@ export default function Activity({ route, navigation }) {
     fromCreated = true;
   }
 
-  useFocusEffect(() => {
-    getActivityInfo();
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      getActivityInfo();
+    }, [])
+  );
 
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + id;
@@ -122,6 +124,8 @@ export default function Activity({ route, navigation }) {
     return true;
   };
 
+  console.log(activityInfo);
+
   if (!activityInfo) {
     return <Loading />;
   }
@@ -130,7 +134,9 @@ export default function Activity({ route, navigation }) {
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" variant="transparent" onPress={() => handleBackButton()} />
-        <OaaIconButton name="pencil" variant="transparent" onPress={() => navigation.navigate("EditActivity", { id: id })} />
+        {isOwner && (
+          <OaaIconButton name="pencil" variant="transparent" onPress={() => navigation.navigate("EditActivity", { id: id })} />
+        )}
       </View>
       <View style={styles.absoluteButton}>
         <OaaButton

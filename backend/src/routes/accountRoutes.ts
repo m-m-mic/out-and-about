@@ -91,10 +91,12 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
       const requestedAccount = await Account.findOne({ _id: id }, { _id: false, password: false })
         .populate({
           path: "saved_activities",
+          populate: { path: "categories", model: "Category", select: "id name" },
           select: "id name categories date",
         })
         .populate({
           path: "planned_activities",
+          populate: { path: "categories", model: "Category", select: "id name" },
           select: "id name categories date",
         });
       if (!requestedAccount) {

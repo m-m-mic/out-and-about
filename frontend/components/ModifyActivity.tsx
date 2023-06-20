@@ -14,6 +14,7 @@ import { OaaIconButton } from "./OaaIconButton";
 import { getItemAsync } from "expo-secure-store";
 import { appColors, primary } from "../styles/StyleAttributes";
 import Loading from "./Loading";
+import { Icon } from "@react-native-material/core";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -51,6 +52,11 @@ export default function ModifyActivity({
       }
     } else {
       updatedCategories?.push(category);
+    }
+    if (updatedCategories.length > 0) {
+      setValidation({ ...validation, categories: true });
+    } else {
+      setValidation({ ...validation, categories: false });
     }
     // @ts-ignore
     setActivityInfo({ ...activityInfo, categories: updatedCategories });
@@ -130,9 +136,7 @@ export default function ModifyActivity({
     return categoryList.filter((e) => e._id === category._id).length > 0;
   };
 
-  console.log(categories);
-
-  console.log(activityInfo.categories);
+  console.log(validation);
 
   if (!categories) {
     return <Loading />;
@@ -185,7 +189,19 @@ export default function ModifyActivity({
               ))}
             </View>
           )}
-          <Text style={PageStyles.body}>Wähle bis zu drei aus.</Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
+              alignItems: "center",
+              justifyContent: "flex-end",
+              height: 25,
+            }}>
+            {validation.categories === false && <Icon name="alert-circle" size={24} color={appColors.error} />}
+            <Text style={[PageStyles.body, !validation.categories && { color: appColors.error }]}>Wähle eins bis drei aus.</Text>
+          </View>
+
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Text style={PageStyles.h2}>Wann?</Text>
             <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>

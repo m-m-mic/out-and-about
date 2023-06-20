@@ -67,7 +67,9 @@ export default function ChoosePreferences({ route, navigation }) {
             ))}
           </View>
         )}
-        <OaaButton label="Los geht's!" onPress={() => signUp(registrationData)} />
+        <View>
+          <OaaButton label="Los geht's!" onPress={() => signUp(registrationData)} />
+        </View>
       </View>
     </ScrollView>
   );

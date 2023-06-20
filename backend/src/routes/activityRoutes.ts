@@ -206,6 +206,8 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
   // Anzahl an Elementen pro Seite
   const limit: number = parseInt(<string>authReq.query.limit) || 15;
 
+  const preferences: boolean = authReq.query.preferences === "true";
+
   const id = authReq.account.id;
   const searchQuery: string = authReq.params.query.toLowerCase();
   try {
@@ -214,15 +216,21 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
     // Account des Request-Senders wird gesucht und dessen Präferenzen werden verwendet, um die relevantesten
     // Ergebnisse als Erstes zu zeigen
     const account = await Account.findOne({ _id: id });
+    let preferenceModel;
+    if (preferences) {
+      preferenceModel = constructPreferenceModel(account, null);
+    } else {
+      preferenceModel = {};
+    }
     // TODO: Hier muss nach Distanz anhand von GeoJSON Daten sortiert werden. Der Standort des Nutzers muss mit im Body des Requests übergeben werden
-    const preferredActivities: ActivityType[] = await Activity.find(constructPreferenceModel(account, null), {
+    let activities: ActivityType[] = await Activity.find(preferenceModel, {
       only_logged_in: false,
       participants: false,
       organizer: false,
       information_text: false,
       maximum_participants: false,
     }).populate("categories", "id name");
-    let activities = searchActivities(searchQuery, preferredActivities);
+    if (searchQuery) activities = searchActivities(searchQuery, activities);
     const totalResults = activities.length;
     const startIndex = page * limit;
     const endIndex = (page + 1) * limit;
@@ -233,6 +241,35 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
     activities = activities.slice(startIndex, endIndex);
     response = { ...response, activities: activities };
     res.send(response);
+  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return res.status(400).send(error.message);
+  }
+});
+
+// GET-Request von Aktivitäten anhand von Suchbegriff
+activityRoutes.get("/recommendations/", authenticateJWT, async (req, res) => {
+  const authReq = req as unknown as authenticatedRequest;
+  const preferences: boolean = <string>authReq.query.filtered === "true";
+  const id = authReq.account.id;
+  try {
+    const account = await Account.findOne({ _id: id });
+    let preferenceModel;
+    if (preferences) {
+      preferenceModel = constructPreferenceModel(account, null);
+    } else {
+      preferenceModel = {};
+    }
+    // TODO: Hier muss nach Distanz anhand von GeoJSON Daten sortiert werden. Der Standort des Nutzers muss mit im Body des Requests übergeben werden
+    const activities: ActivityType[] = await Activity.find(preferenceModel, {
+      only_logged_in: false,
+      participants: false,
+      organizer: false,
+      information_text: false,
+      maximum_participants: false,
+    }).populate("categories", "id name");
+    res.send(activities);
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
