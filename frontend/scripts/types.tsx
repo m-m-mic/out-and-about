@@ -7,6 +7,7 @@ export interface AuthType {
 }
 
 export type Account = {
+  _id: string;
   username: string;
   email: string;
   password: string;

@@ -4,25 +4,29 @@ import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Account, ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
 import { NoEntriesDisclaimer } from "../components/NoEntriesDisclaimer";
+import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
   const [accountInfo, setAccountInfo] = useState<Account>();
   const [recommendations, setRecommendations] = useState<ActivityType[]>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
+      setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
       getAccountInfo();
       getRecommendations();
     }, [])
   );
+
   const onRefresh = async () => {
     setRefreshing(true);
     await getAccountInfo();
@@ -62,7 +66,7 @@ export default function Overview({ navigation }) {
     console.log("Oh oh :((((");
   };
 
-  if (!accountInfo || !recommendations) {
+  if (!accountInfo || !recommendations || !disclaimerIcons) {
     return <Loading />;
   }
 
@@ -73,30 +77,39 @@ export default function Overview({ navigation }) {
         <Text style={PageStyles.h2}>Zugesagt</Text>
         {accountInfo.saved_activities.length > 0 ? (
           <FlatList
-            style={{ overflow: "hidden" }}
+            style={{ marginHorizontal: -12, marginVertical: -5 }}
+            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
             showsHorizontalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
             data={accountInfo.saved_activities}
             horizontal={true}
-            renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
+            renderItem={({ item }) => (
+              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+              </View>
+            )}
           />
         ) : (
           <NoEntriesDisclaimer
-            text={"Du hast noch keinen Aktivitäten zugesagt. Verwende die Suche, um Events in deiner Umgebung zu finden!"}
+            text={"Du hast noch nichts zugesagt. Verwende die Suche, um Aktivitäten in deiner Umgebung zu finden!"}
+            icon={disclaimerIcons[0]}
           />
         )}
         <Text style={PageStyles.h2}>Von dir geplant</Text>
         {accountInfo.planned_activities.length > 0 ? (
           <FlatList
-            pagingEnabled
-            ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
+            style={{ marginHorizontal: -12, marginVertical: -5 }}
+            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
             showsHorizontalScrollIndicator={false}
             data={accountInfo.planned_activities}
             horizontal={true}
-            renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
+            renderItem={({ item }) => (
+              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+              </View>
+            )}
           />
         ) : (
-          <NoEntriesDisclaimer text={"Du hast noch keinen Aktivitäten geplant."} />
+          <NoEntriesDisclaimer text={"Du hast noch keinen Aktivitäten geplant."} icon={disclaimerIcons[1]} />
         )}
         <OaaButton
           label="Aktivität erstellen"
@@ -107,15 +120,22 @@ export default function Overview({ navigation }) {
         <Text style={PageStyles.h2}>In deiner Nähe</Text>
         {recommendations.length > 0 ? (
           <FlatList
-            pagingEnabled
-            ItemSeparatorComponent={() => <View style={{ width: 16 }} />}
+            style={{ marginHorizontal: -12, marginVertical: -5 }}
+            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
             showsHorizontalScrollIndicator={false}
             data={recommendations}
             horizontal={true}
-            renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
+            renderItem={({ item }) => (
+              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+              </View>
+            )}
           />
         ) : (
-          <NoEntriesDisclaimer text={"Es konnten keinen keine Aktivitäten in deiner Nähe gefunden werden."} />
+          <NoEntriesDisclaimer
+            text={"Es konnten keinen keine Aktivitäten in deiner Nähe gefunden werden."}
+            icon={disclaimerIcons[2]}
+          />
         )}
       </View>
     </ScrollView>

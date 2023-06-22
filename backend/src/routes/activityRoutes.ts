@@ -99,7 +99,6 @@ activityRoutes.patch("/activity/:activityId", authenticateJWT, async (req, res) 
     const updatedActivity = authReq.body;
     const accountId = authReq.account.id;
     const activityId = authReq.params.activityId;
-    console.log(updatedActivity);
     if (mongoose.Types.ObjectId.isValid(activityId)) {
       try {
         const updated = await Activity.findOneAndUpdate({ _id: activityId, organizer: accountId }, updatedActivity, {

@@ -136,8 +136,6 @@ export default function ModifyActivity({
     return categoryList.filter((e) => e._id === category._id).length > 0;
   };
 
-  console.log(validation);
-
   if (!categories) {
     return <Loading />;
   }
@@ -289,7 +287,13 @@ export default function ModifyActivity({
               />
             </View>
             <Text style={PageStyles.body}> Personen</Text>
-            {editMode && <OaaChip label={`${activityInfo.participants.length} Zusagen`} size="small" variant="caution" />}
+            {editMode && (
+              <OaaChip
+                label={`${activityInfo.participants.length} ${activityInfo.participants.length === 1 ? "Zusage" : "Zusagen"}`}
+                size="small"
+                variant="caution"
+              />
+            )}
           </View>
           <Text style={PageStyles.h2}>Weitere Informationen</Text>
           <OaaInput

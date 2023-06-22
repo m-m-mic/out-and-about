@@ -48,7 +48,6 @@ export default function Profile({ navigation }: any) {
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
-      console.log("updated user preferences");
       await getAccountInfo();
     } else {
       console.log("unable to update categories");
@@ -66,7 +65,7 @@ export default function Profile({ navigation }: any) {
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
-      const data = await response.json();
+      const data: Account = await response.json();
       setAccountInfo(data);
       setUserCategories(data.categories);
       setHavePreferencesChanged(false);

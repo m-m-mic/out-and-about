@@ -51,6 +51,7 @@ accountRoutes.post("/account/register", async (req, res) => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       console.log(error.message);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return res.status(400).send(error.message);
     }
@@ -94,11 +95,13 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
         .populate({
           path: "saved_activities",
           populate: { path: "categories", model: "Category", select: "id name" },
+          options: { sort: { date: -1 } },
           select: "id name categories date",
         })
         .populate({
           path: "planned_activities",
           populate: { path: "categories", model: "Category", select: "id name" },
+          options: { sort: { date: -1 } },
           select: "id name categories date",
         });
       if (!requestedAccount) {
@@ -124,7 +127,6 @@ accountRoutes.patch("/account/info", authenticateJWT, async (req: Request, res: 
     const id = authReq.account.id;
     const updatedValues = req.body;
     if (mongoose.Types.ObjectId.isValid(id)) {
-      console.log(updatedValues);
       try {
         const updated = await Account.findOneAndUpdate({ _id: id }, updatedValues, {
           new: true,
@@ -133,7 +135,6 @@ accountRoutes.patch("/account/info", authenticateJWT, async (req: Request, res: 
         if (!updated) {
           return res.status(404).send("Account not found");
         }
-        console.log(updated.categories);
         return res.send(updated);
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

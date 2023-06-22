@@ -29,7 +29,7 @@ export default function Activity({ route, navigation }) {
   }
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       getActivityInfo();
     }, [])
   );
@@ -94,7 +94,7 @@ export default function Activity({ route, navigation }) {
 
   const handleButtonPress = async () => {
     if (isOwner) {
-      navigation.navigate("Participants", { data: activityInfo });
+      navigation.navigate("Participants", { id: activityInfo?._id, name: activityInfo?.name });
     } else {
       setIsChangingUserRelation(true);
       await changeParticipantSub();
@@ -189,7 +189,9 @@ export default function Activity({ route, navigation }) {
                 label={
                   isActivityFull
                     ? "Keine Plätze mehr frei!"
-                    : `Noch ${activityInfo.maximum_participants - activityInfo.participants.length} Plätze frei!`
+                    : `Noch ${activityInfo.maximum_participants - activityInfo.participants.length} ${
+                        activityInfo.participants.length === 1 ? "Platz" : "Plätze"
+                      } frei!`
                 }
                 size="small"
                 variant="caution"

@@ -19,6 +19,7 @@ export const ooaInputStyles = StyleSheet.create({
     gap: 8,
   },
   input: {
+    height: 30,
     width: "100%",
     flex: 1,
     fontFamily: typefaces.body.fontFamily,
