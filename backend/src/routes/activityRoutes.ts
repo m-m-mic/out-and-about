@@ -141,8 +141,8 @@ activityRoutes.patch("/activity/:activityId/save", authenticateJWT, async (req, 
             {
               runValidators: true,
             }
-          ).then(() => (response += `deleted account id ${accountId} from activity id ${activityId}\n`));
-        } else {
+          ).then(() => (response = `deleted account id ${accountId} from activity id ${activityId}\n`));
+        } else if (activity.participants.length < activity.maximum_participants) {
           activity.participants.push(accountId);
           await Account.updateOne(
             { _id: accountId },
@@ -152,7 +152,9 @@ activityRoutes.patch("/activity/:activityId/save", authenticateJWT, async (req, 
             {
               runValidators: true,
             }
-          ).then(() => (response += `added account id ${accountId} from activity id ${activityId}\n`));
+          ).then(() => (response = `added account id ${accountId} from activity id ${activityId}\n`));
+        } else {
+          response = "could not add id as activity is already full";
         }
         activity.save();
         res.send(response);

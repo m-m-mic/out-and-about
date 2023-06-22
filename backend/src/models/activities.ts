@@ -22,7 +22,7 @@ const ActivitySchema = new mongoose.Schema({
   information_text: { type: String, trim: true },
   location: GeoSchema,
   organizer: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
-  maximum_participants: Number,
+  maximum_participants: { type: Number, required: true },
   only_logged_in: { type: Boolean, default: false },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
 });

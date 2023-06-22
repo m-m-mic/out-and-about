@@ -9,6 +9,7 @@ import { Account, ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
+import { NoEntriesDisclaimer } from "../components/NoEntriesDisclaimer";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -80,7 +81,9 @@ export default function Overview({ navigation }) {
             renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
           />
         ) : (
-          <Text>Du haschst disch noch nischt angemeldet idiot</Text>
+          <NoEntriesDisclaimer
+            text={"Du hast noch keinen Aktivitäten zugesagt. Verwende die Suche, um Events in deiner Umgebung zu finden!"}
+          />
         )}
         <Text style={PageStyles.h2}>Von dir geplant</Text>
         {accountInfo.planned_activities.length > 0 ? (
@@ -93,7 +96,7 @@ export default function Overview({ navigation }) {
             renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
           />
         ) : (
-          <Text>Du haschst noch nischts geplant dummy</Text>
+          <NoEntriesDisclaimer text={"Du hast noch keinen Aktivitäten geplant."} />
         )}
         <OaaButton
           label="Aktivität erstellen"
@@ -112,7 +115,7 @@ export default function Overview({ navigation }) {
             renderItem={({ item }) => <OaaActivityCard key={item._id} activity={item} navigation={navigation} />}
           />
         ) : (
-          <Text>Dir wird nischts vorgeschlagen dork</Text>
+          <NoEntriesDisclaimer text={"Es konnten keinen keine Aktivitäten in deiner Nähe gefunden werden."} />
         )}
       </View>
     </ScrollView>

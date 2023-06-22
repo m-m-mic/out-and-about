@@ -18,10 +18,10 @@ export default function Activity({ route, navigation }) {
   const [activityInfo, setActivityInfo] = useState<ActivityType | null>(null);
   const [isOwner, setOwner] = useState(false);
   const [isParticipant, setParticipant] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isChangingUserRelation, setIsChangingUserRelation] = useState<boolean>(false);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isActivityFull, setIsActivityFull] = useState<boolean>();
   const id = route.params.id;
   let fromCreated: boolean = false;
   if (route.params.fromCreated) {
@@ -38,7 +38,6 @@ export default function Activity({ route, navigation }) {
     const url = backendUrl + "/activity/" + id;
     const storedToken = await getItemAsync("userToken");
     const storedUserId = await getItemAsync("userId");
-    setUserId(storedUserId);
     let requestOptions = {
       method: "GET",
       headers: {
@@ -47,9 +46,10 @@ export default function Activity({ route, navigation }) {
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
-      const data = await response.json();
+      const data: ActivityType = await response.json();
       setActivityInfo(data);
       setRelations(data, storedUserId);
+      setIsActivityFull(data.participants.length >= data.maximum_participants);
     } else {
       console.log("error 404: activity not found");
     }
@@ -124,8 +124,6 @@ export default function Activity({ route, navigation }) {
     return true;
   };
 
-  console.log(activityInfo);
-
   if (!activityInfo) {
     return <Loading />;
   }
@@ -142,7 +140,13 @@ export default function Activity({ route, navigation }) {
         <OaaButton
           expand={false}
           elevation={true}
-          variant={isChangingUserRelation ? "disabled" : isOwner || !isParticipant ? "primary" : "caution"}
+          variant={
+            isChangingUserRelation || (!isParticipant && !isOwner && isActivityFull)
+              ? "disabled"
+              : isOwner || !isParticipant
+              ? "primary"
+              : "caution"
+          }
           icon={isOwner ? "account" : isParticipant ? "close" : "check"}
           label={isOwner ? "Zusagenliste ansehen" : isParticipant ? "Absagen" : "Zusagen"}
           onPress={handleButtonPress}
@@ -182,7 +186,11 @@ export default function Activity({ route, navigation }) {
             </Text>
             {1 - activityInfo.participants.length / activityInfo.maximum_participants <= 0.2 && (
               <OaaChip
-                label={`Noch ${activityInfo.maximum_participants - activityInfo.participants.length} Plätze frei!`}
+                label={
+                  isActivityFull
+                    ? "Keine Plätze mehr frei!"
+                    : `Noch ${activityInfo.maximum_participants - activityInfo.participants.length} Plätze frei!`
+                }
                 size="small"
                 variant="caution"
               />
