@@ -4,6 +4,7 @@ import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { denyChangeRequests, secretToken } from "../index";
+import { AccountType } from "../interfaces";
 
 export const accountRoutes = express.Router();
 
@@ -13,8 +14,7 @@ accountRoutes.post("/account/check-email", async (req, res) => {
     return res.status(503).send("Change requests are disabled");
   } else {
     try {
-      const email = req.body.email;
-      console.log(email);
+      const email = req.body.email.toLowerCase();
       // Neuer Account wird erstellt und gespeichert
       const account = await Account.findOne({ email: email });
       if (!account) {
@@ -37,7 +37,9 @@ accountRoutes.post("/account/register", async (req, res) => {
   } else {
     try {
       // Neuer Account wird erstellt und gespeichert
-      const newAccount = new Account({ ...req.body });
+      let accountInfo: AccountType = req.body;
+      accountInfo = { ...accountInfo, email: accountInfo.email.toLowerCase() };
+      const newAccount = new Account(accountInfo);
       await newAccount.save();
       // Access-Token wird generiert und an Frontend zurückgegeben
       const accessToken = jwt.sign({ id: newAccount.id, password: newAccount.password }, secretToken);
@@ -60,7 +62,7 @@ accountRoutes.post("/account/login", async (req, res) => {
   const credentials = req.body;
   try {
     // Account mit passender Email wird gesucht
-    Account.findOne({ email: credentials.email }).then((account) => {
+    Account.findOne({ email: credentials.email.toLowerCase() }).then((account) => {
       if (!account) {
         return res.status(404).end();
       }

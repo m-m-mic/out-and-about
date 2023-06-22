@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Mongoose Schema für einen Account
 const AccountSchema = new mongoose.Schema({
-  email: { type: String, trim: true, unique: true, sparse: true },
+  email: { type: String, trim: true, unique: true, lowercase: true, sparse: true },
   username: {
     type: String,
     required: true,
