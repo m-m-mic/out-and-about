@@ -63,7 +63,7 @@ export default function Overview({ navigation }) {
       const data = await response.json();
       setRecommendations(data);
     }
-    console.log("Oh oh :((((");
+    // console.log("Oh oh :((((");
   };
 
   if (!accountInfo || !recommendations || !disclaimerIcons) {

@@ -178,7 +178,7 @@ export default function Activity({ route, navigation }) {
             })}
           </Text>
           <Text style={PageStyles.h2}>Wo?</Text>
-          <Text style={PageStyles.body}>{activityInfo.location.coordinates}</Text>
+          <Text style={PageStyles.body}>{activityInfo.location ? activityInfo.location.coordinates : "kein Ort"}</Text>
           <Text style={PageStyles.h2}>Wie viele?</Text>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <Text style={PageStyles.body}>

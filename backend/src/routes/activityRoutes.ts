@@ -19,17 +19,25 @@ activityRoutes.post("/activity/", async (req, res) => {
     //const id = authReq.account.id;
     try {
       // Neue Aktivität wird erstellt und gespeichert
-      const newActivity = await new Activity({ ...req.body });
+      const newActivity = await new Activity({ ...req.body }).populate("organizer", "id username");
       await newActivity.save();
       // Daten der neuen Aktivität werden in die activities Liste des Übungsleiters geschrieben
-      /* await Account.findOneAndUpdate(
-        { _id: id },
-        {
-          $addToSet: {
-            planned_activities: newActivity._id,
-          },
+      try {
+        if (newActivity.organizer) {
+          await Account.findOneAndUpdate(
+            { _id: newActivity.organizer._id },
+            {
+              $addToSet: {
+                planned_activities: newActivity._id,
+              },
+            }
+          );
         }
-      ); */
+      } catch (e) {
+        console.log(e);
+        return newActivity;
+      }
+
       for (const categoryId in newActivity.categories) {
         await Category.findOneAndUpdate({ _id: categoryId }, { $addToSet: { activities: newActivity._id } });
       }

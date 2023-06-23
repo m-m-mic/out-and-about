@@ -78,10 +78,11 @@ export default function ModifyActivity({
   };
 
   const createActivity = async () => {
+    console.log("creating activity...");
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
     const requestOptions = {
-      method: "PUSH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -89,8 +90,10 @@ export default function ModifyActivity({
       body: JSON.stringify(activityInfo),
     };
     const response = await fetch(url, requestOptions);
+    console.log("status: " + response.status + response.statusText);
     if (response.status == 201) {
       const data: ActivityType = await response.json();
+      console.log(data);
       navigation.navigate("Activity", { id: data._id });
     }
   };
@@ -115,6 +118,7 @@ export default function ModifyActivity({
   };
 
   const runValidators = () => {
+    console.log(validation);
     for (const [key, value] of Object.entries(validation)) {
       if (value === false) {
         return false;
