@@ -13,7 +13,7 @@ export function NoEntriesDisclaimer({
 }: NoEntriesDisclaimerProps) {
   return (
     <View
-      style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "center", marginVertical: 20, marginHorizontal: 10 }}>
+      style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "center", marginVertical: 30, marginHorizontal: 10 }}>
       <Icon name={icon} size={48} color={appColors.body} />
       <Text style={{ color: appColors.body, fontFamily: typefaces.button.fontFamily, flex: 1, textAlign: "center" }}>{text}</Text>
     </View>

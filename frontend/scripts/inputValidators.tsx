@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Account, ActivityType, ActivityValidatorType } from "./types";
+import { AccountType, ActivityType, ActivityValidatorType } from "./types";
 
 export const emailPattern: RegExp =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -9,8 +9,8 @@ const specialCharacterPattern: RegExp = /^[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~
 // Validates email using regex pattern
 export const setEmailInput = (
   input: string,
-  data: Account,
-  setData: Dispatch<SetStateAction<Account>>,
+  data: AccountType,
+  setData: Dispatch<SetStateAction<AccountType>>,
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>,
   setEmailError: Dispatch<SetStateAction<string>>
@@ -26,8 +26,8 @@ export const setEmailInput = (
 // Validates username using regex pattern
 export const setUsernameInput = (
   input: string,
-  data: Account,
-  setData: Dispatch<SetStateAction<Account>>,
+  data: AccountType,
+  setData: Dispatch<SetStateAction<AccountType>>,
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>
 ) => {
@@ -42,8 +42,8 @@ export const setUsernameInput = (
 // Password must be between 8 and 20 characters long
 export const setPasswordInput = (
   input: string,
-  data: Account,
-  setData: Dispatch<SetStateAction<Account>>,
+  data: AccountType,
+  setData: Dispatch<SetStateAction<AccountType>>,
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>
 ) => {
@@ -58,7 +58,7 @@ export const setPasswordInput = (
 // Repeated password must match initial password
 export const setPasswordRepeatInput = (
   input: string,
-  data: Account,
+  data: AccountType,
   validation: object,
   setValidation: Dispatch<SetStateAction<any>>
 ) => {
@@ -72,7 +72,7 @@ export const setPasswordRepeatInput = (
 export const setNameInput = (
   input: string,
   data: ActivityType,
-  setData: Dispatch<SetStateAction<ActivityType>>,
+  setData: Dispatch<SetStateAction<ActivityType | undefined>>,
   validation: ActivityValidatorType,
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>
 ) => {
@@ -87,7 +87,7 @@ export const setNameInput = (
 export const setMaximumParticipantsInput = (
   input: string,
   data: ActivityType,
-  setData: Dispatch<SetStateAction<ActivityType>>,
+  setData: Dispatch<SetStateAction<ActivityType | undefined>>,
   validation: ActivityValidatorType,
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>,
   currentConfirmations: number
@@ -103,7 +103,7 @@ export const setMaximumParticipantsInput = (
 export const setInformationTextInput = (
   input: string,
   data: ActivityType,
-  setData: Dispatch<SetStateAction<ActivityType>>,
+  setData: Dispatch<SetStateAction<ActivityType | undefined>>,
   validation: ActivityValidatorType,
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>
 ) => {
@@ -122,7 +122,7 @@ export const setInformationTextInput = (
 export const setDateInput = (
   input: Date,
   data: ActivityType,
-  setData: Dispatch<SetStateAction<ActivityType>>,
+  setData: Dispatch<SetStateAction<ActivityType | undefined>>,
   validation: ActivityValidatorType,
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>
 ) => {

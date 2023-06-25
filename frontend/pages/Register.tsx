@@ -2,9 +2,9 @@ import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
-import { registrationTemplate, registrationValidationTemplate } from "../scripts/templates";
+import { registrationTemplate, registrationValidatorTemplate } from "../scripts/templates";
 import { emailPattern, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
-import { Account } from "../scripts/types";
+import { AccountType, AccountValidatorType } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
 import { OaaButton } from "../components/OaaButton";
@@ -12,8 +12,8 @@ import { OaaIconButton } from "../components/OaaIconButton";
 
 // @ts-ignore TODO
 export default function Register({ navigation }) {
-  const [registrationData, setRegistrationData] = useState<Account>(registrationTemplate);
-  const [registrationValidator, setRegistrationValidator] = useState<any>(registrationValidationTemplate);
+  const [registrationData, setRegistrationData] = useState<AccountType>(registrationTemplate);
+  const [registrationValidator, setRegistrationValidator] = useState<AccountValidatorType>(registrationValidatorTemplate);
   const [emailError, setEmailError] = useState<string>("Eingabe entspricht keiner validen E-Mail.");
 
   // Checks if entered email is available
@@ -52,13 +52,13 @@ export default function Register({ navigation }) {
   };
 
   // Checks if all validators are set to true
-  const runValidators = () => {
-    for (const [key, value] of Object.entries(registrationValidator)) {
+  const areInputsValid = () => {
+    for (const value of Object.values(registrationValidator)) {
       if (!value) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   };
 
   return (
@@ -114,7 +114,7 @@ export default function Register({ navigation }) {
         <View>
           <OaaButton
             label="Weiter"
-            variant={runValidators() ? "disabled" : "primary"}
+            variant={areInputsValid() ? "primary" : "disabled"}
             onPress={() => navigation.navigate("ChoosePreferences", { data: registrationData })}
           />
         </View>

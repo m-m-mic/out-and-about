@@ -1,6 +1,6 @@
 import { GestureResponderEvent, TouchableOpacity, Text } from "react-native";
 import React from "react";
-import { ooaButtonStyles as styles } from "../styles/ooaButtonStyles";
+import { OaaButtonStyles as styles } from "../styles/OaaButtonStyles";
 import { Icon } from "@react-native-material/core";
 import { appColors } from "../styles/StyleAttributes";
 

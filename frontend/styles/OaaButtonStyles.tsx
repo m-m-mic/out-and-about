@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
-export const ooaButtonStyles = StyleSheet.create({
+export const OaaButtonStyles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",

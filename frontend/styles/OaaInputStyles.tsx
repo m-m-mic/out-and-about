@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
-export const ooaInputStyles = StyleSheet.create({
+export const OaaInputStyles = StyleSheet.create({
   container: {
     display: "flex",
     width: "100%",
