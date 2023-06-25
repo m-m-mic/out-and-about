@@ -12,10 +12,12 @@ import { OaaActivityImage } from "../components/OaaActivityImage";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
+import { LocationGeocodedAddress, reverseGeocodeAsync } from "expo-location";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
   const [activityInfo, setActivityInfo] = useState<ActivityType | null>(null);
+  const [geocode, setGeocode] = useState<LocationGeocodedAddress>();
   const [isOwner, setOwner] = useState(false);
   const [isParticipant, setParticipant] = useState(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -45,6 +47,11 @@ export default function Activity({ route, navigation }) {
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: ActivityType = await response.json();
+      const geocodedLocation: LocationGeocodedAddress[] = await reverseGeocodeAsync({
+        latitude: data.location.coordinates[0],
+        longitude: data.location.coordinates[1],
+      });
+      setGeocode(geocodedLocation[0]);
       setActivityInfo(data);
       setRelations(data, storedUserId);
       setIsActivityFull(data.participants.length >= data.maximum_participants);
@@ -176,7 +183,9 @@ export default function Activity({ route, navigation }) {
             })}
           </Text>
           <Text style={PageStyles.h2}>Wo?</Text>
-          <Text style={PageStyles.body}>{activityInfo.location ? activityInfo.location.coordinates : "kein Ort"}</Text>
+          <Text style={PageStyles.body}>
+            {geocode?.district}, {geocode?.city}
+          </Text>
           <Text style={PageStyles.h2}>Wie viele?</Text>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <Text style={PageStyles.body}>

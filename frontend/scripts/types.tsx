@@ -27,7 +27,7 @@ export type ActivityType = {
   categories: CategoryType[];
   date: number;
   information_text: string;
-  location?: GeoType;
+  location: GeoType;
   organizer?: AccountType | string;
   maximum_participants: number;
   only_logged_in: boolean;

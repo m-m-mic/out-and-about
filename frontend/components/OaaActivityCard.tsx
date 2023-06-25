@@ -29,7 +29,12 @@ export function OaaActivityCard({ activity, navigation, expanded }: OaaActivityC
         </Text>
         <View style={styles.chipColumn}>
           <View style={styles.chips}>
-            <OaaChip label={formatDistance(activity.distance)} size="small" variant="outline" />
+            <OaaChip
+              label={formatDistance(activity.distance)}
+              size="small"
+              variant="outline"
+              onPress={() => navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id } })}
+            />
             <OaaChip
               label={new Date(activity.date).toLocaleString("de-DE", {
                 year: "numeric",
@@ -44,7 +49,12 @@ export function OaaActivityCard({ activity, navigation, expanded }: OaaActivityC
             />
           </View>
           <View style={[styles.chips]}>
-            <OaaChip label={activity.categories[0].name} size="small" variant="outline" />
+            <OaaChip
+              label={activity.categories[0].name}
+              size="small"
+              variant="outline"
+              onPress={() => navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id } })}
+            />
           </View>
         </View>
       </View>

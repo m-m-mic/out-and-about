@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
@@ -9,7 +9,8 @@ import { ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { OaaIconButton } from "../components/OaaIconButton";
-import * as Location from "expo-location";
+import { getLocation } from "../scripts/getLocation";
+import { LocationRequest } from "./LocationRequest";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -19,32 +20,32 @@ export default function Search({ navigation }: any) {
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [results, setResults] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [location, setLocation] = useState<Location.LocationObject>();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isLocationGranted, setIsLocationGranted] = useState<boolean>(true);
 
   useEffect(() => {
-    getLocation().then((location) => {
-      setPage(0);
-      if (location) getResults(0, location);
-    });
+    setIsLocationGranted(!!getLocation());
+    setPage(0);
+    getResults(0);
   }, []);
 
   useEffect(() => {
-    if (location) getResults(0, location);
+    setPage(0);
+    getResults(0);
   }, [filtered]);
 
-  const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.log("Permission to access location was denied");
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-    return location;
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getResults(0);
+    setRefreshing(false);
   };
 
-  const getResults = async (page: number, location: Location.LocationObject) => {
+  const getResults = async (page: number) => {
+    const location = await getLocation();
+    if (!location) {
+      setIsLocationGranted(false);
+      return;
+    }
     setLoading(true);
     const token = await getItemAsync("userToken");
     let url;
@@ -75,8 +76,12 @@ export default function Search({ navigation }: any) {
     setLoading(false);
   };
 
+  if (!isLocationGranted) {
+    return <LocationRequest />;
+  }
+
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Suche</Text>
         <OaaInput
@@ -84,10 +89,8 @@ export default function Search({ navigation }: any) {
           placeholder="Hier Suchbegriff eingeben..."
           onChangeText={(value: string) => setSearchTerm(value)}
           onEndEditing={() => {
-            if (location) {
-              setPage(0);
-              getResults(0, location);
-            }
+            setPage(0);
+            getResults(0);
           }}
         />
         {loading ? (
