@@ -31,6 +31,11 @@ export const OaaActivityCardStyles = StyleSheet.create({
     color: typefaces.hero.color,
     textTransform: "uppercase",
   },
+  chipColumn: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+  },
   chips: {
     display: "flex",
     flexDirection: "row",

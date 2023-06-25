@@ -26,21 +26,25 @@ export function OaaActivityCard({ activity, navigation, expanded }: OaaActivityC
         <Text style={styles.name} numberOfLines={2}>
           {activity.name}
         </Text>
-        <View style={styles.chips}>
-          <OaaChip label="TODO REGION" size="small" variant="outline" />
-          <OaaChip
-            label={new Date(activity.date).toLocaleString("de-DE", {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-            onPress={() => navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id } })}
-            size="small"
-            variant="outline"
-          />
-          <OaaChip label={activity.categories[0].name} size="small" variant="outline" />
+        <View style={styles.chipColumn}>
+          <View style={styles.chips}>
+            <OaaChip label="TODO REGION" size="small" variant="outline" />
+            <OaaChip
+              label={new Date(activity.date).toLocaleString("de-DE", {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              onPress={() => navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id } })}
+              size="small"
+              variant="outline"
+            />
+          </View>
+          <View style={[styles.chips]}>
+            <OaaChip label={activity.categories[0].name} size="small" variant="outline" />
+          </View>
         </View>
       </View>
       <Image style={styles.image} blurRadius={4} resizeMode={"cover"} source={{ uri: imageSrc }} onError={() => onFallback()} />

@@ -206,11 +206,10 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
   const page: number = parseInt(<string>authReq.query.page) || 0;
   // Anzahl an Elementen pro Seite
   const limit: number = parseInt(<string>authReq.query.limit) || 15;
-
   const preferences: boolean = authReq.query.preferences === "true";
-
   const id = authReq.account.id;
   const searchQuery: string = authReq.params.query.toLowerCase();
+
   try {
     let response;
     response = { last_page: false };
@@ -249,12 +248,18 @@ activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
   }
 });
 
-// GET-Request von Aktivitäten anhand von Suchbegriff
-activityRoutes.get("/recommendations/", authenticateJWT, async (req, res) => {
+// POST-Request von Aktivitäten anhand von Suchbegriff
+activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
   const authReq = req as unknown as authenticatedRequest;
-  const preferences: boolean = <string>authReq.query.filtered === "true";
+  const preferences: boolean = <string>authReq.query.preferences === "true";
   const id = authReq.account.id;
+  const page: number = parseInt(<string>authReq.query.page) || 0;
+  // Anzahl an Elementen pro Seite
+  const limit: number = parseInt(<string>authReq.query.limit) || 15;
+
   try {
+    let response;
+    response = { last_page: false };
     const account = await Account.findOne({ _id: id });
     let preferenceModel;
     if (preferences) {
@@ -263,14 +268,23 @@ activityRoutes.get("/recommendations/", authenticateJWT, async (req, res) => {
       preferenceModel = {};
     }
     // TODO: Hier muss nach Distanz anhand von GeoJSON Daten sortiert werden. Der Standort des Nutzers muss mit im Body des Requests übergeben werden
-    const activities: ActivityType[] = await Activity.find(preferenceModel, {
+    let activities: ActivityType[] = await Activity.find(preferenceModel, {
       only_logged_in: false,
       participants: false,
       organizer: false,
       information_text: false,
       maximum_participants: false,
     }).populate("categories", "id name");
-    res.send(activities);
+    const totalResults = activities.length;
+    const startIndex = page * limit;
+    const endIndex = (page + 1) * limit;
+    // Setzt last_page auf true, falls es nicht mehr Ergebnisse auf anderen Seiten gibt
+    if (endIndex >= totalResults) {
+      response.last_page = true;
+    }
+    activities = activities.slice(startIndex, endIndex);
+    response = { ...response, activities: activities };
+    res.send(response);
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

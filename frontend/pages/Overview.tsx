@@ -52,18 +52,21 @@ export default function Overview({ navigation }) {
   };
 
   const getRecommendations = async () => {
-    const url = backendUrl + "/recommendations/?filtered=false";
-    const userToken = await getItemAsync("userToken");
+    const url = backendUrl + "/recommendations/?preferences=false";
+    const token = await getItemAsync("userToken");
     const requestOptions = {
-      method: "GET",
-      headers: { Authorization: `Bearer ${userToken}` },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
-      const data = await response.json();
-      setRecommendations(data);
+      const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
+      setRecommendations(data.activities);
     }
-    // console.log("Oh oh :((((");
+    console.log("Oh oh :((((");
   };
 
   if (!accountInfo || !recommendations || !disclaimerIcons) {
