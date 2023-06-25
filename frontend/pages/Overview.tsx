@@ -1,81 +1,74 @@
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
+import { useCallback, useState } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { useCallback, useState } from "react";
 import { AccountType, ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
 import { NoEntriesDisclaimer } from "../components/NoEntriesDisclaimer";
+import { getLocation } from "../scripts/getLocation";
 import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
-import * as Location from "expo-location";
+import { LocationRequest } from "./LocationRequest";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
-  const [accountInfo, setAccountInfo] = useState<AccountType>();
+  const [accountActivities, setAccountActivities] = useState<AccountType>();
   const [recommendations, setRecommendations] = useState<ActivityType[]>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
-  const [location, setLocation] = useState<Location.LocationObject>();
+  const [isLocationGranted, setIsLocationGranted] = useState<boolean>(true);
 
   useFocusEffect(
     useCallback(() => {
-      getLocation().then((location) => {
-        setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
-        console.log(location);
-        if (location) {
-          getRecommendations(location);
-          getAccountInfo(location);
-        }
-      });
+      setIsLocationGranted(!!getLocation());
+      setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
+      getRecommendations();
+      getAccountActivities();
     }, [])
   );
 
-  const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.log("Permission to access location was denied");
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-    return location;
-  };
-
   const onRefresh = async () => {
     setRefreshing(true);
-    if (location) {
-      await getAccountInfo(location);
-      await getRecommendations(location);
-    }
+    await getAccountActivities();
+    await getRecommendations();
     setRefreshing(false);
   };
 
-  const getAccountInfo = async (location: Location.LocationObject) => {
-    const url = backendUrl + "/account/activities";
+  const getAccountActivities = async () => {
+    const location = await getLocation();
+    if (!location) {
+      setIsLocationGranted(false);
+      return;
+    }
     const storedToken = await getItemAsync("userToken");
+    const url = backendUrl + "/account/activities";
     let requestOptions = {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${storedToken}`,
       },
       body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
-    console.log(url, requestOptions);
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data = await response.json();
-      setAccountInfo(data);
+      setAccountActivities(data);
     } else {
-      console.log("could not load account data");
+      console.log(response.status);
     }
   };
 
-  const getRecommendations = async (location: Location.LocationObject) => {
+  const getRecommendations = async () => {
+    const location = await getLocation();
+    if (!location) {
+      setIsLocationGranted(false);
+      return;
+    }
     const url = backendUrl + "/recommendations/?preferences=false";
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -95,7 +88,11 @@ export default function Overview({ navigation }) {
     }
   };
 
-  if (!accountInfo || !recommendations || !disclaimerIcons) {
+  if (!isLocationGranted) {
+    return <LocationRequest />;
+  }
+
+  if (!accountActivities || !recommendations || !disclaimerIcons) {
     return <Loading />;
   }
 
@@ -104,12 +101,12 @@ export default function Overview({ navigation }) {
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Übersicht</Text>
         <Text style={PageStyles.h2}>Zugesagt</Text>
-        {accountInfo.saved_activities.length > 0 ? (
+        {accountActivities.saved_activities.length > 0 ? (
           <FlatList
             style={{ marginHorizontal: -12, marginVertical: -5 }}
             ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
             showsHorizontalScrollIndicator={false}
-            data={accountInfo.saved_activities}
+            data={accountActivities.saved_activities}
             horizontal={true}
             renderItem={({ item }) => (
               <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
@@ -124,12 +121,12 @@ export default function Overview({ navigation }) {
           />
         )}
         <Text style={PageStyles.h2}>Von dir geplant</Text>
-        {accountInfo.planned_activities.length > 0 ? (
+        {accountActivities.planned_activities.length > 0 ? (
           <FlatList
             style={{ marginHorizontal: -12, marginVertical: -5 }}
             ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
             showsHorizontalScrollIndicator={false}
-            data={accountInfo.planned_activities}
+            data={accountActivities.planned_activities}
             horizontal={true}
             renderItem={({ item }) => (
               <View style={{ marginVertical: 5, marginHorizontal: 12 }}>

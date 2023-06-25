@@ -124,6 +124,7 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
   const authReq = req as authenticatedRequest;
   const id = authReq.account.id;
   const userLocation = [authReq.body.lat, authReq.body.long];
+  console.log(userLocation);
   if (mongoose.Types.ObjectId.isValid(id)) {
     try {
       // Accountdaten des Nutzers werden in der Collection gesucht. id, password, type und tier werden nicht mitgegeben
@@ -134,14 +135,14 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
         .populate({
           path: "saved_activities",
           populate: { path: "categories", model: "Category", select: "id name" },
-          options: { sort: { date: -1 } },
-          select: "id name categories date",
+          options: { sort: { date: 1 } },
+          select: "id name categories date location",
         })
         .populate({
           path: "planned_activities",
           populate: { path: "categories", model: "Category", select: "id name" },
-          options: { sort: { date: -1 } },
-          select: "id name categories date",
+          options: { sort: { date: 1 } },
+          select: "id name categories date location",
         });
       if (!requestedAccount) {
         res.status(404).send("Account not found");

@@ -13,7 +13,7 @@ import * as Location from "expo-location";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filtered, setFiltered] = useState<boolean>(false);
+  const [filtered, setFiltered] = useState<boolean>(true);
   const [isSearchResults, setIsSearchResults] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
@@ -26,6 +26,10 @@ export default function Search({ navigation }: any) {
       setPage(0);
       if (location) getResults(0, location);
     });
+  }, []);
+
+  useEffect(() => {
+    if (location) getResults(0, location);
   }, [filtered]);
 
   const getLocation = async () => {
@@ -56,6 +60,7 @@ export default function Search({ navigation }: any) {
       setIsSearchResults(false);
       url = backendUrl + "/recommendations/" + "?page=" + page + "&preferences=" + filtered;
     } else {
+      setIsSearchResults(true);
       url = backendUrl + "/search/" + searchTerm + "?page=" + page + "&preferences=" + filtered;
     }
     const response = await fetch(url, requestOptions);
@@ -79,22 +84,28 @@ export default function Search({ navigation }: any) {
           placeholder="Hier Suchbegriff eingeben..."
           onChangeText={(value: string) => setSearchTerm(value)}
           onEndEditing={() => {
-            setPage(0);
-            getResults(0, location);
+            if (location) {
+              setPage(0);
+              getResults(0, location);
+            }
           }}
         />
-        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
-          <OaaIconButton name={filtered ? "filter" : "filter-off"} onPress={() => setFiltered(!filtered)} />
-        </View>
         {loading ? (
           <Loading />
-        ) : results.length > 0 ? (
-          results.map((activity: ActivityType) => (
-            <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
-          ))
         ) : (
-          <Text>Keine Ergebnisse gefunden.</Text>
+          <>
+            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
+              <OaaIconButton name={filtered ? "filter-off" : "filter"} onPress={() => setFiltered(!filtered)} />
+            </View>
+            {results.length > 0 ? (
+              results.map((activity: ActivityType) => (
+                <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
+              ))
+            ) : (
+              <Text>Keine Ergebnisse gefunden.</Text>
+            )}
+          </>
         )}
       </View>
     </ScrollView>
