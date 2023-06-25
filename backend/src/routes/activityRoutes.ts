@@ -199,8 +199,8 @@ activityRoutes.delete("/activity/:activityId", authenticateJWT, async (req, res)
   }
 });
 
-// GET-Request von Aktivitäten anhand von Suchbegriff
-activityRoutes.get("/search/:query", authenticateJWT, async (req, res) => {
+// POST-Request von Aktivitäten anhand von Suchbegriff
+activityRoutes.post("/search/:query", authenticateJWT, async (req, res) => {
   const authReq = req as unknown as authenticatedRequest;
   // Seitenanzahl für den Request
   const page: number = parseInt(<string>authReq.query.page) || 0;
