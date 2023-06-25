@@ -7,6 +7,7 @@ import { authenticatedRequest, authenticateJWT } from "../middleware/authenticat
 import { Account } from "../models/accounts";
 import { Category } from "../models/categories";
 import { denyChangeRequests } from "../index";
+import { getDistance } from "geolib";
 
 export const activityRoutes = express.Router();
 
@@ -256,16 +257,15 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
   const page: number = parseInt(<string>authReq.query.page) || 0;
   // Anzahl an Elementen pro Seite
   const limit: number = parseInt(<string>authReq.query.limit) || 15;
-
+  const userLocation = [authReq.body.lat, authReq.body.long];
   try {
     let response;
     response = { last_page: false };
     const account = await Account.findOne({ _id: id });
-    let preferenceModel;
+    let preferenceModel: object = { location: { $near: { $geometry: { type: "Point", coordinates: userLocation } } } };
     if (preferences) {
-      preferenceModel = constructPreferenceModel(account, null);
-    } else {
-      preferenceModel = {};
+      const userPreferences = constructPreferenceModel(account, null);
+      preferenceModel = { ...preferenceModel, ...userPreferences };
     }
     // TODO: Hier muss nach Distanz anhand von GeoJSON Daten sortiert werden. Der Standort des Nutzers muss mit im Body des Requests übergeben werden
     let activities: ActivityType[] = await Activity.find(preferenceModel, {
@@ -283,6 +283,12 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
       response.last_page = true;
     }
     activities = activities.slice(startIndex, endIndex);
+    activities.map((activity) => {
+      activity.distance = getDistance(
+        { latitude: userLocation[0], longitude: userLocation[1] },
+        { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+      );
+    });
     response = { ...response, activities: activities };
     res.send(response);
   } catch (error) {

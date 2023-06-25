@@ -32,6 +32,7 @@ export type ActivityType = {
   maximum_participants: number;
   only_logged_in: boolean;
   participants: AccountType[];
+  distance?: number;
 };
 
 type GeoType = {

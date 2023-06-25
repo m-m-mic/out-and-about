@@ -9,6 +9,7 @@ import { ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { OaaIconButton } from "../components/OaaIconButton";
+import * as Location from "expo-location";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -18,13 +19,28 @@ export default function Search({ navigation }: any) {
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [results, setResults] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [location, setLocation] = useState<Location.LocationObject>();
 
   useEffect(() => {
-    setPage(0);
-    getResults(0);
+    getLocation().then((location) => {
+      setPage(0);
+      if (location) getResults(0, location);
+    });
   }, [filtered]);
 
-  const getResults = async (page: number) => {
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    return location;
+  };
+
+  const getResults = async (page: number, location: Location.LocationObject) => {
     setLoading(true);
     const token = await getItemAsync("userToken");
     let url;
@@ -34,6 +50,7 @@ export default function Search({ navigation }: any) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
     if (searchTerm.trim().length === 0) {
       setIsSearchResults(false);
@@ -41,7 +58,6 @@ export default function Search({ navigation }: any) {
     } else {
       url = backendUrl + "/search/" + searchTerm + "?page=" + page + "&preferences=" + filtered;
     }
-    console.log(url);
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
@@ -64,7 +80,7 @@ export default function Search({ navigation }: any) {
           onChangeText={(value: string) => setSearchTerm(value)}
           onEndEditing={() => {
             setPage(0);
-            getResults(0);
+            getResults(0, location);
           }}
         />
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

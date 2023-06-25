@@ -25,6 +25,7 @@ const ActivitySchema = new mongoose.Schema({
   maximum_participants: { type: Number, required: true },
   only_logged_in: { type: Boolean, default: false },
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
+  distance: { type: Number, optional: true },
 });
 
 ActivitySchema.index({ location: "2dsphere" });

@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 import { OaaChip } from "./OaaChip";
 import { OaaActivityCardStyles as styles } from "../styles/OaaActivityCardStyles";
 import { backendUrl } from "../scripts/backendConnection";
+import { formatDistance } from "../scripts/formatDistance";
 
 interface OaaActivityCardProps {
   activity: ActivityType;
@@ -28,7 +29,7 @@ export function OaaActivityCard({ activity, navigation, expanded }: OaaActivityC
         </Text>
         <View style={styles.chipColumn}>
           <View style={styles.chips}>
-            <OaaChip label="TODO REGION" size="small" variant="outline" />
+            <OaaChip label={formatDistance(activity.distance)} size="small" variant="outline" />
             <OaaChip
               label={new Date(activity.date).toLocaleString("de-DE", {
                 year: "numeric",

@@ -29,6 +29,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow OUT & ABOUT to use your location.",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ]
   }
 }

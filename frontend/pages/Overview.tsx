@@ -11,6 +11,7 @@ import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
 import { NoEntriesDisclaimer } from "../components/NoEntriesDisclaimer";
 import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
+import * as Location from "expo-location";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -33,9 +34,24 @@ export default function Overview({ navigation }) {
     }, [])
   );
 
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    return location;
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await getAccountInfo();
+    if (location) {
+      await getAccountInfo(location);
+      await getRecommendations(location);
+    }
     setRefreshing(false);
   };
 
@@ -43,11 +59,13 @@ export default function Overview({ navigation }) {
     const url = backendUrl + "/account/activities";
     const storedToken = await getItemAsync("userToken");
     let requestOptions = {
-      method: "GET",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${storedToken}`,
       },
+      body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
+    console.log(url, requestOptions);
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data = await response.json();
@@ -57,7 +75,7 @@ export default function Overview({ navigation }) {
     }
   };
 
-  const getRecommendations = async () => {
+  const getRecommendations = async (location: Location.LocationObject) => {
     const url = backendUrl + "/recommendations/?preferences=false";
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -66,13 +84,15 @@ export default function Overview({ navigation }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
       setRecommendations(data.activities);
+    } else {
+      console.log("Oh oh :((((");
     }
-    console.log("Oh oh :((((");
   };
 
   if (!accountInfo || !recommendations || !disclaimerIcons) {

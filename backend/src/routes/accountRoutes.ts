@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { denyChangeRequests, secretToken } from "../index";
 import { AccountType } from "../interfaces";
+import { getDistance } from "geolib";
 
 export const accountRoutes = express.Router();
 
@@ -107,6 +108,63 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
       if (!requestedAccount) {
         res.status(404).send("Account not found");
       }
+      return res.send(requestedAccount);
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return res.status(400).send(error.message);
+    }
+  } else {
+    return res.status(403).send("Invalid account id");
+  }
+});
+
+// GET-Request für alle Informationen des eigenen Accounts
+accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, res: Response) => {
+  const authReq = req as authenticatedRequest;
+  const id = authReq.account.id;
+  const userLocation = [authReq.body.lat, authReq.body.long];
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    try {
+      // Accountdaten des Nutzers werden in der Collection gesucht. id, password, type und tier werden nicht mitgegeben
+      const requestedAccount = await Account.findOne(
+        { _id: id },
+        { _id: false, password: false, categories: false, email: false, username: false }
+      )
+        .populate({
+          path: "saved_activities",
+          populate: { path: "categories", model: "Category", select: "id name" },
+          options: { sort: { date: -1 } },
+          select: "id name categories date",
+        })
+        .populate({
+          path: "planned_activities",
+          populate: { path: "categories", model: "Category", select: "id name" },
+          options: { sort: { date: -1 } },
+          select: "id name categories date",
+        });
+      if (!requestedAccount) {
+        res.status(404).send("Account not found");
+      }
+      // @ts-ignore
+      requestedAccount.planned_activities.map((activity) => {
+        // @ts-ignore
+        activity.distance = getDistance(
+          { latitude: userLocation[0], longitude: userLocation[1] },
+          // @ts-ignore
+          { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+        );
+      });
+      // @ts-ignore
+      requestedAccount.saved_activities.map((activity) => {
+        // @ts-ignore
+        activity.distance = getDistance(
+          { latitude: userLocation[0], longitude: userLocation[1] },
+          // @ts-ignore
+          { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+        );
+      });
+      console.log(requestedAccount);
       return res.send(requestedAccount);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
