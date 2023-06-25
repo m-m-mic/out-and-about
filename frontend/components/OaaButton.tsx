@@ -4,7 +4,7 @@ import { OaaButtonStyles as styles } from "../styles/OaaButtonStyles";
 import { Icon } from "@react-native-material/core";
 import { appColors } from "../styles/StyleAttributes";
 
-type ButtonVariant = "primary" | "disabled" | "ghost" | "caution" | "outline";
+type ButtonVariant = "primary" | "disabled" | "ghost" | "caution" | "outline" | "warning";
 
 interface OoaButtonProps {
   label?: string;
@@ -28,6 +28,9 @@ export function OaaButton({ label, variant = "primary", onPress, icon, expand = 
         break;
       case "caution":
         wrapperStyles.push(styles.caution);
+        break;
+      case "warning":
+        wrapperStyles.push(styles.warning);
         break;
       case "ghost":
         wrapperStyles.push(styles.ghost);

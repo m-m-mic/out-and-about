@@ -24,7 +24,7 @@ export const newActivityTemplate: ActivityType = {
   categories: [],
   date: new Date().valueOf() + 86400000,
   information_text: "",
-  maximum_participants: 100,
+  maximum_participants: 0,
   only_logged_in: false,
   participants: [],
 };

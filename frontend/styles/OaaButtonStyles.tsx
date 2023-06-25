@@ -40,6 +40,9 @@ export const OaaButtonStyles = StyleSheet.create({
   outlineText: {
     color: appColors.buttonPrimary,
   },
+  warning: {
+    backgroundColor: appColors.error,
+  },
   ghost: {},
   ghostText: { color: appColors.body },
   disabled: { backgroundColor: appColors.buttonDisabled },

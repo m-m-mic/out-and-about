@@ -11,33 +11,25 @@ import { denyChangeRequests } from "../index";
 export const activityRoutes = express.Router();
 
 // POST-Request zum Erstellen einer Aktivität
-activityRoutes.post("/activity/", async (req, res) => {
+activityRoutes.post("/activity/", authenticateJWT, async (req, res) => {
   if (denyChangeRequests === "true") {
     return res.status(503).send("Change requests are disabled");
   } else {
-    //const authReq = req as authenticatedRequest;
-    //const id = authReq.account.id;
+    const authReq = req as authenticatedRequest;
+    const id = authReq.account.id;
     try {
       // Neue Aktivität wird erstellt und gespeichert
       const newActivity = await new Activity({ ...req.body }).populate("organizer", "id username");
       await newActivity.save();
       // Daten der neuen Aktivität werden in die activities Liste des Übungsleiters geschrieben
-      try {
-        if (newActivity.organizer) {
-          await Account.findOneAndUpdate(
-            { _id: newActivity.organizer._id },
-            {
-              $addToSet: {
-                planned_activities: newActivity._id,
-              },
-            }
-          );
+      await Account.findOneAndUpdate(
+        { _id: id },
+        {
+          $addToSet: {
+            planned_activities: newActivity._id,
+          },
         }
-      } catch (e) {
-        console.log(e);
-        return newActivity;
-      }
-
+      );
       for (const categoryId in newActivity.categories) {
         await Category.findOneAndUpdate({ _id: categoryId }, { $addToSet: { activities: newActivity._id } });
       }

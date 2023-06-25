@@ -22,14 +22,12 @@ export default function Activity({ route, navigation }) {
   const [isChangingUserRelation, setIsChangingUserRelation] = useState<boolean>(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isActivityFull, setIsActivityFull] = useState<boolean>();
+  const [fromCreated, setFromCreated] = useState<boolean>(false);
   const id = route.params.id;
-  let fromCreated: boolean = false;
-  if (route.params.fromCreated) {
-    fromCreated = true;
-  }
 
   useFocusEffect(
     useCallback(() => {
+      if (route.params.fromCreated) setFromCreated(route.params.fromCreated);
       getActivityInfo();
     }, [])
   );
@@ -116,8 +114,7 @@ export default function Activity({ route, navigation }) {
 
   const handleBackButton = () => {
     if (fromCreated) {
-      // TODO: Logik für Back button override wenn man von createActivity kam
-      console.log("Special back button");
+      navigation.getParent().goBack();
     } else {
       navigation.goBack();
     }
@@ -160,7 +157,8 @@ export default function Activity({ route, navigation }) {
         <View style={[PageStyles.page, styles.mainView]}>
           <View style={{ display: "flex", gap: 8 }}>
             <Text style={PageStyles.hero}>{activityInfo.name}</Text>
-            <Text style={PageStyles.subtitle}>Organisiert von {activityInfo.organizer.username}</Text>
+            {/*@ts-ignore*/}
+            <Text style={PageStyles.subtitle}>Organisiert von {activityInfo.organizer?.username}</Text>
           </View>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {activityInfo.categories.map((category, key) => (

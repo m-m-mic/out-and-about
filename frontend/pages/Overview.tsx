@@ -115,7 +115,7 @@ export default function Overview({ navigation }) {
           label="Aktivität erstellen"
           icon="plus"
           variant="ghost"
-          onPress={() => navigation.navigate("CreateActivity")}
+          onPress={() => navigation.navigate("ActivityStack", { screen: "CreateActivity", params: { stackOrigin: "Overview" } })}
         />
         <Text style={PageStyles.h2}>In deiner Nähe</Text>
         {recommendations.length > 0 ? (

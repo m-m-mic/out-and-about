@@ -14,18 +14,18 @@ export default function CreateActivity({ route, navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      if (!activityInfo) {
-        createNewActivity();
-      }
+      createNewActivity();
     }, [])
   );
 
   const createNewActivity = async () => {
     const userId = await getItemAsync("userId");
     if (userId) {
-      setActivityInfo({ ...newActivityTemplate, organizer: userId });
+      setActivityInfo({ ...newActivityTemplate, organizer: userId, categories: [] });
     }
   };
+
+  console.log(activityInfo);
 
   if (!activityInfo) {
     return <Loading />;

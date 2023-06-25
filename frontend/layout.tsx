@@ -34,6 +34,11 @@ export function ActivityStackScreen() {
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
       />
       <ActivityStack.Screen
+        name="CreateActivity"
+        component={CreateActivity}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <ActivityStack.Screen
         name="Participants"
         component={Participants}
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
@@ -49,11 +54,6 @@ export function OverviewStackScreen() {
       <OverviewStack.Screen
         name="ActivityStack"
         component={ActivityStackScreen}
-        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
-      />
-      <OverviewStack.Screen
-        name="CreateActivity"
-        component={CreateActivity}
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
       />
     </OverviewStack.Navigator>
@@ -84,11 +84,6 @@ export function ProfileStackScreen() {
       <ProfileStack.Screen
         name="ActivityStack"
         component={ActivityStackScreen}
-        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
-      />
-      <ProfileStack.Screen
-        name="CreateActivity"
-        component={CreateActivity}
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
       />
     </ProfileStack.Navigator>

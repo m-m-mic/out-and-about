@@ -150,7 +150,9 @@ export default function Profile({ navigation }: any) {
               label="Aktivität erstellen"
               icon="plus"
               variant="outline"
-              onPress={() => navigation.navigate("CreateActivity")}
+              onPress={() =>
+                navigation.navigate("ActivityStack", { screen: "CreateActivity", params: { stackOrigin: "Profile" } })
+              }
             />
             {accountInfo?.planned_activities &&
               accountInfo?.planned_activities.length > 0 &&

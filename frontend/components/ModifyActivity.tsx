@@ -78,7 +78,6 @@ export default function ModifyActivity({
   };
 
   const createActivity = async () => {
-    console.log("creating activity...");
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -90,11 +89,10 @@ export default function ModifyActivity({
       body: JSON.stringify(activityInfo),
     };
     const response = await fetch(url, requestOptions);
-    console.log("status: " + response.status + response.statusText);
     if (response.status == 201) {
       const data: ActivityType = await response.json();
       console.log(data);
-      navigation.navigate("Activity", { id: data._id });
+      navigation.navigate("Activity", { id: data._id, fromCreated: true });
     }
   };
 
@@ -112,6 +110,25 @@ export default function ModifyActivity({
     const response = await fetch(url, requestOptions);
     if (response.status == 200) {
       navigation.navigate("Activity", { id: activityInfo._id });
+    } else {
+      console.log(response);
+    }
+  };
+
+  const deleteActivity = async () => {
+    const url = backendUrl + "/activity/" + activityInfo._id;
+    const token = await getItemAsync("userToken");
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(activityInfo),
+    };
+    const response = await fetch(url, requestOptions);
+    if (response.status == 200) {
+      navigation.getParent().goBack();
     } else {
       console.log(response);
     }
@@ -307,6 +324,7 @@ export default function ModifyActivity({
             multiline={true}
             errorMessage="Weitere Informationen müssen unter 300 Zeichen lang sein."
           />
+          {editMode && <OaaButton label="Aktivität löschen" icon="delete" variant="warning" onPress={() => deleteActivity()} />}
         </View>
       </ScrollView>
     </View>
