@@ -12,6 +12,8 @@ export interface ActivityType {
   only_logged_in: boolean;
   organizer: AccountType[];
   participants: AccountType[];
+  //distance in meters
+  distance?: number;
 }
 
 export interface AccountType {

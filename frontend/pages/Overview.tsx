@@ -18,12 +18,18 @@ export default function Overview({ navigation }) {
   const [recommendations, setRecommendations] = useState<ActivityType[]>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
+  const [location, setLocation] = useState<Location.LocationObject>();
 
   useFocusEffect(
     useCallback(() => {
-      setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
-      getAccountInfo();
-      getRecommendations();
+      getLocation().then((location) => {
+        setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
+        console.log(location);
+        if (location) {
+          getRecommendations(location);
+          getAccountInfo(location);
+        }
+      });
     }, [])
   );
 
@@ -33,8 +39,8 @@ export default function Overview({ navigation }) {
     setRefreshing(false);
   };
 
-  const getAccountInfo = async () => {
-    const url = backendUrl + "/account/info/";
+  const getAccountInfo = async (location: Location.LocationObject) => {
+    const url = backendUrl + "/account/activities";
     const storedToken = await getItemAsync("userToken");
     let requestOptions = {
       method: "GET",
