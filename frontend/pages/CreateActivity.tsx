@@ -1,11 +1,44 @@
-import { Text, View } from "react-native";
 import * as React from "react";
-import { PageStyles } from "../styles/PageStyles";
+import { ActivityType } from "../scripts/types";
+import { useCallback, useState } from "react";
+import { getItemAsync } from "expo-secure-store";
+import ModifyActivity from "../components/ModifyActivity";
+import Loading from "../components/Loading";
+import { useFocusEffect } from "@react-navigation/native";
+import { createActivityValidatorTemplate, newActivityTemplate } from "../scripts/templates";
 
-export default function CreateActivity() {
-  return (
-    <View style={PageStyles.page}>
-      <Text style={{ textAlign: "center", marginTop: 300 }}>Aktivität erstellen</Text>
-    </View>
+//@ts-ignore
+export default function CreateActivity({ route, navigation }) {
+  const [activityInfo, setActivityInfo] = useState<ActivityType>();
+  const [validator, setValidator] = useState(createActivityValidatorTemplate);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!activityInfo) {
+        createNewActivity();
+      }
+    }, [])
   );
+
+  const createNewActivity = async () => {
+    const userId = await getItemAsync("userId");
+    if (userId) {
+      setActivityInfo({ ...newActivityTemplate, organizer: userId });
+    }
+  };
+
+  if (!activityInfo) {
+    return <Loading />;
+  } else {
+    return (
+      <ModifyActivity
+        activityInfo={activityInfo}
+        setActivityInfo={setActivityInfo}
+        validation={validator}
+        setValidation={setValidator}
+        editMode={false}
+        navigation={navigation}
+      />
+    );
+  }
 }

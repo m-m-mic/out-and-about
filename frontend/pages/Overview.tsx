@@ -5,7 +5,7 @@ import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
 import { useCallback, useState } from "react";
-import { Account, ActivityType } from "../scripts/types";
+import { AccountType, ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
@@ -14,7 +14,7 @@ import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
-  const [accountInfo, setAccountInfo] = useState<Account>();
+  const [accountInfo, setAccountInfo] = useState<AccountType>();
   const [recommendations, setRecommendations] = useState<ActivityType[]>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
@@ -63,7 +63,7 @@ export default function Overview({ navigation }) {
       const data = await response.json();
       setRecommendations(data);
     }
-    console.log("Oh oh :((((");
+    // console.log("Oh oh :((((");
   };
 
   if (!accountInfo || !recommendations || !disclaimerIcons) {

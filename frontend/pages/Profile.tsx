@@ -8,16 +8,16 @@ import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
-import { Account, Category } from "../scripts/types";
+import { AccountType, CategoryType } from "../scripts/types";
 import { OaaChip } from "../components/OaaChip";
 import { OaaActivityButton } from "../components/OaaActivityButton";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import Loading from "../components/Loading";
 
 export default function Profile({ navigation }: any) {
-  const [accountInfo, setAccountInfo] = useState<Account>();
+  const [accountInfo, setAccountInfo] = useState<AccountType>();
   const [userCategories, setUserCategories] = useState<string[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [havePreferencesChanged, setHavePreferencesChanged] = useState<boolean>(false);
 
@@ -65,7 +65,7 @@ export default function Profile({ navigation }: any) {
     };
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
-      const data: Account = await response.json();
+      const data: AccountType = await response.json();
       setAccountInfo(data);
       setUserCategories(data.categories);
       setHavePreferencesChanged(false);

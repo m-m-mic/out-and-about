@@ -6,8 +6,8 @@ export interface AuthType {
   signUp: Function;
 }
 
-export type Account = {
-  _id: string;
+export type AccountType = {
+  _id?: string;
   username: string;
   email: string;
   password: string;
@@ -16,22 +16,22 @@ export type Account = {
   planned_activities: any[];
 };
 
-export type Category = {
+export type CategoryType = {
   _id: string;
   name: string;
 };
 
 export type ActivityType = {
-  _id: string;
+  _id?: string;
   name: string;
-  categories: Category[];
+  categories: CategoryType[];
   date: number;
   information_text: string;
-  location: GeoType;
-  organizer: Account;
+  location?: GeoType;
+  organizer?: AccountType | string;
   maximum_participants: number;
   only_logged_in: boolean;
-  participants: Account[];
+  participants: AccountType[];
 };
 
 type GeoType = {
@@ -40,10 +40,20 @@ type GeoType = {
 };
 
 export type ActivityValidatorType = {
-  name: boolean;
-  location: boolean;
-  maximum_participants: boolean;
-  categories: boolean;
-  information_text: boolean;
-  date: boolean;
+  name: boolean | undefined;
+  location: boolean | undefined;
+  maximum_participants: boolean | undefined;
+  categories: boolean | undefined;
+  information_text: boolean | undefined;
+  date: boolean | undefined;
+};
+
+export type AccountValidatorType = {
+  username: boolean | undefined;
+  email: boolean | undefined;
+  password: boolean | undefined;
+  password_repeat: boolean | undefined;
+  categories: boolean | undefined;
+  saved_activities: boolean | undefined;
+  planned_activities: boolean | undefined;
 };

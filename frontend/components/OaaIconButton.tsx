@@ -1,8 +1,8 @@
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import { Icon } from "@react-native-material/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
-import { ooaIconButtonStyles as styles } from "../styles/ooaIconButtonStyles";
+import { OaaIconButtonStyles as styles } from "../styles/OaaIconButtonStyles";
 
 type IconButtonVariant = "ghost" | "transparent";
 
@@ -18,6 +18,11 @@ export function OaaIconButton({ name, size = 24, variant = "ghost", onPress, dis
   const [color, setColor] = useState(
     disabled ? appColors.bodyDisabled : variant === "transparent" ? appColors.bodyInverted : appColors.body
   );
+
+  useEffect(() => {
+    setColor(disabled ? appColors.bodyDisabled : variant === "transparent" ? appColors.bodyInverted : appColors.body);
+  }, [disabled, variant]);
+
   const getStyles = () => {
     let ButtonStyles: any = [styles.container];
     switch (variant) {

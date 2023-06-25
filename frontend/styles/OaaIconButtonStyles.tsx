@@ -1,7 +1,6 @@
 import { StyleSheet } from "react-native";
-import { appColors } from "./StyleAttributes";
 
-export const ooaIconButtonStyles = StyleSheet.create({
+export const OaaIconButtonStyles = StyleSheet.create({
   container: {
     display: "flex",
     justifyContent: "center",

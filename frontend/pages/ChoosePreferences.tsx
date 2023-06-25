@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { AuthContext } from "../App";
 import { backendUrl } from "../scripts/backendConnection";
-import { Category } from "../scripts/types";
+import { CategoryType } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
@@ -12,7 +12,7 @@ import { OaaChip } from "../components/OaaChip";
 // @ts-ignore
 export default function ChoosePreferences({ route, navigation }) {
   const [registrationData, setRegistrationData] = useState(route.params.data);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryType[]>([]);
   const { signUp } = React.useContext(AuthContext);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
-import { ActivityType, ActivityValidatorType, Category } from "../scripts/types";
+import { ActivityType, ActivityValidatorType, CategoryType } from "../scripts/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "./OaaInput";
@@ -12,13 +12,13 @@ import { OaaButton } from "./OaaButton";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import { OaaIconButton } from "./OaaIconButton";
 import { getItemAsync } from "expo-secure-store";
-import { appColors, primary } from "../styles/StyleAttributes";
+import { appColors } from "../styles/StyleAttributes";
 import Loading from "./Loading";
 import { Icon } from "@react-native-material/core";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
-  setActivityInfo: Dispatch<SetStateAction<ActivityType>>;
+  setActivityInfo: Dispatch<SetStateAction<ActivityType | undefined>>;
   validation: ActivityValidatorType;
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>;
   editMode?: boolean;
@@ -33,7 +33,7 @@ export default function ModifyActivity({
   editMode = false,
   navigation,
 }: ModifyActivityProps) {
-  const [categories, setCategories] = useState<Category[]>();
+  const [categories, setCategories] = useState<CategoryType[]>();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -42,7 +42,7 @@ export default function ModifyActivity({
   }, []);
 
   // Adds or removes category from user preferences
-  const handleCategoryPress = (category: Category) => {
+  const handleCategoryPress = (category: CategoryType) => {
     let updatedCategories = activityInfo.categories;
     if (isCategoryIdIncluded(updatedCategories, category)) {
       for (let i = 0; i < updatedCategories.length; i++) {
@@ -78,10 +78,11 @@ export default function ModifyActivity({
   };
 
   const createActivity = async () => {
+    console.log("creating activity...");
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
     const requestOptions = {
-      method: "PUSH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -89,8 +90,10 @@ export default function ModifyActivity({
       body: JSON.stringify(activityInfo),
     };
     const response = await fetch(url, requestOptions);
+    console.log("status: " + response.status + response.statusText);
     if (response.status == 201) {
       const data: ActivityType = await response.json();
+      console.log(data);
       navigation.navigate("Activity", { id: data._id });
     }
   };
@@ -114,8 +117,8 @@ export default function ModifyActivity({
     }
   };
 
-  const runValidators = () => {
-    for (const [key, value] of Object.entries(validation)) {
+  const areInputsValid = () => {
+    for (const value of Object.values(validation)) {
       if (value === false) {
         return false;
       }
@@ -124,7 +127,6 @@ export default function ModifyActivity({
   };
 
   const handleConfirmation = async () => {
-    runValidators();
     if (editMode) {
       updateActivity();
     } else {
@@ -132,7 +134,7 @@ export default function ModifyActivity({
     }
   };
 
-  const isCategoryIdIncluded = (categoryList: Category[], category: Category): boolean => {
+  const isCategoryIdIncluded = (categoryList: CategoryType[], category: CategoryType): boolean => {
     return categoryList.filter((e) => e._id === category._id).length > 0;
   };
 
@@ -144,11 +146,7 @@ export default function ModifyActivity({
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
-        {runValidators() ? (
-          <OaaIconButton name="check" onPress={() => handleConfirmation()} />
-        ) : (
-          <OaaIconButton name="check" disabled={true} />
-        )}
+        <OaaIconButton name="check" disabled={!areInputsValid()} onPress={() => handleConfirmation()} />
       </View>
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>
