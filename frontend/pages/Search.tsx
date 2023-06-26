@@ -21,7 +21,7 @@ import { Icon } from "@react-native-material/core";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filtered, setFiltered] = useState<boolean>(true);
+  const [isSearchFiltered, setIsSearchFiltered] = useState<boolean>(true);
   const [isSearchResults, setIsSearchResults] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
@@ -74,7 +74,7 @@ export default function Search({ navigation }: any) {
   // page dictates which page of the results should be fetched
   // filtered dictates whether the results should be filtered based on user preferences
   // if useMapRegion is true the current position of the map is used instead of the userLocation
-  const getResults = async (page: number, filtered = false, useMapRegion = false) => {
+  const getResults = async (page: number, filtered = isSearchFiltered, useMapRegion = false) => {
     setIsNewSearchPromptVisible(false);
     setLoading(true);
     const location = await getLocation();
@@ -121,7 +121,7 @@ export default function Search({ navigation }: any) {
     } else {
       console.log("Could not perform search");
     }
-    setFiltered(filtered);
+    setIsSearchFiltered(filtered);
     setLoading(false);
   };
 
@@ -162,7 +162,7 @@ export default function Search({ navigation }: any) {
               style={styles.searchPrompt}
               onPress={() => {
                 setPage(0);
-                getResults(0, filtered, true);
+                getResults(0, isSearchFiltered, true);
               }}>
               <Icon name="magnify" color={appColors.body} size={24} />
               <Text style={PageStyles.body}>Hier suchen</Text>
@@ -234,11 +234,11 @@ export default function Search({ navigation }: any) {
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
           <OaaIconButton
-            name={filtered ? "filter-off" : "filter"}
+            name={isSearchFiltered ? "filter-off" : "filter"}
             disabled={loading}
             onPress={() => {
               setPage(0);
-              getResults(0, !filtered);
+              getResults(0, !isSearchFiltered);
             }}
           />
         </View>
