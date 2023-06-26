@@ -15,6 +15,8 @@ import { getItemAsync } from "expo-secure-store";
 import { appColors } from "../styles/StyleAttributes";
 import Loading from "./Loading";
 import { Icon } from "@react-native-material/core";
+import { geocodeAsync } from "expo-location";
+import { getGeocodeString } from "../scripts/getGeocodeString";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -36,10 +38,30 @@ export default function ModifyActivity({
   const [categories, setCategories] = useState<CategoryType[]>();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [geocode, setGeocode] = useState<string | undefined>();
+  const [locationValue, setLocationValue] = useState<string | undefined>();
 
   useEffect(() => {
+    getGeocode(activityInfo.location.coordinates[0], activityInfo.location.coordinates[1]);
     getCategories();
   }, []);
+
+  const getGeocode = async (latitude?: number, longitude?: number) => {
+    if (!latitude || !longitude) {
+      return setGeocode(undefined);
+    }
+    const geocodeString = await getGeocodeString(latitude, longitude);
+    if (geocodeString != locationValue) {
+      if (!locationValue) {
+        setLocationValue(geocodeString);
+        setGeocode(undefined);
+      } else {
+        setGeocode(geocodeString);
+      }
+    } else {
+      setGeocode(undefined);
+    }
+  };
 
   // Adds or removes category from user preferences
   const handleCategoryPress = (category: CategoryType) => {
@@ -134,9 +156,29 @@ export default function ModifyActivity({
     }
   };
 
+  const validateLocation = async () => {
+    if (locationValue) {
+      const location = await geocodeAsync(locationValue);
+      if (location.length > 0) {
+        setActivityInfo({
+          ...activityInfo,
+          location: { ...activityInfo.location, coordinates: [location[0].latitude, location[0].longitude] },
+        });
+        await getGeocode(location[0].latitude, location[0].longitude);
+        setValidation({ ...validation, location: true });
+      } else {
+        await getGeocode();
+        setValidation({ ...validation, location: false });
+      }
+    } else {
+      await getGeocode();
+      setValidation({ ...validation, location: false });
+    }
+  };
+
   const areInputsValid = () => {
     for (const value of Object.values(validation)) {
-      if (value === false) {
+      if (!value) {
         return false;
       }
     }
@@ -214,7 +256,6 @@ export default function ModifyActivity({
             {validation.categories === false && <Icon name="alert-circle" size={24} color={appColors.error} />}
             <Text style={[PageStyles.body, !validation.categories && { color: appColors.error }]}>Wähle eins bis drei aus.</Text>
           </View>
-
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Text style={PageStyles.h2}>Wann?</Text>
             <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
@@ -276,7 +317,16 @@ export default function ModifyActivity({
             <Text style={PageStyles.h2}>Wo?</Text>
             <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
           </View>
-          <Text>TO DO</Text>
+          <OaaInput
+            placeholder="Geb hier eine Adresse ein..."
+            value={locationValue}
+            onChangeText={(value: string) => setLocationValue(value)}
+            onEndEditing={() => validateLocation()}
+            isValid={validation.location}
+            isError={validation.location === false}
+            errorMessage="Eingegebene Adresse ist inkorrekt."
+          />
+          {geocode && <Text style={PageStyles.body}>Exakt: {geocode}</Text>}
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Text style={PageStyles.h2}>Wie viele?</Text>
             <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>

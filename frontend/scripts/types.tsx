@@ -36,8 +36,8 @@ export type ActivityType = {
 };
 
 type GeoType = {
-  type: string;
-  coordinates: number[];
+  type: "Point";
+  coordinates: [number, number];
 };
 
 export type ActivityValidatorType = {

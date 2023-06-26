@@ -2,7 +2,7 @@ import { KeyboardTypeOptions, TextInput, View, Text, TouchableOpacity } from "re
 import * as React from "react";
 import { OaaInputStyles as styles } from "../styles/OaaInputStyles";
 import { appColors, primary } from "../styles/StyleAttributes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@react-native-material/core";
 
 interface OaaInputProps {
@@ -40,6 +40,10 @@ export function OaaInput({
 }: OaaInputProps) {
   const [borderColor, setBorderColor] = useState(primary["200"]);
   const [hideTextEntry, setHideTextEntry] = useState(secureTextEntry);
+
+  useEffect(() => {
+    setColor();
+  }, [isValid, isError]);
 
   const setColor = (focused: boolean = false) => {
     if (focused) return setBorderColor(primary["700"]);

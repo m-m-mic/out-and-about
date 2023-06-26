@@ -13,11 +13,12 @@ import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { LocationGeocodedAddress, reverseGeocodeAsync } from "expo-location";
+import { getGeocodeString } from "../scripts/getGeocodeString";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
   const [activityInfo, setActivityInfo] = useState<ActivityType | null>(null);
-  const [geocode, setGeocode] = useState<LocationGeocodedAddress>();
+  const [geocode, setGeocode] = useState<string | undefined>();
   const [isOwner, setOwner] = useState(false);
   const [isParticipant, setParticipant] = useState(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -47,11 +48,8 @@ export default function Activity({ route, navigation }) {
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: ActivityType = await response.json();
-      const geocodedLocation: LocationGeocodedAddress[] = await reverseGeocodeAsync({
-        latitude: data.location.coordinates[0],
-        longitude: data.location.coordinates[1],
-      });
-      setGeocode(geocodedLocation[0]);
+      const geocodeString = await getGeocodeString(data.location.coordinates[0], data.location.coordinates[1]);
+      setGeocode(geocodeString);
       setActivityInfo(data);
       setRelations(data, storedUserId);
       setIsActivityFull(data.participants.length >= data.maximum_participants);
@@ -183,9 +181,7 @@ export default function Activity({ route, navigation }) {
             })}
           </Text>
           <Text style={PageStyles.h2}>Wo?</Text>
-          <Text style={PageStyles.body}>
-            {geocode?.district}, {geocode?.city}
-          </Text>
+          <Text style={PageStyles.body}>{geocode && geocode}</Text>
           <Text style={PageStyles.h2}>Wie viele?</Text>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <Text style={PageStyles.body}>

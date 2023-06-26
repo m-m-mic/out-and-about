@@ -92,19 +92,15 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
   if (mongoose.Types.ObjectId.isValid(id)) {
     try {
       // Accountdaten des Nutzers werden in der Collection gesucht. id, password, type und tier werden nicht mitgegeben
-      const requestedAccount = await Account.findOne({ _id: id }, { _id: false, password: false })
-        .populate({
-          path: "saved_activities",
-          populate: { path: "categories", model: "Category", select: "id name" },
-          options: { sort: { date: -1 } },
-          select: "id name categories date",
-        })
-        .populate({
-          path: "planned_activities",
-          populate: { path: "categories", model: "Category", select: "id name" },
-          options: { sort: { date: -1 } },
-          select: "id name categories date",
-        });
+      const requestedAccount = await Account.findOne(
+        { _id: id },
+        { _id: false, password: false, saved_activities: false }
+      ).populate({
+        path: "planned_activities",
+        populate: { path: "categories", model: "Category", select: "id name" },
+        options: { sort: { date: -1 } },
+        select: "id name categories date",
+      });
       if (!requestedAccount) {
         res.status(404).send("Account not found");
       }
@@ -146,7 +142,26 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
         });
       if (!requestedAccount) {
         res.status(404).send("Account not found");
+        return;
       }
+      for (let i = 0; i < requestedAccount.planned_activities.length; i++) {
+        // @ts-ignore
+        if (requestedAccount.planned_activities[i].date < new Date().valueOf()) {
+          requestedAccount.planned_activities.splice(i, 1);
+        } else {
+          break;
+        }
+      }
+
+      for (let i = 0; i < requestedAccount.saved_activities.length; i++) {
+        // @ts-ignore
+        if (requestedAccount.saved_activities[i].date < new Date().valueOf()) {
+          requestedAccount.saved_activities.splice(i, 1);
+        } else {
+          break;
+        }
+      }
+
       // @ts-ignore
       requestedAccount.planned_activities.map((activity) => {
         // @ts-ignore
@@ -165,7 +180,6 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
           { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
         );
       });
-      console.log(requestedAccount);
       return res.send(requestedAccount);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

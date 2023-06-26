@@ -6,13 +6,16 @@ import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
 import { AccountType, CategoryType } from "../scripts/types";
 import { OaaChip } from "../components/OaaChip";
 import { OaaActivityButton } from "../components/OaaActivityButton";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import Loading from "../components/Loading";
+import { useFocusEffect } from "@react-navigation/native";
+import { getLocation } from "../scripts/getLocation";
+import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 
 export default function Profile({ navigation }: any) {
   const [accountInfo, setAccountInfo] = useState<AccountType>();
@@ -26,10 +29,12 @@ export default function Profile({ navigation }: any) {
 
   const currentTime = new Date().valueOf();
 
-  useEffect(() => {
-    getAccountInfo();
-    getCategories();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getAccountInfo();
+      getCategories();
+    }, [])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

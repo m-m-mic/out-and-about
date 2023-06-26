@@ -23,6 +23,10 @@ export const newActivityTemplate: ActivityType = {
   name: "",
   categories: [],
   date: new Date().valueOf() + 86400000,
+  location: {
+    type: "Point",
+    coordinates: [48.137154, 11.576124],
+  },
   information_text: "",
   maximum_participants: 0,
   only_logged_in: false,
@@ -31,7 +35,7 @@ export const newActivityTemplate: ActivityType = {
 
 export const createActivityValidatorTemplate: ActivityValidatorType = {
   name: undefined,
-  location: undefined,
+  location: true,
   maximum_participants: undefined,
   categories: false,
   information_text: true,

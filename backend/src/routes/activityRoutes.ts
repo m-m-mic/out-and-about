@@ -217,7 +217,10 @@ activityRoutes.post("/search/:query", authenticateJWT, async (req, res) => {
     // Account des Request-Senders wird gesucht und dessen Präferenzen werden verwendet, um die relevantesten
     // Ergebnisse als Erstes zu zeigen
     const account = await Account.findOne({ _id: id });
-    let preferenceModel: object = { location: { $near: { $geometry: { type: "Point", coordinates: userLocation } } } };
+    let preferenceModel: object = {
+      location: { $near: { $geometry: { type: "Point", coordinates: userLocation } } },
+      date: { $gt: new Date().valueOf() },
+    };
     if (preferences) {
       const userPreferences = constructPreferenceModel(account, null);
       preferenceModel = { ...preferenceModel, ...userPreferences };
@@ -266,7 +269,10 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
     let response;
     response = { last_page: false };
     const account = await Account.findOne({ _id: id });
-    let preferenceModel: object = { location: { $near: { $geometry: { type: "Point", coordinates: userLocation } } } };
+    let preferenceModel: object = {
+      location: { $near: { $geometry: { type: "Point", coordinates: userLocation } } },
+      date: { $gt: new Date().valueOf() },
+    };
     if (preferences) {
       const userPreferences = constructPreferenceModel(account, null);
       preferenceModel = { ...preferenceModel, ...userPreferences };
