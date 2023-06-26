@@ -29,18 +29,13 @@ export default function Search({ navigation }: any) {
     getResults(0);
   }, []);
 
-  useEffect(() => {
-    setPage(0);
-    getResults(0);
-  }, [filtered]);
-
   const onRefresh = async () => {
     setRefreshing(true);
     await getResults(0);
     setRefreshing(false);
   };
 
-  const getResults = async (page: number) => {
+  const getResults = async (page: number, filtered = false) => {
     const location = await getLocation();
     if (!location) {
       setIsLocationGranted(false);
@@ -73,6 +68,7 @@ export default function Search({ navigation }: any) {
     } else {
       console.log("Could not perform search");
     }
+    setFiltered(filtered);
     setLoading(false);
   };
 
@@ -81,8 +77,8 @@ export default function Search({ navigation }: any) {
   }
 
   return (
-    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      <View style={PageStyles.page}>
+    <>
+      <View style={[PageStyles.page, { borderBottomEndRadius: 12, borderBottomStartRadius: 12 }]}>
         <Text style={PageStyles.h1}>Suche</Text>
         <OaaInput
           icon="magnify"
@@ -93,24 +89,35 @@ export default function Search({ navigation }: any) {
             getResults(0);
           }}
         />
-        {loading ? (
-          <Loading />
-        ) : (
-          <>
-            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
-              <OaaIconButton name={filtered ? "filter-off" : "filter"} onPress={() => setFiltered(!filtered)} />
-            </View>
-            {results.length > 0 ? (
-              results.map((activity: ActivityType) => (
-                <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
-              ))
-            ) : (
-              <Text>Keine Ergebnisse gefunden.</Text>
-            )}
-          </>
-        )}
+        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
+          <OaaIconButton
+            name={filtered ? "filter-off" : "filter"}
+            disabled={loading}
+            onPress={() => {
+              setPage(0);
+              getResults(0, !filtered);
+            }}
+          />
+        </View>
       </View>
-    </ScrollView>
+      <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <View style={[PageStyles.page, { marginTop: -16 }]}>
+          {loading ? (
+            <Loading />
+          ) : (
+            <>
+              {results.length > 0 ? (
+                results.map((activity: ActivityType) => (
+                  <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
+                ))
+              ) : (
+                <Text>Keine Ergebnisse gefunden.</Text>
+              )}
+            </>
+          )}
+        </View>
+      </ScrollView>
+    </>
   );
 }

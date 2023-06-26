@@ -25,7 +25,7 @@ export const newActivityTemplate: ActivityType = {
   date: new Date().valueOf() + 86400000,
   location: {
     type: "Point",
-    coordinates: [48.137154, 11.576124],
+    coordinates: [11.576124, 48.137154],
   },
   information_text: "",
   maximum_participants: 0,

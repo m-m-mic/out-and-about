@@ -46,11 +46,11 @@ export default function ModifyActivity({
     getCategories();
   }, []);
 
-  const getGeocode = async (latitude?: number, longitude?: number) => {
+  const getGeocode = async (longitude?: number, latitude?: number) => {
     if (!latitude || !longitude) {
       return setGeocode(undefined);
     }
-    const geocodeString = await getGeocodeString(latitude, longitude);
+    const geocodeString = await getGeocodeString(longitude, latitude);
     if (geocodeString != locationValue) {
       if (!locationValue) {
         setLocationValue(geocodeString);
@@ -113,7 +113,6 @@ export default function ModifyActivity({
     const response = await fetch(url, requestOptions);
     if (response.status == 201) {
       const data: ActivityType = await response.json();
-      console.log(data);
       navigation.navigate("Activity", { id: data._id, fromCreated: true });
     }
   };
@@ -133,7 +132,7 @@ export default function ModifyActivity({
     if (response.status == 200) {
       navigation.navigate("Activity", { id: activityInfo._id });
     } else {
-      console.log(response);
+      console.log(response.status);
     }
   };
 
@@ -162,9 +161,9 @@ export default function ModifyActivity({
       if (location.length > 0) {
         setActivityInfo({
           ...activityInfo,
-          location: { ...activityInfo.location, coordinates: [location[0].latitude, location[0].longitude] },
+          location: { ...activityInfo.location, coordinates: [location[0].longitude, location[0].latitude] },
         });
-        await getGeocode(location[0].latitude, location[0].longitude);
+        await getGeocode(location[0].longitude, location[0].latitude);
         setValidation({ ...validation, location: true });
       } else {
         await getGeocode();
@@ -200,6 +199,8 @@ export default function ModifyActivity({
   if (!categories) {
     return <Loading />;
   }
+
+  console.log(activityInfo);
 
   return (
     <View style={{ flex: 1 }}>

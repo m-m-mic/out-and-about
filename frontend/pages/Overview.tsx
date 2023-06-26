@@ -26,8 +26,8 @@ export default function Overview({ navigation }) {
     useCallback(() => {
       setIsLocationGranted(!!getLocation());
       setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
-      getRecommendations();
       getAccountActivities();
+      getRecommendations();
     }, [])
   );
 
@@ -44,13 +44,13 @@ export default function Overview({ navigation }) {
       setIsLocationGranted(false);
       return;
     }
-    const storedToken = await getItemAsync("userToken");
+    const token = await getItemAsync("userToken");
     const url = backendUrl + "/account/activities";
     let requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${storedToken}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };

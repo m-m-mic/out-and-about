@@ -119,7 +119,7 @@ accountRoutes.get("/account/info", authenticateJWT, async (req: Request, res: Re
 accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, res: Response) => {
   const authReq = req as authenticatedRequest;
   const id = authReq.account.id;
-  const userLocation = [authReq.body.lat, authReq.body.long];
+  const userLocation = [authReq.body.long, authReq.body.lat];
   console.log(userLocation);
   if (mongoose.Types.ObjectId.isValid(id)) {
     try {
@@ -166,18 +166,18 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
       requestedAccount.planned_activities.map((activity) => {
         // @ts-ignore
         activity.distance = getDistance(
-          { latitude: userLocation[0], longitude: userLocation[1] },
+          { longitude: userLocation[0], latitude: userLocation[1] },
           // @ts-ignore
-          { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+          { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
         );
       });
       // @ts-ignore
       requestedAccount.saved_activities.map((activity) => {
         // @ts-ignore
         activity.distance = getDistance(
-          { latitude: userLocation[0], longitude: userLocation[1] },
+          { longitude: userLocation[0], latitude: userLocation[1] },
           // @ts-ignore
-          { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+          { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
         );
       });
       return res.send(requestedAccount);

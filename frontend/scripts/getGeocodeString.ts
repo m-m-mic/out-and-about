@@ -1,6 +1,6 @@
 import { reverseGeocodeAsync } from "expo-location";
 
-export async function getGeocodeString(latitude: number, longitude: number): Promise<string | undefined> {
+export async function getGeocodeString(longitude: number, latitude: number): Promise<string | undefined> {
   const geocodeLocation = await reverseGeocodeAsync({
     latitude: latitude,
     longitude: longitude,

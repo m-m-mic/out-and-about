@@ -27,7 +27,7 @@ export default function CreateActivity({ route, navigation }) {
       if (location)
         newActivity = {
           ...newActivity,
-          location: { ...newActivity.location, coordinates: [location.coords.latitude, location.coords.longitude] },
+          location: { ...newActivity.location, coordinates: [location.coords.longitude, location.coords.latitude] },
         };
       setActivityInfo(newActivity);
     }

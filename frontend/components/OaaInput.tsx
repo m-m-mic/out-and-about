@@ -1,4 +1,12 @@
-import { KeyboardTypeOptions, TextInput, View, Text, TouchableOpacity } from "react-native";
+import {
+  KeyboardTypeOptions,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+  NativeSyntheticEvent,
+  TextInputEndEditingEventData,
+} from "react-native";
 import * as React from "react";
 import { OaaInputStyles as styles } from "../styles/OaaInputStyles";
 import { appColors, primary } from "../styles/StyleAttributes";
@@ -8,8 +16,8 @@ import { Icon } from "@react-native-material/core";
 interface OaaInputProps {
   value?: string;
   placeholder?: string;
-  onChangeText?: any;
-  onEndEditing?: any;
+  onChangeText?: (text: string) => void;
+  onEndEditing?: (e: NativeSyntheticEvent<TextInputEndEditingEventData>) => void;
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   isValid?: boolean;

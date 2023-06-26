@@ -113,6 +113,8 @@ activityRoutes.patch("/activity/:activityId", authenticateJWT, async (req, res) 
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+        console.log(error.message);
+        // @ts-ignore
         return res.status(400).send(error.message);
       }
     } else {
@@ -210,7 +212,7 @@ activityRoutes.post("/search/:query", authenticateJWT, async (req, res) => {
   const preferences: boolean = authReq.query.preferences === "true";
   const id = authReq.account.id;
   const searchQuery: string = authReq.params.query.toLowerCase();
-  const userLocation = [authReq.body.lat, authReq.body.long];
+  const userLocation = [authReq.body.long, authReq.body.lat];
   try {
     let response;
     response = { last_page: false };
@@ -243,8 +245,8 @@ activityRoutes.post("/search/:query", authenticateJWT, async (req, res) => {
     activities = activities.slice(startIndex, endIndex);
     activities.map((activity) => {
       activity.distance = getDistance(
-        { latitude: userLocation[0], longitude: userLocation[1] },
-        { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+        { longitude: userLocation[0], latitude: userLocation[1] },
+        { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
       );
     });
     response = { ...response, activities: activities };
@@ -264,7 +266,7 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
   const page: number = parseInt(<string>authReq.query.page) || 0;
   // Anzahl an Elementen pro Seite
   const limit: number = parseInt(<string>authReq.query.limit) || 15;
-  const userLocation = [authReq.body.lat, authReq.body.long];
+  const userLocation = [authReq.body.long, authReq.body.lat];
   try {
     let response;
     response = { last_page: false };
@@ -294,8 +296,8 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
     activities = activities.slice(startIndex, endIndex);
     activities.map((activity) => {
       activity.distance = getDistance(
-        { latitude: userLocation[0], longitude: userLocation[1] },
-        { latitude: activity.location.coordinates[0], longitude: activity.location.coordinates[1] }
+        { longitude: userLocation[0], latitude: userLocation[1] },
+        { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
       );
     });
     response = { ...response, activities: activities };
