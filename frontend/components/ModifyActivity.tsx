@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { ActivityType, ActivityValidatorType, CategoryType } from "../scripts/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import Loading from "./Loading";
 import { Icon } from "@react-native-material/core";
 import { geocodeAsync } from "expo-location";
 import { getGeocodeString } from "../scripts/getGeocodeString";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -40,6 +41,7 @@ export default function ModifyActivity({
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [geocode, setGeocode] = useState<string | undefined>();
   const [locationValue, setLocationValue] = useState<string | undefined>();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getGeocode(activityInfo.location.coordinates[0], activityInfo.location.coordinates[1]);
@@ -200,10 +202,8 @@ export default function ModifyActivity({
     return <Loading />;
   }
 
-  console.log(activityInfo);
-
   return (
-    <View style={[{ flex: 1 }, PageStyles.header]}>
+    <View style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
         <OaaIconButton name="check" disabled={!areInputsValid()} onPress={() => handleConfirmation()} />

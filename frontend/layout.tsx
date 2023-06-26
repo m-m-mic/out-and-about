@@ -16,6 +16,7 @@ import { TouchableOpacity, View, Text } from "react-native";
 import { Icon } from "@react-native-material/core";
 import { appColors } from "./styles/StyleAttributes";
 import { TabBarStyles } from "./styles/TabBarStyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const OverviewStack = createStackNavigator();
 
@@ -124,7 +125,7 @@ const Tab = createBottomTabNavigator();
 
 export function loggedInStack() {
   return (
-    <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
+    <Tab.Navigator tabBar={(props) => <OaaTabBar {...props} />}>
       <Tab.Screen name="OverviewStack" component={OverviewStackScreen} options={{ headerShown: false }} />
       <Tab.Screen name="SearchStack" component={SearchStackScreen} options={{ headerShown: false }} />
       <Tab.Screen name="ProfileStack" component={ProfileStackScreen} options={{ headerShown: false }} />
@@ -133,7 +134,7 @@ export function loggedInStack() {
 }
 
 // @ts-ignore
-function MyTabBar({ state, descriptors, navigation }) {
+function OaaTabBar({ state, descriptors, navigation }) {
   const tabAttributes = [
     {
       tabName: "OverviewStack",
@@ -151,8 +152,11 @@ function MyTabBar({ state, descriptors, navigation }) {
       icon: "account",
     },
   ];
+
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={TabBarStyles.bar}>
+    <View style={[TabBarStyles.bar, { marginBottom: insets.bottom }]}>
       {state.routes.map((route: { key: string | number; name: any }, index: any) => {
         const { options } = descriptors[route.key];
         let label = route.name;

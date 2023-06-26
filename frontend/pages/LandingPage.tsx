@@ -8,6 +8,7 @@ import { ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { backendUrl } from "../scripts/backendConnection";
 import { OaaActivityPreviewCard } from "../components/OaaActivityPreviewCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore
 export default function LandingPage({ navigation }) {
@@ -16,6 +17,7 @@ export default function LandingPage({ navigation }) {
   const [flatListIndex, setFlatListIndex] = useState<number>(0);
   const width = Dimensions.get("window").width;
   const ref = React.useRef<FlatList>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getActivities();
@@ -58,7 +60,9 @@ export default function LandingPage({ navigation }) {
   };
 
   return (
-    <ScrollView style={[{ flex: 1 }, PageStyles.header]} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <Text style={PageStyles.hero}>OUT & ABOUT</Text>

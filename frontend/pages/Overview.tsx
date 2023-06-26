@@ -13,6 +13,7 @@ import { NoEntriesDisclaimer } from "../components/NoEntriesDisclaimer";
 import { getLocation } from "../scripts/getLocation";
 import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 import { LocationRequest } from "./LocationRequest";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -29,6 +30,8 @@ export default function Overview({ navigation }) {
       getContent();
     }, [])
   );
+
+  const insets = useSafeAreaInsets();
 
   const getContent = async () => {
     await getAccountActivities();
@@ -101,7 +104,7 @@ export default function Overview({ navigation }) {
 
   return (
     <ScrollView
-      style={[{ flex: 1 }, PageStyles.header]}
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Übersicht</Text>

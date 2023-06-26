@@ -10,11 +10,13 @@ export const OaaActivityButtonStyles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: appColors.background,
     gap: 8,
+    elevation: 2,
+  },
+  shadow: {
     shadowColor: "#171717",
-    shadowOffset: { width: -2, height: 4 },
+    shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 2,
   },
   image: {
     width: 50,

@@ -25,7 +25,7 @@ export function OaaActivityCard({ activity, navigation, expanded, onDismiss }: O
   };
 
   return (
-    <View style={{ position: "relative", width: "100%" }}>
+    <View style={[styles.shadow, { position: "relative", width: "100%" }]}>
       {onDismiss && (
         <View style={{ position: "absolute", right: 12, top: 12, zIndex: 6 }}>
           <OaaIconButton name="close" variant="transparent" onPress={onDismiss} />

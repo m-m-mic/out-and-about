@@ -10,6 +10,7 @@ import { SafeAreaView, StatusBar } from "react-native";
 import { appColors, primary } from "./styles/StyleAttributes";
 import { IconComponentProvider } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
 
@@ -130,7 +131,9 @@ export default function App() {
       {/* @ts-ignore */}
       <IconComponentProvider IconComponent={MaterialCommunityIcons}>
         <StatusBar barStyle="dark-content" backgroundColor={appColors.background} />
-        <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
+        <SafeAreaProvider>
+          <NavigationContainer>{state.userToken ? loggedInStack() : loggedOutStack()}</NavigationContainer>
+        </SafeAreaProvider>
       </IconComponentProvider>
     </AuthContext.Provider>
   );

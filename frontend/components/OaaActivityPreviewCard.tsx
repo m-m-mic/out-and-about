@@ -16,11 +16,13 @@ export function OaaActivityPreviewCard({ name, id }: OaaActivityPreviewCardProps
   };
 
   return (
-    <View style={styles.container}>
-      <Image style={styles.image} resizeMode={"cover"} source={{ uri: imageSrc }} onError={() => onFallback()} />
-      <Text style={styles.title} numberOfLines={2}>
-        {name}
-      </Text>
+    <View style={styles.shadow}>
+      <View style={styles.container}>
+        <Image style={styles.image} resizeMode={"cover"} source={{ uri: imageSrc }} onError={() => onFallback()} />
+        <Text style={styles.title} numberOfLines={2}>
+          {name}
+        </Text>
+      </View>
     </View>
   );
 }

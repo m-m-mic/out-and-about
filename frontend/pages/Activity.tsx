@@ -12,8 +12,8 @@ import { OaaActivityImage } from "../components/OaaActivityImage";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
-import { LocationGeocodedAddress, reverseGeocodeAsync } from "expo-location";
 import { getGeocodeString } from "../scripts/getGeocodeString";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
@@ -27,6 +27,7 @@ export default function Activity({ route, navigation }) {
   const [isActivityFull, setIsActivityFull] = useState<boolean>();
   const [fromCreated, setFromCreated] = useState<boolean>(false);
   const id = route.params.id;
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -131,7 +132,7 @@ export default function Activity({ route, navigation }) {
   }
 
   return (
-    <View style={[{ flex: 1 }, PageStyles.header]}>
+    <View style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" variant="transparent" onPress={() => handleBackButton()} />
         {isOwner && (

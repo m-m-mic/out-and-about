@@ -6,11 +6,13 @@ export const OaaActivityCardStyles = StyleSheet.create({
     backgroundColor: appColors.background,
     borderRadius: 12,
     overflow: "hidden",
+    elevation: 2,
+  },
+  shadow: {
     shadowColor: "#171717",
-    shadowOffset: { width: -2, height: 4 },
+    shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 2,
   },
   content: {
     display: "flex",

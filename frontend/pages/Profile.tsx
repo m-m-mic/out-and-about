@@ -14,8 +14,7 @@ import { OaaActivityButton } from "../components/OaaActivityButton";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
-import { getLocation } from "../scripts/getLocation";
-import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Profile({ navigation }: any) {
   const [accountInfo, setAccountInfo] = useState<AccountType>();
@@ -23,6 +22,7 @@ export default function Profile({ navigation }: any) {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [havePreferencesChanged, setHavePreferencesChanged] = useState<boolean>(false);
+  const insets = useSafeAreaInsets();
 
   // @ts-ignore
   const { signOut } = React.useContext(AuthContext);
@@ -111,7 +111,7 @@ export default function Profile({ navigation }: any) {
 
   return (
     <ScrollView
-      style={[{ flex: 1 }, PageStyles.header]}
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

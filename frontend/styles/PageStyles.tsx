@@ -1,6 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
 import { typefaces } from "./StyleAttributes";
-import Constants from "expo-constants";
 
 export const PageStyles = StyleSheet.create({
   page: {
@@ -10,9 +9,7 @@ export const PageStyles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
   },
-  header: {
-    marginTop: Platform.OS === "ios" ? Constants.statusBarHeight : 0,
-  },
+  header: {},
   spaceBetween: {
     flex: 1,
     justifyContent: "space-between",

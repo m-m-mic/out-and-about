@@ -18,6 +18,7 @@ import { LocationObject } from "expo-location";
 import { SearchStyles as styles } from "../styles/SearchStyles";
 import { getDistance } from "geolib";
 import { Icon } from "@react-native-material/core";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -36,6 +37,7 @@ export default function Search({ navigation }: any) {
   const [startCoordinates, setStartCoordinates] = useState<{ long: number; lat: number }>();
   const [mapCoordinates, setMapCoordinates] = useState<Region>();
   const [isNewSearchPromptVisible, setIsNewSearchPromptVisible] = useState<boolean>(false);
+  const insets = useSafeAreaInsets();
 
   // Fetches results on page load
   useEffect(() => {
@@ -218,8 +220,15 @@ export default function Search({ navigation }: any) {
       <View
         style={[
           PageStyles.page,
-          PageStyles.header,
-          { borderBottomEndRadius: 12, borderBottomStartRadius: 12, backgroundColor: appColors.background, zIndex: 5 },
+          {
+            marginTop: insets.top,
+            marginLeft: insets.left,
+            marginRight: insets.right,
+            borderBottomEndRadius: 12,
+            borderBottomStartRadius: 12,
+            backgroundColor: appColors.background,
+            zIndex: 5,
+          },
         ]}>
         <Text style={PageStyles.h1}>Suche</Text>
         <OaaInput

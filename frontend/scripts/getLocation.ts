@@ -1,4 +1,5 @@
 import * as Location from "expo-location";
+import { Platform } from "react-native";
 
 export const getLocation = async () => {
   let { status } = await Location.requestForegroundPermissionsAsync();
@@ -7,5 +8,7 @@ export const getLocation = async () => {
     return null;
   }
 
-  return await Location.getCurrentPositionAsync({});
+  return await Location.getCurrentPositionAsync({
+    accuracy: Platform.OS === "android" ? Location.Accuracy.Low : Location.Accuracy.Lowest,
+  });
 };
