@@ -23,6 +23,7 @@ export function OaaIconButton({ name, size = 24, variant = "ghost", onPress, dis
     setColor(disabled ? appColors.bodyDisabled : variant === "transparent" ? appColors.bodyInverted : appColors.body);
   }, [disabled, variant]);
 
+  // Styles icon button based on chosen variant
   const getStyles = () => {
     let ButtonStyles: any = [styles.container];
     switch (variant) {

@@ -11,6 +11,7 @@ interface OaaActivityPreviewCardProps {
 export function OaaActivityPreviewCard({ name, id }: OaaActivityPreviewCardProps) {
   const [imageSrc, setImageSrc] = useState<string>(backendUrl + "/images/activities/" + id + ".jpg");
 
+  // Fallback if activity image is unavailable
   const onFallback = () => {
     setImageSrc(backendUrl + "/images/activities/placeholder_large.jpg");
   };

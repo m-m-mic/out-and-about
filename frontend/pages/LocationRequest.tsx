@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function LocationRequest() {
   const insets = useSafeAreaInsets();
+
   return (
     <ScrollView
       style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}

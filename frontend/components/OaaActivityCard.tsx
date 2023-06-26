@@ -20,6 +20,7 @@ export function OaaActivityCard({ activity, navigation, expanded, onDismiss }: O
     setImageSrc(backendUrl + "/images/activities/" + activity._id + ".jpg");
   }, [activity]);
 
+  // Fallback if activity image is unavailable
   const onFallback = () => {
     setImageSrc(backendUrl + "/images/activities/placeholder_large.jpg");
   };

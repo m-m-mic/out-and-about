@@ -23,6 +23,7 @@ export default function LandingPage({ navigation }) {
     getActivities();
   }, []);
 
+  // Sets up interval which is used to periodically change flatList index
   useEffect(() => {
     const interval = setInterval(() => {
       countUpIndex();
@@ -30,6 +31,7 @@ export default function LandingPage({ navigation }) {
     return () => clearInterval(interval);
   }, [activities]);
 
+  // Animates flatList when index changes
   useEffect(() => {
     ref.current?.scrollToIndex({
       index: flatListIndex,
@@ -37,6 +39,7 @@ export default function LandingPage({ navigation }) {
     });
   }, [flatListIndex]);
 
+  // Counts up the index or resets it back to 0
   const countUpIndex = () => {
     return setFlatListIndex((flatListIndex) => {
       if (flatListIndex < activities.length - 1) {
@@ -48,6 +51,7 @@ export default function LandingPage({ navigation }) {
     });
   };
 
+  // Fetches activities
   const getActivities = async () => {
     setLoading(true);
     const url = backendUrl + "/landing-page";

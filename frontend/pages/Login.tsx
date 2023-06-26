@@ -18,6 +18,7 @@ export default function Login({ navigation }: any) {
   const insets = useSafeAreaInsets();
   const { signIn } = React.useContext(AuthContext);
 
+  // Attempts sign in, makes disclaimer visible if sign in fails
   const handleSignIn = () => {
     signIn({ email: email, password: password }).then((response: number) => {
       if (response === 403 || response === 404) {
@@ -26,6 +27,7 @@ export default function Login({ navigation }: any) {
     });
   };
 
+  // Checks if user has entered email and password
   const runValidators = () => {
     return email.length === 0 || password.length === 0;
   };

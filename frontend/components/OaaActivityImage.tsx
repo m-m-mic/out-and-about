@@ -15,6 +15,8 @@ export function OaaActivityImage({ id, blur = 0 }: { id: string; blur: number })
       zIndex: 0,
     },
   });
+
+  // Fallback if activity image is unavailable
   const onFallback = () => {
     setImageSrc(backendUrl + "/images/activities/placeholder_large.jpg");
   };

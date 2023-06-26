@@ -14,6 +14,7 @@ interface OoaChipProps {
 }
 
 export function OaaChip({ label, variant = "primary", size = "medium", onPress }: OoaChipProps) {
+  // Styles chip based on chosen variant
   const getStyles = (component: string) => {
     let containerStyles: any = [styles.container];
     let textStyles: any = [styles.text];

@@ -19,10 +19,13 @@ export function OaaAccountImage({ size }: { size: number }) {
     getImageUri();
   }, []);
 
+  // Gets image from backend
   const getImageUri = async () => {
     const id = await getItemAsync("userId");
     setImageSrc(backendUrl + "/images/accounts/" + id + ".jpg");
   };
+
+  // Placeholder fallback if account image is unavailable
   const onFallback = () => {
     setImageSrc(backendUrl + "/images/accounts/placeholder_small.jpg");
   };

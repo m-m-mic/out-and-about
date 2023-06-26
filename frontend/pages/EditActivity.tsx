@@ -13,6 +13,11 @@ export default function EditActivity({ route, navigation }) {
   const [validator, setValidator] = useState(editActivityValidatorTemplate);
   const activityId = route.params.id;
 
+  useEffect(() => {
+    getActivityInfo();
+  }, []);
+
+  // Fetches activity data
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + activityId;
     const token = await getItemAsync("userToken");
@@ -30,10 +35,6 @@ export default function EditActivity({ route, navigation }) {
       console.log("error 404: activity not found");
     }
   };
-
-  useEffect(() => {
-    getActivityInfo();
-  }, []);
 
   if (!activityInfo) {
     return <Loading />;

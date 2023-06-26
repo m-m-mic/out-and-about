@@ -16,6 +16,7 @@ interface OoaButtonProps {
 }
 
 export function OaaButton({ label, variant = "primary", onPress, icon, expand = true, elevation = false }: OoaButtonProps) {
+  // Styles button based on chosen variant
   const getStyles = (component: string) => {
     let wrapperStyles: any = [styles.container];
     if (expand) wrapperStyles.push(styles.expand);

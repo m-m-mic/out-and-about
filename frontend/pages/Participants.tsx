@@ -13,6 +13,7 @@ import { appColors, primary } from "../styles/StyleAttributes";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// @ts-ignore
 export default function Participants({ navigation, route }) {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
@@ -26,6 +27,7 @@ export default function Participants({ navigation, route }) {
     }, [])
   );
 
+  // Fetches participant list of activity
   const getParticipants = async () => {
     const url = backendUrl + "/activity/" + id + "/participants";
     const storedToken = await getItemAsync("userToken");
@@ -44,6 +46,7 @@ export default function Participants({ navigation, route }) {
     }
   };
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     getParticipants();

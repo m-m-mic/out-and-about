@@ -6,7 +6,7 @@ import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
 import { AccountType, CategoryType } from "../scripts/types";
 import { OaaChip } from "../components/OaaChip";
@@ -23,11 +23,9 @@ export default function Profile({ navigation }: any) {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [havePreferencesChanged, setHavePreferencesChanged] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
-
-  // @ts-ignore
-  const { signOut } = React.useContext(AuthContext);
-
   const currentTime = new Date().valueOf();
+
+  const { signOut } = React.useContext(AuthContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -36,6 +34,7 @@ export default function Profile({ navigation }: any) {
     }, [])
   );
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     await getAccountInfo();
@@ -43,6 +42,7 @@ export default function Profile({ navigation }: any) {
     setRefreshing(false);
   };
 
+  // Updates the category preferences of user
   const updateAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
     const storedToken = await getItemAsync("userToken");
@@ -59,6 +59,7 @@ export default function Profile({ navigation }: any) {
     }
   };
 
+  // Fetches account data of user
   const getAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
     const storedToken = await getItemAsync("userToken");
@@ -79,6 +80,7 @@ export default function Profile({ navigation }: any) {
     }
   };
 
+  // Fetches all available categories
   const getCategories = () => {
     const url = backendUrl + "/category";
     const requestOptions = {
@@ -92,6 +94,7 @@ export default function Profile({ navigation }: any) {
     });
   };
 
+  // Decides whether pressed category should be added or removed from preferences
   const handleCategoryPress = (categoryId: string) => {
     let updatedCategories = userCategories;
     if (updatedCategories?.includes(categoryId)) {

@@ -36,6 +36,7 @@ export default function Activity({ route, navigation }) {
     }, [])
   );
 
+  // Fetches activity data from backend
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + id;
     const storedToken = await getItemAsync("userToken");
@@ -49,6 +50,7 @@ export default function Activity({ route, navigation }) {
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: ActivityType = await response.json();
+      // Turns activity location into a readable string
       const geocodeString = await getGeocodeString(data.location.coordinates[0], data.location.coordinates[1]);
       setGeocode(geocodeString);
       setActivityInfo(data);
@@ -59,8 +61,7 @@ export default function Activity({ route, navigation }) {
     }
   };
 
-  // Entscheidet anhand von activityInfo, welches Verhältnis der Nutzer zur aufgerufenen Aktivität hat
-  // z.B. ist er als Teilnehmer angemeldet, oder ein Organisator der Aktivität etc.
+  // Assigns role to user (e.g. participant, owner)
   const setRelations = (data: any, userId: any) => {
     if (data.organizer._id === userId) {
       setOwner(true);
@@ -73,6 +74,7 @@ export default function Activity({ route, navigation }) {
     }
   };
 
+  // Adds or removes activity from user's saved_activities list
   const changeParticipantSub = async () => {
     const url = backendUrl + "/activity/" + id + "/save";
     const token = await getItemAsync("userToken");
@@ -96,6 +98,7 @@ export default function Activity({ route, navigation }) {
     }
   };
 
+  // Dictates what happens if user presses the hover button (e.g. save activity, open participant list...)
   const handleButtonPress = async () => {
     if (isOwner) {
       navigation.navigate("Participants", { id: activityInfo?._id, name: activityInfo?.name });
@@ -107,17 +110,20 @@ export default function Activity({ route, navigation }) {
     }
   };
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     await getActivityInfo();
     setRefreshing(false);
   };
 
+  // Adds and removes back press event listener
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
     return () => backHandler.remove();
   }, []);
 
+  // Dictates how back button behaves. If previous page was createActivity, the back button will go to the root of the stack instead
   const handleBackButton = () => {
     if (fromCreated) {
       navigation.getParent().goBack();

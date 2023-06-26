@@ -69,6 +69,7 @@ export const setPasswordRepeatInput = (
   }
 };
 
+// Name must be between 1 and 30 chars long
 export const setNameInput = (
   input: string,
   data: ActivityType,
@@ -84,6 +85,7 @@ export const setNameInput = (
   }
 };
 
+// Maximum_participants must be at least 1 or the amount of participants and at most 100
 export const setMaximumParticipantsInput = (
   input: string,
   data: ActivityType,
@@ -100,6 +102,7 @@ export const setMaximumParticipantsInput = (
   }
 };
 
+// Information text can't be longer than 300 chars
 export const setInformationTextInput = (
   input: string,
   data: ActivityType,
@@ -119,6 +122,7 @@ export const setInformationTextInput = (
   }
 };
 
+// Date can't be in the past
 export const setDateInput = (
   input: Date,
   data: ActivityType,

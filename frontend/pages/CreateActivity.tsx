@@ -19,6 +19,7 @@ export default function CreateActivity({ route, navigation }) {
     }, [])
   );
 
+  // Creates template for new activity which is then used by ModifyActivity component
   const createNewActivity = async () => {
     const userId = await getItemAsync("userId");
     if (userId) {

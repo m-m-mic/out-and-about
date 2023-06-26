@@ -53,6 +53,7 @@ export function OaaInput({
     setColor();
   }, [isValid, isError]);
 
+  // Sets color of border based on state
   const setColor = (focused: boolean = false) => {
     if (focused) return setBorderColor(primary["700"]);
     if (isValid) return setBorderColor(appColors.valid);

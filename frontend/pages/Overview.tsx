@@ -22,6 +22,7 @@ export default function Overview({ navigation }) {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
   const [isLocationGranted, setIsLocationGranted] = useState<boolean>(true);
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -31,19 +32,20 @@ export default function Overview({ navigation }) {
     }, [])
   );
 
-  const insets = useSafeAreaInsets();
-
+  // Performs all required fetch requests for the page to work
   const getContent = async () => {
     await getAccountActivities();
     await getRecommendations();
   };
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     await getContent();
     setRefreshing(false);
   };
 
+  // Fetches activities of user
   const getAccountActivities = async () => {
     const location = await getLocation();
     if (!location) {
@@ -69,6 +71,7 @@ export default function Overview({ navigation }) {
     }
   };
 
+  // Fetches recommendations for user
   const getRecommendations = async () => {
     const location = await getLocation();
     if (!location) {
@@ -94,6 +97,7 @@ export default function Overview({ navigation }) {
     }
   };
 
+  // Displays different page if location permissions weren't granted
   if (!isLocationGranted) {
     return <LocationRequest />;
   }
