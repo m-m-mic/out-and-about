@@ -6,7 +6,7 @@ import { backendUrl } from "./scripts/backendConnection";
 import { AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
 import { useFonts } from "expo-font";
-import { StatusBar } from "react-native";
+import { SafeAreaView, StatusBar } from "react-native";
 import { appColors, primary } from "./styles/StyleAttributes";
 import { IconComponentProvider } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";

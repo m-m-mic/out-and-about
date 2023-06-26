@@ -29,7 +29,7 @@ export default function Login({ navigation }: any) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView style={[{ flex: 1 }, PageStyles.header]} contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <OaaIconButton name="arrow-left" onPress={() => navigation.goBack()} />

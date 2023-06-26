@@ -110,7 +110,9 @@ export default function Profile({ navigation }: any) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+    <ScrollView
+      style={[{ flex: 1 }, PageStyles.header]}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={PageStyles.h1}>Profil</Text>

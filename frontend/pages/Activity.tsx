@@ -131,7 +131,7 @@ export default function Activity({ route, navigation }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, PageStyles.header]}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" variant="transparent" onPress={() => handleBackButton()} />
         {isOwner && (

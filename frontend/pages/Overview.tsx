@@ -26,15 +26,18 @@ export default function Overview({ navigation }) {
     useCallback(() => {
       setIsLocationGranted(!!getLocation());
       setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
-      getAccountActivities();
-      getRecommendations();
+      getContent();
     }, [])
   );
 
-  const onRefresh = async () => {
-    setRefreshing(true);
+  const getContent = async () => {
     await getAccountActivities();
     await getRecommendations();
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getContent();
     setRefreshing(false);
   };
 
@@ -97,7 +100,9 @@ export default function Overview({ navigation }) {
   }
 
   return (
-    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+    <ScrollView
+      style={[{ flex: 1 }, PageStyles.header]}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Übersicht</Text>
         <Text style={PageStyles.h2}>Zugesagt</Text>

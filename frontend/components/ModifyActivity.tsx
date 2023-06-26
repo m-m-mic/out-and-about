@@ -203,7 +203,7 @@ export default function ModifyActivity({
   console.log(activityInfo);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, PageStyles.header]}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
         <OaaIconButton name="check" disabled={!areInputsValid()} onPress={() => handleConfirmation()} />
