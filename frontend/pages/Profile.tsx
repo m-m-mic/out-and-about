@@ -177,7 +177,7 @@ export default function Profile({ navigation }: any) {
               ))}
           </>
         ) : (
-          <Loading />
+          <Loading padding />
         )}
       </View>
     </ScrollView>

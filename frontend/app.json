@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "out-and-about",
+    "name": "OUT & ABOUT",
     "slug": "out-and-about",
-    "version": "1.0.0",
+    "version": "0.1.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -26,6 +26,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F5F5F5"
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+      ],
+      "package": "com.mmmic.outandabout",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBchgZmo0AnqrbHRMF9p_S0r7fjcrguRr8"
+        }
       }
     },
     "web": {
@@ -35,10 +46,14 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow OUT & ABOUT to use your location.",
-          "isAndroidBackgroundLocationEnabled": true
+          "locationAlwaysAndWhenInUsePermission": "Allow OUT & ABOUT to use your location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f6501ffe-283a-4db3-80bb-c210a7afa1ce"
+      }
+    }
   }
 }

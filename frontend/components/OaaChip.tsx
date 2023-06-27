@@ -1,4 +1,4 @@
-import { GestureResponderEvent, TouchableOpacity, Text } from "react-native";
+import { GestureResponderEvent, TouchableOpacity, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { OaaChipStyles as styles } from "../styles/OaaChipStyles";
 
@@ -47,14 +47,17 @@ export function OaaChip({ label, variant = "primary", size = "medium", onPress }
       return textStyles;
     }
   };
-
-  return (
-    <TouchableOpacity
-      activeOpacity={variant === "disabled" || !onPress ? 1 : 0.8}
-      style={getStyles("wrapper")}
-      disabled={variant === "disabled"}
-      onPress={onPress}>
-      {label && <Text style={getStyles("text")}>{label}</Text>}
-    </TouchableOpacity>
-  );
+  if (!onPress) {
+    return <View style={getStyles("wrapper")}>{label && <Text style={getStyles("text")}>{label}</Text>}</View>;
+  } else {
+    return (
+      <TouchableOpacity
+        activeOpacity={variant === "disabled" ? 1 : 0.8}
+        style={getStyles("wrapper")}
+        disabled={variant === "disabled"}
+        onPress={onPress}>
+        {label && <Text style={getStyles("text")}>{label}</Text>}
+      </TouchableOpacity>
+    );
+  }
 }

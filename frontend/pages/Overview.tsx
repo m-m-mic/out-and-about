@@ -102,78 +102,85 @@ export default function Overview({ navigation }) {
     return <LocationRequest />;
   }
 
-  if (!accountActivities || !recommendations || !disclaimerIcons) {
-    return <Loading />;
-  }
-
   return (
     <ScrollView
       style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <Text style={PageStyles.h1}>Übersicht</Text>
-        <Text style={PageStyles.h2}>Zugesagt</Text>
-        {accountActivities.saved_activities.length > 0 ? (
-          <FlatList
-            style={{ marginHorizontal: -12, marginVertical: -5 }}
-            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
-            showsHorizontalScrollIndicator={false}
-            data={accountActivities.saved_activities}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
-                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
-              </View>
+        {accountActivities && recommendations && disclaimerIcons ? (
+          <>
+            <Text style={PageStyles.h2}>Zugesagt</Text>
+            {accountActivities.saved_activities.length > 0 ? (
+              <FlatList
+                style={{ marginHorizontal: -12, marginVertical: -5 }}
+                ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
+                showsHorizontalScrollIndicator={false}
+                data={accountActivities.saved_activities}
+                horizontal={true}
+                renderItem={({ item }) => (
+                  <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                    <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+                  </View>
+                )}
+              />
+            ) : (
+              <NoEntriesDisclaimer
+                text={"Du hast noch nichts zugesagt. Verwende die Suche, um Aktivitäten in deiner Umgebung zu finden!"}
+                icon={disclaimerIcons[0]}
+              />
             )}
-          />
-        ) : (
-          <NoEntriesDisclaimer
-            text={"Du hast noch nichts zugesagt. Verwende die Suche, um Aktivitäten in deiner Umgebung zu finden!"}
-            icon={disclaimerIcons[0]}
-          />
-        )}
-        <Text style={PageStyles.h2}>Von dir geplant</Text>
-        {accountActivities.planned_activities.length > 0 ? (
-          <FlatList
-            style={{ marginHorizontal: -12, marginVertical: -5 }}
-            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
-            showsHorizontalScrollIndicator={false}
-            data={accountActivities.planned_activities}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
-                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
-              </View>
+            <Text style={PageStyles.h2}>Von dir geplant</Text>
+            {accountActivities.planned_activities.length > 0 ? (
+              <FlatList
+                style={{ marginHorizontal: -12, marginVertical: -5 }}
+                ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
+                showsHorizontalScrollIndicator={false}
+                data={accountActivities.planned_activities}
+                horizontal={true}
+                renderItem={({ item }) => (
+                  <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                    <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+                  </View>
+                )}
+              />
+            ) : (
+              <NoEntriesDisclaimer text={"Du hast noch keinen Aktivitäten geplant."} icon={disclaimerIcons[1]} />
             )}
-          />
-        ) : (
-          <NoEntriesDisclaimer text={"Du hast noch keinen Aktivitäten geplant."} icon={disclaimerIcons[1]} />
-        )}
-        <OaaButton
-          label="Aktivität erstellen"
-          icon="plus"
-          variant="ghost"
-          onPress={() => navigation.navigate("ActivityStack", { screen: "CreateActivity", params: { stackOrigin: "Overview" } })}
-        />
-        <Text style={PageStyles.h2}>In deiner Nähe</Text>
-        {recommendations.length > 0 ? (
-          <FlatList
-            style={{ marginHorizontal: -12, marginVertical: -5 }}
-            ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
-            showsHorizontalScrollIndicator={false}
-            data={recommendations}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
-                <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
-              </View>
+            <OaaButton
+              label="Aktivität erstellen"
+              icon="plus"
+              variant="ghost"
+              onPress={() =>
+                navigation.navigate("ActivityStack", {
+                  screen: "CreateActivity",
+                  params: { stackOrigin: "Overview" },
+                })
+              }
+            />
+            <Text style={PageStyles.h2}>In deiner Nähe</Text>
+            {recommendations.length > 0 ? (
+              <FlatList
+                style={{ marginHorizontal: -12, marginVertical: -5 }}
+                ItemSeparatorComponent={() => <View style={{ marginLeft: -8 }} />}
+                showsHorizontalScrollIndicator={false}
+                data={recommendations}
+                horizontal={true}
+                renderItem={({ item }) => (
+                  <View style={{ marginVertical: 5, marginHorizontal: 12 }}>
+                    <OaaActivityCard key={item._id} activity={item} navigation={navigation} />
+                  </View>
+                )}
+              />
+            ) : (
+              <NoEntriesDisclaimer
+                text={"Es konnten keinen keine Aktivitäten in deiner Nähe gefunden werden."}
+                icon={disclaimerIcons[2]}
+              />
             )}
-          />
+          </>
         ) : (
-          <NoEntriesDisclaimer
-            text={"Es konnten keinen keine Aktivitäten in deiner Nähe gefunden werden."}
-            icon={disclaimerIcons[2]}
-          />
+          <Loading padding />
         )}
       </View>
     </ScrollView>

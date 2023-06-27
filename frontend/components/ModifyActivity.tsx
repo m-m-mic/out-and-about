@@ -41,6 +41,7 @@ export default function ModifyActivity({
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [geocode, setGeocode] = useState<string | undefined>();
   const [locationValue, setLocationValue] = useState<string | undefined>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -105,6 +106,7 @@ export default function ModifyActivity({
 
   // Creates new activity and redirects to new activity page
   const createActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -120,10 +122,12 @@ export default function ModifyActivity({
       const data: ActivityType = await response.json();
       navigation.navigate("Activity", { id: data._id, fromCreated: true });
     }
+    setIsFetching(false);
   };
 
   // Updates the edited activity and redirects to said activity page
   const updateActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -140,10 +144,12 @@ export default function ModifyActivity({
     } else {
       console.log(response.status);
     }
+    setIsFetching(false);
   };
 
   // Permanently deletes activity
   const deleteActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -160,6 +166,7 @@ export default function ModifyActivity({
     } else {
       console.log(response);
     }
+    setIsFetching(false);
   };
 
   // Validates whether user entered string is a valid location
@@ -215,7 +222,7 @@ export default function ModifyActivity({
     <View style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
-        <OaaIconButton name="check" disabled={!areInputsValid()} onPress={() => handleConfirmation()} />
+        <OaaIconButton name="check" disabled={!areInputsValid() || isFetching} onPress={() => handleConfirmation()} />
       </View>
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>
@@ -384,7 +391,14 @@ export default function ModifyActivity({
             multiline={true}
             errorMessage="Weitere Informationen müssen unter 300 Zeichen lang sein."
           />
-          {editMode && <OaaButton label="Aktivität löschen" icon="delete" variant="warning" onPress={() => deleteActivity()} />}
+          {editMode && (
+            <OaaButton
+              label="Aktivität löschen"
+              icon="delete"
+              variant={isFetching ? "disabled" : "warning"}
+              onPress={() => deleteActivity()}
+            />
+          )}
         </View>
       </ScrollView>
     </View>

@@ -19,12 +19,13 @@ import { SearchStyles as styles } from "../styles/SearchStyles";
 import { getDistance } from "geolib";
 import { Icon } from "@react-native-material/core";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { OaaButton } from "../components/OaaButton";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isSearchFiltered, setIsSearchFiltered] = useState<boolean>(true);
   const [isSearchResults, setIsSearchResults] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [results, setResults] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,7 +43,7 @@ export default function Search({ navigation }: any) {
   // Fetches results on page load
   useEffect(() => {
     setIsLocationGranted(!!getLocation());
-    setPage(0);
+    setCurrentPage(0);
     getResults(0);
   }, []);
 
@@ -68,6 +69,7 @@ export default function Search({ navigation }: any) {
   // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
+    setCurrentPage(0);
     await getResults(0);
     setRefreshing(false);
   };
@@ -76,9 +78,9 @@ export default function Search({ navigation }: any) {
   // page dictates which page of the results should be fetched
   // filtered dictates whether the results should be filtered based on user preferences
   // if useMapRegion is true the current position of the map is used instead of the userLocation
-  const getResults = async (page: number, filtered = isSearchFiltered, useMapRegion = false) => {
+  const getResults = async (page = currentPage, filtered = isSearchFiltered, useMapRegion = false) => {
     setIsNewSearchPromptVisible(false);
-    setLoading(true);
+    if (page === 0) setLoading(true);
     const location = await getLocation();
     if (!location) {
       setIsLocationGranted(false);
@@ -108,7 +110,11 @@ export default function Search({ navigation }: any) {
     const response = await fetch(url, requestOptions);
     if (response.status === 200) {
       const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
-      setResults(data.activities);
+      if (page === 0) {
+        setResults(data.activities);
+      } else {
+        setResults([...results, ...data.activities]);
+      }
       // Sets coordinates of search to startCoordinates
       setStartCoordinates(coordinates);
       // Disables the activityPopup on the map if no results were returned
@@ -118,7 +124,7 @@ export default function Search({ navigation }: any) {
       } else {
         setActivityPopup(undefined);
       }
-      setPage(page + 1);
+      setCurrentPage(page + 1);
       setIsLastPage(data.last_page);
     } else {
       console.log("Could not perform search");
@@ -135,19 +141,25 @@ export default function Search({ navigation }: any) {
   // Returns list view of results
   const resultsListView = () => {
     return (
-      <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={loading && { flex: 1 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {loading ? (
           <Loading />
         ) : (
-          <View style={[PageStyles.page, { marginTop: -16, flex: 1 }]}>
-            {results.length > 0 ? (
-              results.map((activity: ActivityType) => (
-                <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
-              ))
-            ) : (
-              <Text>Keine Ergebnisse gefunden.</Text>
-            )}
-          </View>
+          <>
+            <View style={[PageStyles.page, { marginTop: -16, flex: 1 }]}>
+              {results.length > 0 ? (
+                results.map((activity: ActivityType) => (
+                  <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
+                ))
+              ) : (
+                <Text>Keine Ergebnisse gefunden.</Text>
+              )}
+            </View>
+            {!isLastPage && <OaaButton label="Weitere Ergebnisse laden" variant="ghost" onPress={() => getResults()} />}
+          </>
         )}
       </ScrollView>
     );
@@ -163,7 +175,7 @@ export default function Search({ navigation }: any) {
               activeOpacity={0.8}
               style={styles.searchPrompt}
               onPress={() => {
-                setPage(0);
+                setCurrentPage(0);
                 getResults(0, isSearchFiltered, true);
               }}>
               <Icon name="magnify" color={appColors.body} size={24} />
@@ -236,7 +248,7 @@ export default function Search({ navigation }: any) {
           placeholder="Hier Suchbegriff eingeben..."
           onChangeText={(value: string) => setSearchTerm(value)}
           onEndEditing={() => {
-            setPage(0);
+            setCurrentPage(0);
             getResults(0);
           }}
         />
@@ -246,7 +258,7 @@ export default function Search({ navigation }: any) {
             name={isSearchFiltered ? "filter-off" : "filter"}
             disabled={loading}
             onPress={() => {
-              setPage(0);
+              setCurrentPage(0);
               getResults(0, !isSearchFiltered);
             }}
           />
