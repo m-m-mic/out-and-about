@@ -2,7 +2,7 @@
   "expo": {
     "name": "OUT & ABOUT",
     "slug": "out-and-about",
-    "version": "0.1.2",
+    "version": "0.1.4",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,6 +32,7 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE"
       ],
+      "versionCode": 3,
       "package": "com.mmmic.outandabout",
       "config": {
         "googleMaps": {

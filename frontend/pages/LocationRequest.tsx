@@ -9,11 +9,15 @@ export function LocationRequest() {
 
   return (
     <ScrollView
-      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}
-      contentContainerStyle={{ flexGrow: 1 }}>
-      <View style={[PageStyles.page, { width: "100%", justifyContent: "center", alignItems: "center" }]}>
-        <Text style={[PageStyles.h1, { textAlign: "center" }]}>Diese Seite kann ohne Standortrechte nicht geladen werden</Text>
-        <OaaButton label="Out & About Einstellungen" onPress={() => Linking.openSettings()} variant="primary" />
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flex: 1 }}>
+      <View style={[PageStyles.page, { flex: 1, justifyContent: "center", gap: 50 }]}>
+        <View>
+          <Text style={[PageStyles.h1, { textAlign: "center" }]}>Diese Seite kann ohne Standortrechte nicht geladen werden</Text>
+        </View>
+        <View style={{ display: "flex" }}>
+          <OaaButton label="Out & About Einstellungen" icon="cog" onPress={() => Linking.openSettings()} variant="primary" />
+        </View>
       </View>
     </ScrollView>
   );
