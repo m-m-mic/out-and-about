@@ -1,5 +1,7 @@
 import { AccountType, AccountValidatorType, ActivityType, ActivityValidatorType } from "./types";
 
+// Templates for activity, account and validators
+
 export const registrationTemplate: AccountType = {
   username: "",
   email: "",

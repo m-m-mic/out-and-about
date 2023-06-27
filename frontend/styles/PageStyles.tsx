@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { typefaces } from "./StyleAttributes";
 
 export const PageStyles = StyleSheet.create({
@@ -9,6 +9,7 @@ export const PageStyles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
   },
+  header: {},
   spaceBetween: {
     flex: 1,
     justifyContent: "space-between",

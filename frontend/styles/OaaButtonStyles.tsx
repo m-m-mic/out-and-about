@@ -15,11 +15,13 @@ export const OaaButtonStyles = StyleSheet.create({
   expand: {
     flex: 1,
   },
-  elevation: {
+  shadow: {
     shadowColor: "#171717",
-    shadowOffset: { width: -2, height: 4 },
+    shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+  },
+  elevation: {
     elevation: 2,
   },
   text: {

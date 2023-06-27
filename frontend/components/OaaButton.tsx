@@ -1,4 +1,4 @@
-import { GestureResponderEvent, TouchableOpacity, Text } from "react-native";
+import { GestureResponderEvent, TouchableOpacity, Text, View } from "react-native";
 import React from "react";
 import { OaaButtonStyles as styles } from "../styles/OaaButtonStyles";
 import { Icon } from "@react-native-material/core";
@@ -16,6 +16,7 @@ interface OoaButtonProps {
 }
 
 export function OaaButton({ label, variant = "primary", onPress, icon, expand = true, elevation = false }: OoaButtonProps) {
+  // Styles button based on chosen variant
   const getStyles = (component: string) => {
     let wrapperStyles: any = [styles.container];
     if (expand) wrapperStyles.push(styles.expand);
@@ -58,13 +59,15 @@ export function OaaButton({ label, variant = "primary", onPress, icon, expand = 
   };
 
   return (
-    <TouchableOpacity
-      activeOpacity={variant === "disabled" ? 1 : 0.8}
-      style={getStyles("wrapper")}
-      disabled={variant === "disabled"}
-      onPress={onPress}>
-      {icon && <Icon name={icon} size={24} color={getStyles("icon")} />}
-      {label && <Text style={getStyles("text")}>{label}</Text>}
-    </TouchableOpacity>
+    <View style={elevation && styles.shadow}>
+      <TouchableOpacity
+        activeOpacity={variant === "disabled" ? 1 : 0.8}
+        style={getStyles("wrapper")}
+        disabled={variant === "disabled"}
+        onPress={onPress}>
+        {icon && <Icon name={icon} size={24} color={getStyles("icon")} />}
+        {label && <Text style={getStyles("text")}>{label}</Text>}
+      </TouchableOpacity>
+    </View>
   );
 }

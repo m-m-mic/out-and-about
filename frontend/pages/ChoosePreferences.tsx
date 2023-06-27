@@ -8,11 +8,13 @@ import { PageStyles } from "../styles/PageStyles";
 import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { OaaChip } from "../components/OaaChip";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore
 export default function ChoosePreferences({ route, navigation }) {
   const [registrationData, setRegistrationData] = useState(route.params.data);
   const [categories, setCategories] = useState<CategoryType[]>([]);
+  const insets = useSafeAreaInsets();
   const { signUp } = React.useContext(AuthContext);
 
   useEffect(() => {
@@ -49,7 +51,9 @@ export default function ChoosePreferences({ route, navigation }) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <OaaIconButton name="arrow-left" onPress={() => navigation.goBack()} />

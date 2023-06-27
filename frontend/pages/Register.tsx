@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
@@ -9,12 +9,14 @@ import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
 import { OaaButton } from "../components/OaaButton";
 import { OaaIconButton } from "../components/OaaIconButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore TODO
 export default function Register({ navigation }) {
   const [registrationData, setRegistrationData] = useState<AccountType>(registrationTemplate);
   const [registrationValidator, setRegistrationValidator] = useState<AccountValidatorType>(registrationValidatorTemplate);
   const [emailError, setEmailError] = useState<string>("Eingabe entspricht keiner validen E-Mail.");
+  const insets = useSafeAreaInsets();
 
   // Checks if entered email is available
   const verifyEmail = (input: string) => {
@@ -62,7 +64,9 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <OaaIconButton name="arrow-left" onPress={() => navigation.goBack()} />

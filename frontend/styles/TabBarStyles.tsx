@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { appColors, typefaces } from "./StyleAttributes";
 
 export const TabBarStyles = StyleSheet.create({

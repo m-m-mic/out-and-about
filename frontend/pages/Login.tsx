@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { AuthContext } from "../App";
 import { useState } from "react";
@@ -8,14 +8,17 @@ import { OaaInput } from "../components/OaaInput";
 import { OaaButton } from "../components/OaaButton";
 import { appColors, typefaces } from "../styles/StyleAttributes";
 import { Icon } from "@react-native-material/core";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore
 export default function Login({ navigation }: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDisclaimerVisible, setIsDisclaimerVisible] = useState(false);
+  const insets = useSafeAreaInsets();
   const { signIn } = React.useContext(AuthContext);
 
+  // Attempts sign in, makes disclaimer visible if sign in fails
   const handleSignIn = () => {
     signIn({ email: email, password: password }).then((response: number) => {
       if (response === 403 || response === 404) {
@@ -24,12 +27,15 @@ export default function Login({ navigation }: any) {
     });
   };
 
+  // Checks if user has entered email and password
   const runValidators = () => {
     return email.length === 0 || password.length === 0;
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <OaaIconButton name="arrow-left" onPress={() => navigation.goBack()} />

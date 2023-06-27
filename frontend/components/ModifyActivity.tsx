@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { ActivityType, ActivityValidatorType, CategoryType } from "../scripts/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import Loading from "./Loading";
 import { Icon } from "@react-native-material/core";
 import { geocodeAsync } from "expo-location";
 import { getGeocodeString } from "../scripts/getGeocodeString";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -40,12 +41,15 @@ export default function ModifyActivity({
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [geocode, setGeocode] = useState<string | undefined>();
   const [locationValue, setLocationValue] = useState<string | undefined>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getGeocode(activityInfo.location.coordinates[0], activityInfo.location.coordinates[1]);
     getCategories();
   }, []);
 
+  // Turns chosen location by user into a readable string
   const getGeocode = async (longitude?: number, latitude?: number) => {
     if (!latitude || !longitude) {
       return setGeocode(undefined);
@@ -84,6 +88,7 @@ export default function ModifyActivity({
     setActivityInfo({ ...activityInfo, categories: updatedCategories });
   };
 
+  // Fetches all available categories
   const getCategories = () => {
     const url = backendUrl + "/category";
     const requestOptions = {
@@ -99,7 +104,9 @@ export default function ModifyActivity({
     });
   };
 
+  // Creates new activity and redirects to new activity page
   const createActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -115,9 +122,12 @@ export default function ModifyActivity({
       const data: ActivityType = await response.json();
       navigation.navigate("Activity", { id: data._id, fromCreated: true });
     }
+    setIsFetching(false);
   };
 
+  // Updates the edited activity and redirects to said activity page
   const updateActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -134,9 +144,12 @@ export default function ModifyActivity({
     } else {
       console.log(response.status);
     }
+    setIsFetching(false);
   };
 
+  // Permanently deletes activity
   const deleteActivity = async () => {
+    setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
     const requestOptions = {
@@ -153,8 +166,10 @@ export default function ModifyActivity({
     } else {
       console.log(response);
     }
+    setIsFetching(false);
   };
 
+  // Validates whether user entered string is a valid location
   const validateLocation = async () => {
     if (locationValue) {
       const location = await geocodeAsync(locationValue);
@@ -175,6 +190,7 @@ export default function ModifyActivity({
     }
   };
 
+  // Checks if all user inputs have passed validation
   const areInputsValid = () => {
     for (const value of Object.values(validation)) {
       if (!value) {
@@ -184,6 +200,7 @@ export default function ModifyActivity({
     return true;
   };
 
+  // Creates or edits activity based on mode
   const handleConfirmation = async () => {
     if (editMode) {
       updateActivity();
@@ -192,6 +209,7 @@ export default function ModifyActivity({
     }
   };
 
+  // Checks if category is part of user's preferences
   const isCategoryIdIncluded = (categoryList: CategoryType[], category: CategoryType): boolean => {
     return categoryList.filter((e) => e._id === category._id).length > 0;
   };
@@ -200,13 +218,11 @@ export default function ModifyActivity({
     return <Loading />;
   }
 
-  console.log(activityInfo);
-
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
-        <OaaIconButton name="check" disabled={!areInputsValid()} onPress={() => handleConfirmation()} />
+        <OaaIconButton name="check" disabled={!areInputsValid() || isFetching} onPress={() => handleConfirmation()} />
       </View>
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>
@@ -375,7 +391,14 @@ export default function ModifyActivity({
             multiline={true}
             errorMessage="Weitere Informationen müssen unter 300 Zeichen lang sein."
           />
-          {editMode && <OaaButton label="Aktivität löschen" icon="delete" variant="warning" onPress={() => deleteActivity()} />}
+          {editMode && (
+            <OaaButton
+              label="Aktivität löschen"
+              icon="delete"
+              variant={isFetching ? "disabled" : "warning"}
+              onPress={() => deleteActivity()}
+            />
+          )}
         </View>
       </ScrollView>
     </View>

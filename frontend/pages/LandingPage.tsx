@@ -8,6 +8,7 @@ import { ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { backendUrl } from "../scripts/backendConnection";
 import { OaaActivityPreviewCard } from "../components/OaaActivityPreviewCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // @ts-ignore
 export default function LandingPage({ navigation }) {
@@ -16,11 +17,13 @@ export default function LandingPage({ navigation }) {
   const [flatListIndex, setFlatListIndex] = useState<number>(0);
   const width = Dimensions.get("window").width;
   const ref = React.useRef<FlatList>(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     getActivities();
   }, []);
 
+  // Sets up interval which is used to periodically change flatList index
   useEffect(() => {
     const interval = setInterval(() => {
       countUpIndex();
@@ -28,6 +31,7 @@ export default function LandingPage({ navigation }) {
     return () => clearInterval(interval);
   }, [activities]);
 
+  // Animates flatList when index changes
   useEffect(() => {
     ref.current?.scrollToIndex({
       index: flatListIndex,
@@ -35,6 +39,7 @@ export default function LandingPage({ navigation }) {
     });
   }, [flatListIndex]);
 
+  // Counts up the index or resets it back to 0
   const countUpIndex = () => {
     return setFlatListIndex((flatListIndex) => {
       if (flatListIndex < activities.length - 1) {
@@ -46,6 +51,7 @@ export default function LandingPage({ navigation }) {
     });
   };
 
+  // Fetches activities
   const getActivities = async () => {
     setLoading(true);
     const url = backendUrl + "/landing-page";
@@ -58,7 +64,9 @@ export default function LandingPage({ navigation }) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right, marginBottom: insets.bottom }}
+      contentContainerStyle={{ flexGrow: 1 }}>
       <View style={[PageStyles.page, PageStyles.spaceBetween]}>
         <View style={{ display: "flex", gap: 16 }}>
           <Text style={PageStyles.hero}>OUT & ABOUT</Text>

@@ -6,7 +6,7 @@ import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
 import { AccountType, CategoryType } from "../scripts/types";
 import { OaaChip } from "../components/OaaChip";
@@ -14,8 +14,7 @@ import { OaaActivityButton } from "../components/OaaActivityButton";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
-import { getLocation } from "../scripts/getLocation";
-import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Profile({ navigation }: any) {
   const [accountInfo, setAccountInfo] = useState<AccountType>();
@@ -23,11 +22,10 @@ export default function Profile({ navigation }: any) {
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [havePreferencesChanged, setHavePreferencesChanged] = useState<boolean>(false);
-
-  // @ts-ignore
-  const { signOut } = React.useContext(AuthContext);
-
+  const insets = useSafeAreaInsets();
   const currentTime = new Date().valueOf();
+
+  const { signOut } = React.useContext(AuthContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -36,6 +34,7 @@ export default function Profile({ navigation }: any) {
     }, [])
   );
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     await getAccountInfo();
@@ -43,6 +42,7 @@ export default function Profile({ navigation }: any) {
     setRefreshing(false);
   };
 
+  // Updates the category preferences of user
   const updateAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
     const storedToken = await getItemAsync("userToken");
@@ -59,6 +59,7 @@ export default function Profile({ navigation }: any) {
     }
   };
 
+  // Fetches account data of user
   const getAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
     const storedToken = await getItemAsync("userToken");
@@ -79,6 +80,7 @@ export default function Profile({ navigation }: any) {
     }
   };
 
+  // Fetches all available categories
   const getCategories = () => {
     const url = backendUrl + "/category";
     const requestOptions = {
@@ -92,6 +94,7 @@ export default function Profile({ navigation }: any) {
     });
   };
 
+  // Decides whether pressed category should be added or removed from preferences
   const handleCategoryPress = (categoryId: string) => {
     let updatedCategories = userCategories;
     if (updatedCategories?.includes(categoryId)) {
@@ -110,7 +113,9 @@ export default function Profile({ navigation }: any) {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+    <ScrollView
+      style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
       <View style={PageStyles.page}>
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={PageStyles.h1}>Profil</Text>
@@ -172,7 +177,7 @@ export default function Profile({ navigation }: any) {
               ))}
           </>
         ) : (
-          <Loading />
+          <Loading padding />
         )}
       </View>
     </ScrollView>

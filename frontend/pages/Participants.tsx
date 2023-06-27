@@ -11,12 +11,15 @@ import { ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { appColors, primary } from "../styles/StyleAttributes";
 import { OaaAccountImage } from "../components/OaaAccountImage";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// @ts-ignore
 export default function Participants({ navigation, route }) {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
   const id = route.params.id;
   const name = route.params.name;
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -24,6 +27,7 @@ export default function Participants({ navigation, route }) {
     }, [])
   );
 
+  // Fetches participant list of activity
   const getParticipants = async () => {
     const url = backendUrl + "/activity/" + id + "/participants";
     const storedToken = await getItemAsync("userToken");
@@ -42,6 +46,7 @@ export default function Participants({ navigation, route }) {
     }
   };
 
+  // Refreshes page if refreshControl is triggered
   const onRefresh = async () => {
     setRefreshing(true);
     getParticipants();
@@ -52,10 +57,8 @@ export default function Participants({ navigation, route }) {
     return <Loading />;
   }
 
-  console.log(activityInfo);
-
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop: insets.top, marginLeft: insets.left, marginRight: insets.right }}>
       <View style={styles.topBar}>
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
       </View>
