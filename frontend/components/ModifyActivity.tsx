@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { ActivityType, ActivityValidatorType, CategoryType } from "../scripts/types";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";

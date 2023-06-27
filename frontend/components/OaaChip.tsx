@@ -1,5 +1,5 @@
 import { GestureResponderEvent, TouchableOpacity, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React from "react";
 import { OaaChipStyles as styles } from "../styles/OaaChipStyles";
 
 type ChipVariant = "primary" | "disabled" | "unselected" | "caution" | "outline";

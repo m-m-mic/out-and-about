@@ -1,2 +1,2 @@
-// Production backend: none yet // Local backend: "http://localhost:3033"
-export const backendUrl: string = "http://100.80.236.168:3033";
+// Production backend: "https://api.ooa.micbu.de" // Local backend: "http://localhost:3033"
+export const backendUrl: string = "https://api.oaa.micbu.de";

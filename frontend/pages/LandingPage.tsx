@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, ScrollView, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Dimensions, FlatList, ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";

@@ -1,4 +1,4 @@
-import { RefreshControl, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";

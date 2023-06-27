@@ -14,6 +14,7 @@ import { getLocation } from "../scripts/getLocation";
 import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 import { LocationRequest } from "./LocationRequest";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {LocationObject} from "expo-location";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -26,7 +27,7 @@ export default function Overview({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      setIsLocationGranted(!!getLocation());
+      setRefreshing(false)
       setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
       getContent();
     }, [])
@@ -34,8 +35,13 @@ export default function Overview({ navigation }) {
 
   // Performs all required fetch requests for the page to work
   const getContent = async () => {
-    await getAccountActivities();
-    await getRecommendations();
+    const location = await getLocation();
+    if (!location) {
+      setIsLocationGranted(false);
+      return;
+    }
+    await getAccountActivities(location);
+    await getRecommendations(location);
   };
 
   // Refreshes page if refreshControl is triggered
@@ -46,12 +52,7 @@ export default function Overview({ navigation }) {
   };
 
   // Fetches activities of user
-  const getAccountActivities = async () => {
-    const location = await getLocation();
-    if (!location) {
-      setIsLocationGranted(false);
-      return;
-    }
+  const getAccountActivities = async (location: LocationObject) => {
     const token = await getItemAsync("userToken");
     const url = backendUrl + "/account/activities";
     let requestOptions = {
@@ -72,12 +73,7 @@ export default function Overview({ navigation }) {
   };
 
   // Fetches recommendations for user
-  const getRecommendations = async () => {
-    const location = await getLocation();
-    if (!location) {
-      setIsLocationGranted(false);
-      return;
-    }
+  const getRecommendations = async (location: LocationObject) => {
     const url = backendUrl + "/recommendations/?preferences=false";
     const token = await getItemAsync("userToken");
     const requestOptions = {

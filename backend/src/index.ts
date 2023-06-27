@@ -7,7 +7,7 @@ import { accountRoutes } from "./routes/accountRoutes";
 import { categoryRoutes } from "./routes/categoryRoutes";
 
 const app = express();
-const port = 3033;
+const port = 3034;
 dotenv.config();
 
 // SecretToken wird verwendet, um JsonWebToken zu generieren
