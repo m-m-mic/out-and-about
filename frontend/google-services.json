@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "10686326871",
+    "project_id": "out-and-about-munich",
+    "storage_bucket": "out-and-about-munich.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10686326871:android:0cd790bf21bb37d53f1b12",
+        "android_client_info": {
+          "package_name": "com.mmmic.outandabout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "10686326871-pl0ehjickns57lm5kdofsobipfpaooi5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqaGiZ--C8JxrRM940v9MUp3UGobVPpTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "10686326871-pl0ehjickns57lm5kdofsobipfpaooi5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

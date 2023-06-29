@@ -12,8 +12,19 @@ import { IconComponentProvider } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
 
+export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
+/* 
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+ */
 export default function App() {
   // Auth logic from here: https://reactnavigation.org/docs/auth-flow
   let [fontsLoaded] = useFonts({
