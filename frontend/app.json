@@ -50,6 +50,13 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow OUT & ABOUT to use your location."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#A2A5E4"
+        }
       ]
     ],
     "extra": {
