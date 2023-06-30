@@ -26,14 +26,14 @@ export default function Activity({ route, navigation }) {
   const [isChangingUserRelation, setIsChangingUserRelation] = useState<boolean>(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isActivityFull, setIsActivityFull] = useState<boolean>();
-  const [fromCreated, setFromCreated] = useState<boolean>(false);
   const id = route.params.id;
   const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
-      if (route.params.fromCreated) setFromCreated(route.params.fromCreated);
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
       getActivityInfo();
+      return () => backHandler.remove();
     }, [])
   );
 
@@ -138,20 +138,15 @@ export default function Activity({ route, navigation }) {
     setRefreshing(false);
   };
 
-  // Adds and removes back press event listener
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-    return () => backHandler.remove();
-  }, []);
-
   // Dictates how back button behaves. If previous page was createActivity, the back button will go to the root of the stack instead
   const handleBackButton = () => {
-    if (fromCreated) {
+    if (route.params.fromCreated) {
       navigation.getParent().goBack();
+      return true;
     } else {
       navigation.goBack();
+      return true;
     }
-    return true;
   };
 
   if (!activityInfo) {
