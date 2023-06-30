@@ -1,4 +1,4 @@
-# OUT & ABOUT
+![image](https://github.com/mobileappdevhm23/app-app-37/assets/85286401/044475c6-996a-433d-87b4-b2ace847970f)
 
 Raus aus dem Haus! Bei uns findest du schnell und einfach Aktivitäten und Events in deiner Nähe. 
 <br />
