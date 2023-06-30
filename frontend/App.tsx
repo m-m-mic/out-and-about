@@ -1,18 +1,28 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createContext, useEffect, useMemo, useReducer } from "react";
+import { createContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { backendUrl } from "./scripts/backendConnection";
 import { AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
 import { useFonts } from "expo-font";
-import { SafeAreaView, StatusBar } from "react-native";
-import { appColors, primary } from "./styles/StyleAttributes";
+import { Platform, StatusBar } from "react-native";
+import { appColors } from "./styles/StyleAttributes";
 import { IconComponentProvider } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 
 export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function App() {
   // Auth logic from here: https://reactnavigation.org/docs/auth-flow
@@ -22,6 +32,60 @@ export default function App() {
     NunitoSansBold: require("./assets/fonts/NunitoSans-Bold.ttf"),
     Righteous: require("./assets/fonts/Righteous-Regular.ttf"),
   });
+
+  const [expoPushToken, setExpoPushToken] = useState<any>("");
+  const [notification, setNotification] = useState<any>(false);
+  const notificationListener = useRef<any>();
+  const responseListener = useRef<any>();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    return token;
+  }
 
   const [state, dispatch] = useReducer(
     (prevState: any, action: { type?: AuthState; token?: string; id?: string }) => {

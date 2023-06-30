@@ -14,6 +14,7 @@ import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { getGeocodeString } from "../scripts/getGeocodeString";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as Notifications from "expo-notifications";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
@@ -35,6 +36,16 @@ export default function Activity({ route, navigation }) {
       getActivityInfo();
     }, [])
   );
+
+  const sendNotification = async (title: string, body: string) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title,
+        body: body,
+      },
+      trigger: null,
+    });
+  };
 
   // Fetches activity data from backend
   const getActivityInfo = async () => {
@@ -89,6 +100,17 @@ export default function Activity({ route, navigation }) {
       };
       const response = await fetch(url, requestOptions);
       if (response.status === 200) {
+        if (!isParticipant && activityInfo) {
+          await sendNotification(
+            `Du hast dich bei '${activityInfo.name}' angemeldet`,
+            `Wir sehen uns am ${new Date(activityInfo.date).toLocaleString("de-DE", {
+              month: "numeric",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}.`
+          );
+        }
         await getActivityInfo();
       } else {
         console.log("error 404: activity not found");
@@ -105,7 +127,6 @@ export default function Activity({ route, navigation }) {
     } else {
       setIsChangingUserRelation(true);
       await changeParticipantSub();
-      await getActivityInfo();
       setIsChangingUserRelation(false);
     }
   };

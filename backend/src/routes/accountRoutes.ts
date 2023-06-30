@@ -120,7 +120,6 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
   const authReq = req as authenticatedRequest;
   const id = authReq.account.id;
   const userLocation = [authReq.body.long, authReq.body.lat];
-  console.log(userLocation);
   if (mongoose.Types.ObjectId.isValid(id)) {
     try {
       // Accountdaten des Nutzers werden in der Collection gesucht. id, password, type und tier werden nicht mitgegeben

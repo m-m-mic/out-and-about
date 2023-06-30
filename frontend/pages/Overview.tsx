@@ -1,6 +1,6 @@
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
@@ -14,7 +14,8 @@ import { getLocation } from "../scripts/getLocation";
 import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 import { LocationRequest } from "./LocationRequest";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {LocationObject} from "expo-location";
+import { LocationObject } from "expo-location";
+import { Button } from "react-native";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -27,7 +28,7 @@ export default function Overview({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      setRefreshing(false)
+      setRefreshing(false);
       setDisclaimerIcons([getRandomActivityIcon(), getRandomActivityIcon(), getRandomActivityIcon()]);
       getContent();
     }, [])
