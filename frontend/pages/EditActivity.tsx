@@ -1,17 +1,20 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ActivityType } from "../scripts/types";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import Loading from "../components/Loading";
 import ModifyActivity from "../components/ModifyActivity";
 import { editActivityValidatorTemplate } from "../scripts/templates";
+import { AuthContext } from "../App";
+import { showToast } from "../scripts/showToast";
 
 //@ts-ignore
 export default function EditActivity({ route, navigation }) {
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
   const [validator, setValidator] = useState(editActivityValidatorTemplate);
   const activityId = route.params.id;
+  const { signOut } = useContext(AuthContext);
 
   useEffect(() => {
     getActivityInfo();
@@ -21,18 +24,25 @@ export default function EditActivity({ route, navigation }) {
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + activityId;
     const token = await getItemAsync("userToken");
+    if (!token) signOut();
     let requestOptions = {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data = await response.json();
-      setActivityInfo(data);
-    } else {
-      console.log("error 404: activity not found");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data = await response.json();
+        setActivityInfo(data);
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Aktivitätsdetails konnten nicht geladen werden");
+      }
+    } catch (error) {
+      showToast("Aktivitätsdetails konnten nicht geladen werden");
     }
   };
 

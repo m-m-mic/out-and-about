@@ -17,6 +17,7 @@ import { Icon } from "@react-native-material/core";
 import { appColors } from "./styles/StyleAttributes";
 import { TabBarStyles } from "./styles/TabBarStyles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Settings } from "./pages/Settings";
 
 const OverviewStack = createStackNavigator();
 
@@ -85,6 +86,11 @@ export function ProfileStackScreen() {
       <ProfileStack.Screen
         name="ActivityStack"
         component={ActivityStackScreen}
+        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
+      />
+      <ProfileStack.Screen
+        name="Settings"
+        component={Settings}
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS }}
       />
     </ProfileStack.Navigator>

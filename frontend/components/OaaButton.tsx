@@ -59,7 +59,7 @@ export function OaaButton({ label, variant = "primary", onPress, icon, expand = 
   };
 
   return (
-    <View style={elevation && styles.shadow}>
+    <View style={[{ flex: 1 }, elevation && styles.shadow]}>
       <TouchableOpacity
         activeOpacity={variant === "disabled" ? 1 : 0.8}
         style={getStyles("wrapper")}

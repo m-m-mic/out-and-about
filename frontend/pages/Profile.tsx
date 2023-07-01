@@ -15,6 +15,7 @@ import { OaaAccountImage } from "../components/OaaAccountImage";
 import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { showToast } from "../scripts/showToast";
 
 export default function Profile({ navigation }: any) {
   const [accountInfo, setAccountInfo] = useState<AccountType>();
@@ -24,7 +25,6 @@ export default function Profile({ navigation }: any) {
   const [havePreferencesChanged, setHavePreferencesChanged] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
   const currentTime = new Date().valueOf();
-
   const { signOut } = React.useContext(AuthContext);
 
   useFocusEffect(
@@ -45,38 +45,52 @@ export default function Profile({ navigation }: any) {
   // Updates the category preferences of user
   const updateAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
-    const storedToken = await getItemAsync("userToken");
+    const token = await getItemAsync("userToken");
+    if (!token) signOut();
     let requestOptions = {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${storedToken}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ categories: userCategories }),
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      await getAccountInfo();
-    } else {
-      console.log("unable to update categories");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        await getAccountInfo();
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Präferenzen konnte nicht aktualisiert werden");
+      }
+    } catch (error) {
+      showToast("Präferenzen konnte nicht aktualisiert werden");
     }
   };
 
   // Fetches account data of user
   const getAccountInfo = async () => {
     const url = backendUrl + "/account/info/";
-    const storedToken = await getItemAsync("userToken");
+    const token = await getItemAsync("userToken");
+    if (!token) signOut();
     let requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${storedToken}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data: AccountType = await response.json();
-      setAccountInfo(data);
-      setUserCategories(data.categories);
-      setHavePreferencesChanged(false);
-    } else {
-      console.log("could not load account data");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data: AccountType = await response.json();
+        setAccountInfo(data);
+        setUserCategories(data.categories);
+        setHavePreferencesChanged(false);
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Profilinformationen konnten nicht geladen werden");
+      }
+    } catch (error) {
+      showToast("Profilinformationen konnten nicht geladen werden");
     }
   };
 
@@ -87,11 +101,17 @@ export default function Profile({ navigation }: any) {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     };
-    fetch(url, requestOptions).then((response) => {
-      if (response.status == 200) {
-        response.json().then((data) => setCategories(data));
-      }
-    });
+    try {
+      fetch(url, requestOptions).then((response) => {
+        if (response.status == 200) {
+          response.json().then((data) => setCategories(data));
+        } else {
+          showToast("Kategorien konnten nicht geladen werden");
+        }
+      });
+    } catch (error) {
+      showToast("Kategorien konnten nicht geladen werden");
+    }
   };
 
   // Decides whether pressed category should be added or removed from preferences
@@ -119,7 +139,7 @@ export default function Profile({ navigation }: any) {
       <View style={PageStyles.page}>
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={PageStyles.h1}>Profil</Text>
-          <OaaIconButton name="logout" onPress={() => signOut()} />
+          <OaaIconButton name="cog" onPress={() => navigation.navigate("Settings")} />
         </View>
         {accountInfo && categories && !refreshing ? (
           <>

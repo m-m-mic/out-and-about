@@ -10,6 +10,9 @@ export const OaaChipStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
   },
+  expand: {
+    flex: 1,
+  },
   cSmall: {
     paddingHorizontal: 10,
     paddingVertical: 6,

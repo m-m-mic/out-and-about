@@ -1,6 +1,6 @@
 import { BackHandler, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import { ActivityType } from "../scripts/types";
@@ -15,6 +15,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getGeocodeString } from "../scripts/getGeocodeString";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
+import { AuthContext } from "../App";
+import { showToast } from "../scripts/showToast";
 
 //@ts-ignore
 export default function Activity({ route, navigation }) {
@@ -27,6 +29,7 @@ export default function Activity({ route, navigation }) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isActivityFull, setIsActivityFull] = useState<boolean>();
   const id = route.params.id;
+  const { signOut } = useContext(AuthContext);
   const insets = useSafeAreaInsets();
 
   useFocusEffect(
@@ -50,25 +53,32 @@ export default function Activity({ route, navigation }) {
   // Fetches activity data from backend
   const getActivityInfo = async () => {
     const url = backendUrl + "/activity/" + id;
-    const storedToken = await getItemAsync("userToken");
-    const storedUserId = await getItemAsync("userId");
+    const token = await getItemAsync("userToken");
+    const userId = await getItemAsync("userId");
+    if (!token || !userId) signOut();
     let requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${storedToken}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data: ActivityType = await response.json();
-      // Turns activity location into a readable string
-      const geocodeString = await getGeocodeString(data.location.coordinates[0], data.location.coordinates[1]);
-      setGeocode(geocodeString);
-      setActivityInfo(data);
-      setRelations(data, storedUserId);
-      setIsActivityFull(data.participants.length >= data.maximum_participants);
-    } else {
-      console.log("error 404: activity not found");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data: ActivityType = await response.json();
+        // Turns activity location into a readable string
+        const geocodeString = await getGeocodeString(data.location.coordinates[0], data.location.coordinates[1]);
+        setGeocode(geocodeString);
+        setActivityInfo(data);
+        setRelations(data, userId);
+        setIsActivityFull(data.participants.length >= data.maximum_participants);
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Aktivität konnte nicht gefunden werden");
+      }
+    } catch (error) {
+      showToast("Aktivität konnte nicht geladen werden");
     }
   };
 
@@ -89,34 +99,42 @@ export default function Activity({ route, navigation }) {
   const changeParticipantSub = async () => {
     const url = backendUrl + "/activity/" + id + "/save";
     const token = await getItemAsync("userToken");
-    let requestOptions;
-    if (token) {
-      requestOptions = {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      };
+    if (!token) signOut();
+    const requestOptions = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
       const response = await fetch(url, requestOptions);
       if (response.status === 200) {
-        if (!isParticipant && activityInfo) {
-          await sendNotification(
-            `Du hast dich bei '${activityInfo.name}' angemeldet`,
-            `Wir sehen uns am ${new Date(activityInfo.date).toLocaleString("de-DE", {
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}.`
-          );
-        }
+        if (activityInfo)
+          if (!isParticipant) {
+            showToast(`Du hast '${activityInfo.name}' zugesagt`);
+            await sendNotification(
+              `Du hast '${activityInfo.name}' zugesagt`,
+              `Wir sehen uns am ${new Date(activityInfo.date).toLocaleString("de-DE", {
+                month: "numeric",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}!`
+            );
+          } else {
+            showToast(`Du hast '${activityInfo.name}' abgesagt`);
+          }
         await getActivityInfo();
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else if (response.status === 404) {
+        showToast("Aktivität konnte nicht gefunden werden");
       } else {
-        console.log("error 404: activity not found");
+        showToast("Aktion konnte nicht ausgeführt werden");
       }
-    } else {
-      console.log("no token");
+    } catch (error) {
+      showToast("Aktion konnte nicht ausgeführt werden");
     }
   };
 

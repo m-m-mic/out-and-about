@@ -1,7 +1,7 @@
 import { ScrollView, Text, View } from "react-native";
 import * as React from "react";
 import { ActivityType, ActivityValidatorType, CategoryType } from "../scripts/types";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "./OaaInput";
 import { OaaChip } from "./OaaChip";
@@ -18,6 +18,8 @@ import { Icon } from "@react-native-material/core";
 import { geocodeAsync } from "expo-location";
 import { getGeocodeString } from "../scripts/getGeocodeString";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AuthContext } from "../App";
+import { showToast } from "../scripts/showToast";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -43,6 +45,7 @@ export default function ModifyActivity({
   const [locationValue, setLocationValue] = useState<string | undefined>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
+  const { signOut } = useContext(AuthContext);
 
   useEffect(() => {
     getGeocode(activityInfo.location.coordinates[0], activityInfo.location.coordinates[1]);
@@ -109,20 +112,29 @@ export default function ModifyActivity({
     setIsFetching(true);
     const url = backendUrl + "/activity";
     const token = await getItemAsync("userToken");
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(activityInfo),
-    };
-    const response = await fetch(url, requestOptions);
-    if (response.status == 201) {
-      const data: ActivityType = await response.json();
-      navigation.navigate("Activity", { id: data._id, fromCreated: true });
+    if (!token) signOut();
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(activityInfo),
+      };
+      const response = await fetch(url, requestOptions);
+      if (response.status == 201) {
+        const data: ActivityType = await response.json();
+        navigation.navigate("Activity", { id: data._id, fromCreated: true });
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Aktivität konnte nicht erstellt werden");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      showToast("Aktivität konnte nicht erstellt werden");
     }
-    setIsFetching(false);
   };
 
   // Updates the edited activity and redirects to said activity page
@@ -130,21 +142,29 @@ export default function ModifyActivity({
     setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
-    const requestOptions = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(activityInfo),
-    };
-    const response = await fetch(url, requestOptions);
-    if (response.status == 200) {
-      navigation.navigate("Activity", { id: activityInfo._id });
-    } else {
-      console.log(response.status);
+    if (!token) signOut();
+
+    try {
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(activityInfo),
+      };
+      const response = await fetch(url, requestOptions);
+      if (response.status == 200) {
+        navigation.navigate("Activity", { id: activityInfo._id });
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Aktivität konnte nicht aktualisiert werden");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      showToast("Aktivität konnte nicht aktualisiert werden");
     }
-    setIsFetching(false);
   };
 
   // Permanently deletes activity
@@ -152,21 +172,29 @@ export default function ModifyActivity({
     setIsFetching(true);
     const url = backendUrl + "/activity/" + activityInfo._id;
     const token = await getItemAsync("userToken");
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(activityInfo),
-    };
-    const response = await fetch(url, requestOptions);
-    if (response.status == 200) {
-      navigation.getParent().goBack();
-    } else {
-      console.log(response);
+    if (!token) signOut();
+
+    try {
+      const requestOptions = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(activityInfo),
+      };
+      const response = await fetch(url, requestOptions);
+      if (response.status == 200) {
+        navigation.getParent().goBack();
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Aktivität konnte nicht gelöscht werden");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      showToast("Aktivität konnte nicht gelöscht werden");
     }
-    setIsFetching(false);
   };
 
   // Validates whether user entered string is a valid location

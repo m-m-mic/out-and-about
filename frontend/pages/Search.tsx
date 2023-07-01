@@ -2,7 +2,7 @@ import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-
 import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
 import { ActivityType } from "../scripts/types";
@@ -20,6 +20,8 @@ import { getDistance } from "geolib";
 import { Icon } from "@react-native-material/core";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OaaButton } from "../components/OaaButton";
+import { showToast } from "../scripts/showToast";
+import { AuthContext } from "../App";
 
 export default function Search({ navigation }: any) {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -39,6 +41,7 @@ export default function Search({ navigation }: any) {
   const [mapCoordinates, setMapCoordinates] = useState<Region>();
   const [isNewSearchPromptVisible, setIsNewSearchPromptVisible] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
+  const { signOut } = useContext(AuthContext);
 
   // Fetches results on page load
   useEffect(() => {
@@ -90,6 +93,7 @@ export default function Search({ navigation }: any) {
     let coordinates = { lat: location?.coords.latitude, long: location?.coords.longitude };
     if (useMapRegion && mapCoordinates) coordinates = { lat: mapCoordinates.latitude, long: mapCoordinates.longitude };
     const token = await getItemAsync("userToken");
+    if (!token) signOut();
     let url;
     const requestOptions = {
       method: "POST",
@@ -107,27 +111,33 @@ export default function Search({ navigation }: any) {
       setIsSearchResults(true);
       url = backendUrl + "/search/" + searchTerm + "?page=" + page + "&preferences=" + filtered;
     }
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
-      if (page === 0) {
-        setResults(data.activities);
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
+        if (page === 0) {
+          setResults(data.activities);
+        } else {
+          setResults([...results, ...data.activities]);
+        }
+        // Sets coordinates of search to startCoordinates
+        setStartCoordinates(coordinates);
+        // Disables the activityPopup on the map if no results were returned
+        if (data.activities.length > 0) {
+          setActivityPopup(data.activities[0]);
+          setIsActivityPopupVisible(true);
+        } else {
+          setActivityPopup(undefined);
+        }
+        setCurrentPage(page + 1);
+        setIsLastPage(data.last_page);
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
       } else {
-        setResults([...results, ...data.activities]);
+        showToast("Ergebnisse konnten nicht geladen werden");
       }
-      // Sets coordinates of search to startCoordinates
-      setStartCoordinates(coordinates);
-      // Disables the activityPopup on the map if no results were returned
-      if (data.activities.length > 0) {
-        setActivityPopup(data.activities[0]);
-        setIsActivityPopupVisible(true);
-      } else {
-        setActivityPopup(undefined);
-      }
-      setCurrentPage(page + 1);
-      setIsLastPage(data.last_page);
-    } else {
-      console.log("Could not perform search");
+    } catch (error) {
+      showToast("Ergebnisse konnten nicht geladen werden");
     }
     setIsSearchFiltered(filtered);
     setLoading(false);
@@ -259,13 +269,30 @@ export default function Search({ navigation }: any) {
             disabled={loading}
             onPress={() => {
               setCurrentPage(0);
+              if (isSearchFiltered) {
+                showToast("Filter deaktiviert");
+              } else {
+                showToast("Aktivitäten werden gefiltert");
+              }
               getResults(0, !isSearchFiltered);
             }}
           />
         </View>
-        <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-          <OaaChip label="Liste" variant={isMapView ? "outline" : "primary"} size="medium" onPress={() => setIsMapView(false)} />
-          <OaaChip label="Karte" variant={!isMapView ? "outline" : "primary"} size="medium" onPress={() => setIsMapView(true)} />
+        <View style={{ display: "flex", flexDirection: "row", gap: 8, width: "100%" }}>
+          <OaaChip
+            label="Liste"
+            variant={isMapView ? "outline" : "primary"}
+            size="medium"
+            expand
+            onPress={() => setIsMapView(false)}
+          />
+          <OaaChip
+            label="Karte"
+            variant={!isMapView ? "outline" : "primary"}
+            size="medium"
+            expand
+            onPress={() => setIsMapView(true)}
+          />
         </View>
       </View>
       {isMapView ? resultsMapView() : resultsListView()}

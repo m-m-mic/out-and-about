@@ -13,7 +13,7 @@ export const OaaButtonStyles = StyleSheet.create({
     borderRadius: 12,
   },
   expand: {
-    flex: 1,
+    flexGrow: 1,
   },
   shadow: {
     shadowColor: "#171717",

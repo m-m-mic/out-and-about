@@ -11,12 +11,14 @@ interface OoaChipProps {
   variant?: ChipVariant;
   onPress?: (event: GestureResponderEvent) => void;
   size?: ChipSize;
+  expand?: boolean;
 }
 
-export function OaaChip({ label, variant = "primary", size = "medium", onPress }: OoaChipProps) {
+export function OaaChip({ label, variant = "primary", size = "medium", onPress, expand = false }: OoaChipProps) {
   // Styles chip based on chosen variant
   const getStyles = (component: string) => {
     let containerStyles: any = [styles.container];
+    if (expand) containerStyles.push(styles.expand);
     let textStyles: any = [styles.text];
     if (size === "small") {
       containerStyles.push(styles.cSmall);

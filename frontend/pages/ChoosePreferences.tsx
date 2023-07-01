@@ -9,6 +9,7 @@ import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { OaaChip } from "../components/OaaChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { showToast } from "../scripts/showToast";
 
 // @ts-ignore
 export default function ChoosePreferences({ route, navigation }) {
@@ -43,11 +44,17 @@ export default function ChoosePreferences({ route, navigation }) {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     };
-    fetch(url, requestOptions).then((response) => {
-      if (response.status == 200) {
-        response.json().then((data) => setCategories(data));
-      }
-    });
+    try {
+      fetch(url, requestOptions).then((response) => {
+        if (response.status == 200) {
+          response.json().then((data) => setCategories(data));
+        } else {
+          showToast("Kategorien konnten nicht geladen werden");
+        }
+      });
+    } catch (error) {
+      showToast("Kategorien konnten nicht geladen werden");
+    }
   };
 
   return (

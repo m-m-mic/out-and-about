@@ -9,6 +9,7 @@ import Loading from "../components/Loading";
 import { backendUrl } from "../scripts/backendConnection";
 import { OaaActivityPreviewCard } from "../components/OaaActivityPreviewCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { showToast } from "../scripts/showToast";
 
 // @ts-ignore
 export default function LandingPage({ navigation }) {
@@ -55,12 +56,18 @@ export default function LandingPage({ navigation }) {
   const getActivities = async () => {
     setLoading(true);
     const url = backendUrl + "/landing-page";
-    const response = await fetch(url);
-    if (response.status === 200) {
-      const data = await response.json();
-      setActivities(data);
+    try {
+      const response = await fetch(url);
+      if (response.status === 200) {
+        const data = await response.json();
+        setActivities(data);
+      } else {
+        showToast("Aktivitäten konnten nicht geladen werden");
+      }
+      setLoading(false);
+    } catch (error) {
+      showToast("Aktivitäten konnten nicht geladen werden");
     }
-    setLoading(false);
   };
 
   return (

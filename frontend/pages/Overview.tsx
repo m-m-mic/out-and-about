@@ -1,6 +1,6 @@
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import * as React from "react";
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useCallback, useState, useContext } from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
@@ -15,7 +15,8 @@ import { getRandomActivityIcon } from "../scripts/getRandomActivityIcon";
 import { LocationRequest } from "./LocationRequest";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LocationObject } from "expo-location";
-import { Button } from "react-native";
+import { AuthContext } from "../App";
+import { showToast } from "../scripts/showToast";
 
 // @ts-ignore
 export default function Overview({ navigation }) {
@@ -25,6 +26,7 @@ export default function Overview({ navigation }) {
   const [disclaimerIcons, setDisclaimerIcons] = useState<string[]>();
   const [isLocationGranted, setIsLocationGranted] = useState<boolean>(true);
   const insets = useSafeAreaInsets();
+  const { signOut } = useContext(AuthContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -55,6 +57,7 @@ export default function Overview({ navigation }) {
   // Fetches activities of user
   const getAccountActivities = async (location: LocationObject) => {
     const token = await getItemAsync("userToken");
+    if (!token) signOut();
     const url = backendUrl + "/account/activities";
     let requestOptions = {
       method: "POST",
@@ -64,12 +67,19 @@ export default function Overview({ navigation }) {
       },
       body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data = await response.json();
-      setAccountActivities(data);
-    } else {
-      console.log(response.status);
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data = await response.json();
+        setAccountActivities(data);
+        return;
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Eigene Aktivitäten konnten nicht geladen werden", 5);
+      }
+    } catch (error) {
+      showToast("Eigene Aktivitäten konnten nicht geladen werden", 5);
     }
   };
 
@@ -77,6 +87,7 @@ export default function Overview({ navigation }) {
   const getRecommendations = async (location: LocationObject) => {
     const url = backendUrl + "/recommendations/?preferences=false";
     const token = await getItemAsync("userToken");
+    if (!token) signOut();
     const requestOptions = {
       method: "POST",
       headers: {
@@ -85,12 +96,19 @@ export default function Overview({ navigation }) {
       },
       body: JSON.stringify({ lat: location?.coords.latitude, long: location?.coords.longitude }),
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
-      setRecommendations(data.activities);
-    } else {
-      console.log("Oh oh :((((");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data: { activities: ActivityType[]; last_page: boolean } = await response.json();
+        setRecommendations(data.activities);
+        return;
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Empfehlungen konnten nicht geladen werden");
+      }
+    } catch (error) {
+      showToast("Empfehlungen konnten nicht geladen werden");
     }
   };
 

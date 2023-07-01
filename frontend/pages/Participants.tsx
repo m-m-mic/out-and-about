@@ -3,7 +3,7 @@ import * as React from "react";
 import { PageStyles } from "../styles/PageStyles";
 import { ActivityStyles as styles } from "../styles/ActivityStyles";
 import { OaaIconButton } from "../components/OaaIconButton";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
@@ -12,6 +12,8 @@ import Loading from "../components/Loading";
 import { appColors, primary } from "../styles/StyleAttributes";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AuthContext } from "../App";
+import { showToast } from "../scripts/showToast";
 
 // @ts-ignore
 export default function Participants({ navigation, route }) {
@@ -20,6 +22,7 @@ export default function Participants({ navigation, route }) {
   const id = route.params.id;
   const name = route.params.name;
   const insets = useSafeAreaInsets();
+  const { signOut } = useContext(AuthContext);
 
   useFocusEffect(
     useCallback(() => {
@@ -30,19 +33,26 @@ export default function Participants({ navigation, route }) {
   // Fetches participant list of activity
   const getParticipants = async () => {
     const url = backendUrl + "/activity/" + id + "/participants";
-    const storedToken = await getItemAsync("userToken");
+    const token = await getItemAsync("userToken");
+    if (!token) signOut();
     let requestOptions = {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${storedToken}`,
+        Authorization: `Bearer ${token}`,
       },
     };
-    const response = await fetch(url, requestOptions);
-    if (response.status === 200) {
-      const data = await response.json();
-      setActivityInfo(data);
-    } else {
-      console.log("error 404: activity not found");
+    try {
+      const response = await fetch(url, requestOptions);
+      if (response.status === 200) {
+        const data = await response.json();
+        setActivityInfo(data);
+      } else if (response.status === 401 || response.status === 403) {
+        signOut();
+      } else {
+        showToast("Teilnehmerliste konnte nicht geladen werden");
+      }
+    } catch (error) {
+      showToast("Teilnehmerliste konnte nicht geladen werden");
     }
   };
 

@@ -49,7 +49,8 @@ export default function Register({ navigation }) {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        setEmailError("Es ist ein unerwarteter Fehler aufgetreten.");
+        setRegistrationValidator({ ...registrationValidator, email: false });
       });
   };
 

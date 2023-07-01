@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import * as React from "react";
 import { typefaces } from "../styles/StyleAttributes";
 
@@ -11,16 +11,15 @@ export default function Loading({ padding = false }) {
         justifyContent: "center",
         alignItems: "center",
       }}>
-      <Text
-        style={{
-          paddingTop: padding ? 150 : 0,
-          textAlign: "center",
-          fontFamily: typefaces.hero.fontFamily,
-          fontSize: typefaces.hero.size,
-          color: typefaces.hero.color,
-        }}>
-        LOADING
-      </Text>
+      <View style={{ paddingTop: padding ? 150 : 0 }}>
+        <Image
+          style={{
+            height: 60,
+            width: 60,
+          }}
+          source={require("../assets/loading-animation.gif")}
+        />
+      </View>
     </View>
   );
 }

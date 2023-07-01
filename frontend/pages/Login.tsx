@@ -21,7 +21,7 @@ export default function Login({ navigation }: any) {
   // Attempts sign in, makes disclaimer visible if sign in fails
   const handleSignIn = () => {
     signIn({ email: email, password: password }).then((response: number) => {
-      if (response === 403 || response === 404) {
+      if (response != 200) {
         setIsDisclaimerVisible(true);
       }
     });

@@ -13,6 +13,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import { showToast } from "./scripts/showToast";
 
 export const AuthContext: React.Context<AuthType> = createContext({} as AuthType);
 
@@ -173,14 +174,19 @@ export default function App() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         };
-        const response = await fetch(url, requestOptions);
-        if (response.status === 201) {
-          const credentials = await response.json();
-          await setItemAsync("userToken", credentials.token);
-          await setItemAsync("userId", credentials.id);
-          dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+        try {
+          const response = await fetch(url, requestOptions);
+          if (response.status === 201) {
+            const credentials = await response.json();
+            await setItemAsync("userToken", credentials.token);
+            await setItemAsync("userId", credentials.id);
+            dispatch({ type: "SIGN_IN", token: credentials.token, id: credentials.id });
+          } else {
+            showToast("Konto konnte nicht erstellt werden. Bitte versuche es später erneut.");
+          }
+        } catch (error) {
+          showToast("Konto konnte nicht erstellt werden. Bitte versuche es später erneut.");
         }
-        return response.status;
       },
     }),
     []
