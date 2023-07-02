@@ -9,6 +9,7 @@ export const OaaActivityButtonStyles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     backgroundColor: appColors.background,
+    paddingRight: 8,
     gap: 8,
     elevation: 2,
   },

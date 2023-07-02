@@ -227,14 +227,13 @@ export default function Activity({ route, navigation }: ActivityProps) {
               minute: "2-digit",
             })}
           </Text>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <View style={{ display: "flex", gap: 16 }}>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <View style={{ display: "flex", gap: 16, flex: 1 }}>
               <Text style={PageStyles.h2}>Wo?</Text>
               <Text style={PageStyles.body}>{geocode && geocode}</Text>
             </View>
             <OaaIconButton name="map-marker" rounded={false} variant="primary" onPress={() => setIsModalVisible(true)} />
           </View>
-
           <Text style={PageStyles.h2}>Wie viele?</Text>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <Text style={PageStyles.body}>
