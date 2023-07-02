@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useContext, useEffect, useState } from "react";
-import { ActivityType } from "../scripts/types";
+import { ActivityStackType, ActivityType } from "../scripts/types";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
 import Loading from "../components/Loading";
@@ -8,9 +8,11 @@ import ModifyActivity from "../components/ModifyActivity";
 import { editActivityValidatorTemplate } from "../scripts/templates";
 import { AuthContext } from "../App";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-//@ts-ignore
-export default function EditActivity({ route, navigation }) {
+type EditActivityProps = NativeStackScreenProps<ActivityStackType, "EditActivity">;
+
+export default function EditActivity({ route, navigation }: EditActivityProps) {
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
   const [validator, setValidator] = useState(editActivityValidatorTemplate);
   const activityId = route.params.id;

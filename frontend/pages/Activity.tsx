@@ -3,7 +3,7 @@ import * as React from "react";
 import { useCallback, useContext, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import { backendUrl } from "../scripts/backendConnection";
-import { ActivityType } from "../scripts/types";
+import { ActivityStackType, ActivityType } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { OaaChip } from "../components/OaaChip";
@@ -17,9 +17,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import { AuthContext } from "../App";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
+import { MapModal } from "../components/MapModal";
+import { IconButton } from "@react-native-material/core";
 
-//@ts-ignore
-export default function Activity({ route, navigation }) {
+type ActivityProps = NativeStackScreenProps<ActivityStackType, "Activity">;
+
+export default function Activity({ route, navigation }: ActivityProps) {
   const [activityInfo, setActivityInfo] = useState<ActivityType | null>(null);
   const [geocode, setGeocode] = useState<string | undefined>();
   const [isOwner, setOwner] = useState(false);
@@ -28,6 +32,7 @@ export default function Activity({ route, navigation }) {
   const [isChangingUserRelation, setIsChangingUserRelation] = useState<boolean>(false);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isActivityFull, setIsActivityFull] = useState<boolean>();
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const id = route.params.id;
   const { signOut } = useContext(AuthContext);
   const insets = useSafeAreaInsets();
@@ -140,8 +145,8 @@ export default function Activity({ route, navigation }) {
 
   // Dictates what happens if user presses the hover button (e.g. save activity, open participant list...)
   const handleButtonPress = async () => {
-    if (isOwner) {
-      navigation.navigate("Participants", { id: activityInfo?._id, name: activityInfo?.name });
+    if (isOwner && activityInfo) {
+      navigation.navigate("Participants", { id: id, name: activityInfo.name });
     } else {
       setIsChangingUserRelation(true);
       await changeParticipantSub();
@@ -159,7 +164,7 @@ export default function Activity({ route, navigation }) {
   // Dictates how back button behaves. If previous page was createActivity, the back button will go to the root of the stack instead
   const handleBackButton = () => {
     if (route.params.fromCreated) {
-      navigation.getParent().goBack();
+      navigation.getParent()?.goBack();
       return true;
     } else {
       navigation.goBack();
@@ -195,6 +200,7 @@ export default function Activity({ route, navigation }) {
           onPress={handleButtonPress}
         />
       </View>
+      <MapModal visible={isModalVisible} setVisible={setIsModalVisible} activities={[activityInfo]} />
       <OaaActivityImage id={id} blur={scrollPosition} />
       <ScrollView
         style={{ flex: 1 }}
@@ -202,7 +208,7 @@ export default function Activity({ route, navigation }) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <View style={[PageStyles.page, styles.mainView]}>
           <View style={{ display: "flex", gap: 8 }}>
-            <Text style={PageStyles.hero}>{activityInfo.name}</Text>
+            <Text style={[PageStyles.hero, { paddingTop: 8 }]}>{activityInfo.name}</Text>
             {/*@ts-ignore*/}
             <Text style={PageStyles.subtitle}>Organisiert von {activityInfo.organizer?.username}</Text>
           </View>
@@ -221,8 +227,14 @@ export default function Activity({ route, navigation }) {
               minute: "2-digit",
             })}
           </Text>
-          <Text style={PageStyles.h2}>Wo?</Text>
-          <Text style={PageStyles.body}>{geocode && geocode}</Text>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <View style={{ display: "flex", gap: 16 }}>
+              <Text style={PageStyles.h2}>Wo?</Text>
+              <Text style={PageStyles.body}>{geocode && geocode}</Text>
+            </View>
+            <OaaIconButton name="map-marker" rounded={false} variant="primary" onPress={() => setIsModalVisible(true)} />
+          </View>
+
           <Text style={PageStyles.h2}>Wie viele?</Text>
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
             <Text style={PageStyles.body}>

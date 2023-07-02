@@ -8,8 +8,12 @@ import { PageStyles } from "../styles/PageStyles";
 import * as React from "react";
 import { OaaButton } from "../components/OaaButton";
 import { primary } from "../styles/StyleAttributes";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
+import { ProfileStackType } from "../scripts/types";
 
-export function Settings({ navigation, route }) {
+type SettingsProps = NativeStackScreenProps<ProfileStackType, "Settings">;
+
+export function Settings({ navigation }: SettingsProps) {
   const insets = useSafeAreaInsets();
   const { signOut } = useContext(AuthContext);
 

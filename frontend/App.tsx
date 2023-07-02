@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { backendUrl } from "./scripts/backendConnection";
-import { AuthState, AuthType } from "./scripts/types";
+import { AccountType, AuthState, AuthType } from "./scripts/types";
 import { loggedInStack, loggedOutStack } from "./layout";
 import { useFonts } from "expo-font";
 import { Platform, StatusBar } from "react-native";
@@ -26,7 +26,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
-  // Auth logic from here: https://reactnavigation.org/docs/auth-flow
   let [fontsLoaded] = useFonts({
     NunitoSansRegular: require("./assets/fonts/NunitoSans-Regular.ttf"),
     NunitoSansBoldItalic: require("./assets/fonts/NunitoSans-BoldItalic.ttf"),
@@ -85,6 +84,7 @@ export default function App() {
     return token;
   }
 
+  // Auth logic from here: https://reactnavigation.org/docs/auth-flow
   const [state, dispatch] = useReducer(
     (prevState: any, action: { type?: AuthState; token?: string; id?: string }) => {
       switch (action.type) {
@@ -140,12 +140,12 @@ export default function App() {
   const authContext: AuthType = useMemo(
     () => ({
       // Sign In fetch request
-      signIn: async (data: any): Promise<number> => {
+      signIn: async (data: { email: string; password: string }): Promise<number> => {
         const url = backendUrl + "/account/login";
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: data.email, password: data.password }),
+          body: JSON.stringify(data),
         };
         try {
           const response = await fetch(url, requestOptions);
@@ -167,7 +167,7 @@ export default function App() {
         dispatch({ type: "SIGN_OUT" });
       },
       // Sign up fetch request
-      signUp: async (data: Object) => {
+      signUp: async (data: AccountType) => {
         const url = backendUrl + "/account/register";
         const requestOptions = {
           method: "POST",

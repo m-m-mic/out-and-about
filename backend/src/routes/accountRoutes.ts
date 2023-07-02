@@ -144,7 +144,6 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
         return;
       }
       for (let i = 0; i < requestedAccount.planned_activities.length; i++) {
-        // @ts-ignore
         if (requestedAccount.planned_activities[i].date < new Date().valueOf()) {
           requestedAccount.planned_activities.splice(i, 1);
         } else {
@@ -153,7 +152,6 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
       }
 
       for (let i = 0; i < requestedAccount.saved_activities.length; i++) {
-        // @ts-ignore
         if (requestedAccount.saved_activities[i].date < new Date().valueOf()) {
           requestedAccount.saved_activities.splice(i, 1);
         } else {
@@ -161,21 +159,16 @@ accountRoutes.post("/account/activities", authenticateJWT, async (req: Request, 
         }
       }
 
-      // @ts-ignore
       requestedAccount.planned_activities.map((activity) => {
-        // @ts-ignore
         activity.distance = getDistance(
           { longitude: userLocation[0], latitude: userLocation[1] },
-          // @ts-ignore
           { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
         );
       });
-      // @ts-ignore
+
       requestedAccount.saved_activities.map((activity) => {
-        // @ts-ignore
         activity.distance = getDistance(
           { longitude: userLocation[0], latitude: userLocation[1] },
-          // @ts-ignore
           { longitude: activity.location.coordinates[0], latitude: activity.location.coordinates[1] }
         );
       });

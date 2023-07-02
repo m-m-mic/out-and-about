@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ActivityType } from "../interfaces";
 
 //Schema für Geolocation
 const GeoSchema = new mongoose.Schema({
@@ -30,4 +31,4 @@ const ActivitySchema = new mongoose.Schema({
 
 ActivitySchema.index({ location: "2dsphere" });
 
-export const Activity = mongoose.model("Activity", ActivitySchema);
+export const Activity = mongoose.model<ActivityType>("Activity", ActivitySchema);

@@ -6,10 +6,11 @@ import { OaaActivityCardStyles as styles } from "../styles/OaaActivityCardStyles
 import { backendUrl } from "../scripts/backendConnection";
 import { formatDistance } from "../scripts/formatDistance";
 import { OaaIconButton } from "./OaaIconButton";
+import { NativeStackNavigationProp } from "react-native-screens/native-stack";
 
 interface OaaActivityCardProps {
   activity: ActivityType;
-  navigation: any;
+  navigation: NativeStackNavigationProp<any>;
   onDismiss?: (event: GestureResponderEvent) => void;
   expanded?: boolean;
 }
@@ -42,7 +43,7 @@ export function OaaActivityCard({ activity, navigation, expanded, onDismiss }: O
           </Text>
           <View style={styles.chipColumn}>
             <View style={styles.chips}>
-              <OaaChip label={formatDistance(activity.distance)} size="small" variant="outline" />
+              {activity.distance && <OaaChip label={formatDistance(activity.distance)} size="small" variant="outline" />}
               <OaaChip
                 label={new Date(activity.date).toLocaleString("de-DE", {
                   year: "numeric",

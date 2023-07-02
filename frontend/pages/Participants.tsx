@@ -7,16 +7,18 @@ import { useCallback, useContext, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { ActivityType } from "../scripts/types";
+import { ActivityStackType, ActivityType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { appColors, primary } from "../styles/StyleAttributes";
 import { OaaAccountImage } from "../components/OaaAccountImage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthContext } from "../App";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-// @ts-ignore
-export default function Participants({ navigation, route }) {
+type ParticipantsProps = NativeStackScreenProps<ActivityStackType, "Participants">;
+
+export default function Participants({ navigation, route }: ParticipantsProps) {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
   const id = route.params.id;
@@ -83,7 +85,7 @@ export default function Participants({ navigation, route }) {
             {activityInfo.participants.map((participant, index) => (
               <View key={participant._id}>
                 <View style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "center" }}>
-                  <OaaAccountImage size={50} />
+                  <OaaAccountImage size={50} id={participant._id} />
                   <View style={{ display: "flex", gap: 2 }}>
                     <Text numberOfLines={1} style={[PageStyles.h1, { color: appColors.body }]}>
                       {participant.username}

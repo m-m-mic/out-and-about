@@ -5,7 +5,7 @@ import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { AccountType, ActivityType } from "../scripts/types";
+import { AccountType, ActivityType, OverviewStackType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { useFocusEffect } from "@react-navigation/native";
@@ -17,9 +17,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LocationObject } from "expo-location";
 import { AuthContext } from "../App";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-// @ts-ignore
-export default function Overview({ navigation }) {
+type OverviewProps = NativeStackScreenProps<OverviewStackType, "Overview">;
+
+export default function Overview({ navigation }: OverviewProps) {
   const [accountActivities, setAccountActivities] = useState<AccountType>();
   const [recommendations, setRecommendations] = useState<ActivityType[]>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -85,7 +87,7 @@ export default function Overview({ navigation }) {
 
   // Fetches recommendations for user
   const getRecommendations = async (location: LocationObject) => {
-    const url = backendUrl + "/recommendations/?preferences=false";
+    const url = backendUrl + "/recommendations/?preferences=true";
     const token = await getItemAsync("userToken");
     if (!token) signOut();
     const requestOptions = {
@@ -169,7 +171,6 @@ export default function Overview({ navigation }) {
               onPress={() =>
                 navigation.navigate("ActivityStack", {
                   screen: "CreateActivity",
-                  params: { stackOrigin: "Overview" },
                 })
               }
             />

@@ -224,7 +224,7 @@ activityRoutes.post("/search/:query", authenticateJWT, async (req, res) => {
       date: { $gt: new Date().valueOf() },
     };
     if (preferences) {
-      const userPreferences = constructPreferenceModel(account, null);
+      const userPreferences = constructPreferenceModel(account, id);
       preferenceModel = { ...preferenceModel, ...userPreferences };
     }
     let activities: ActivityType[] = await Activity.find(preferenceModel, {
@@ -276,7 +276,7 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
       date: { $gt: new Date().valueOf() },
     };
     if (preferences) {
-      const userPreferences = constructPreferenceModel(account, null);
+      const userPreferences = constructPreferenceModel(account, id);
       preferenceModel = { ...preferenceModel, ...userPreferences };
     }
     let activities: ActivityType[] = await Activity.find(preferenceModel, {
@@ -312,9 +312,8 @@ activityRoutes.post("/recommendations/", authenticateJWT, async (req, res) => {
 // Gibt zufällig 8 verschiedene Aktivitäten zurück
 activityRoutes.get("/landing-page/", async (req, res) => {
   try {
-    // TODO: filter inactive activities based on date
     let activities = await Activity.find(
-      { only_logged_in: false },
+      { only_logged_in: false, date: { $gt: new Date().valueOf() } },
       {
         only_logged_in: false,
         participants: false,

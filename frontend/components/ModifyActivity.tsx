@@ -20,6 +20,8 @@ import { getGeocodeString } from "../scripts/getGeocodeString";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthContext } from "../App";
 import { showToast } from "../scripts/showToast";
+import { NativeStackNavigationProp } from "react-native-screens/native-stack";
+import { MapModal } from "./MapModal";
 
 interface ModifyActivityProps {
   activityInfo: ActivityType;
@@ -27,7 +29,7 @@ interface ModifyActivityProps {
   validation: ActivityValidatorType;
   setValidation: Dispatch<SetStateAction<ActivityValidatorType>>;
   editMode?: boolean;
-  navigation: any;
+  navigation: NativeStackNavigationProp<any>;
 }
 
 export default function ModifyActivity({
@@ -44,6 +46,7 @@ export default function ModifyActivity({
   const [geocode, setGeocode] = useState<string | undefined>();
   const [locationValue, setLocationValue] = useState<string | undefined>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
   const { signOut } = useContext(AuthContext);
 
@@ -185,7 +188,7 @@ export default function ModifyActivity({
       };
       const response = await fetch(url, requestOptions);
       if (response.status == 200) {
-        navigation.getParent().goBack();
+        navigation.getParent()?.goBack();
       } else if (response.status === 401 || response.status === 403) {
         signOut();
       } else {
@@ -252,6 +255,7 @@ export default function ModifyActivity({
         <OaaIconButton name="close" onPress={() => navigation.goBack()} />
         <OaaIconButton name="check" disabled={!areInputsValid() || isFetching} onPress={() => handleConfirmation()} />
       </View>
+      <MapModal visible={isModalVisible} setVisible={setIsModalVisible} activities={[activityInfo]} />
       <ScrollView style={{ flex: 1 }}>
         <View style={PageStyles.page}>
           <Text style={PageStyles.h1}>{editMode ? "Aktivität bearbeiten" : "Aktivität erstellen"}</Text>
@@ -273,7 +277,7 @@ export default function ModifyActivity({
           </View>
           {categories.length > 0 && (
             <View style={PageStyles.categorySelection}>
-              {categories.map((category, key) => (
+              {categories.map((category) => (
                 <OaaChip
                   label={category.name}
                   variant={
@@ -283,7 +287,7 @@ export default function ModifyActivity({
                       ? "disabled"
                       : "unselected"
                   }
-                  key={key}
+                  key={category._id}
                   onPress={() => handleCategoryPress(category)}
                 />
               ))}
@@ -362,15 +366,18 @@ export default function ModifyActivity({
             <Text style={PageStyles.h2}>Wo?</Text>
             <Text style={[PageStyles.h2, { color: appColors.error }]}>*</Text>
           </View>
-          <OaaInput
-            placeholder="Geb hier eine Adresse ein..."
-            value={locationValue}
-            onChangeText={(value: string) => setLocationValue(value)}
-            onEndEditing={() => validateLocation()}
-            isValid={validation.location}
-            isError={validation.location === false}
-            errorMessage="Eingegebene Adresse ist inkorrekt."
-          />
+          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <OaaInput
+              placeholder="Geb hier eine Adresse ein..."
+              value={locationValue}
+              onChangeText={(value: string) => setLocationValue(value)}
+              onEndEditing={() => validateLocation()}
+              isValid={validation.location}
+              isError={validation.location === false}
+              errorMessage="Eingegebene Adresse ist inkorrekt."
+            />
+            <OaaIconButton name="map-marker" rounded={false} variant="primary" onPress={() => setIsModalVisible(true)} />
+          </View>
           {geocode && <Text style={PageStyles.body}>Exakt: {geocode}</Text>}
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <Text style={PageStyles.h2}>Wie viele?</Text>

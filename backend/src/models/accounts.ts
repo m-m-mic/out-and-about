@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { AccountType } from "../interfaces";
 
 // Mongoose Schema für einen Account
 const AccountSchema = new mongoose.Schema({
@@ -13,4 +14,4 @@ const AccountSchema = new mongoose.Schema({
   planned_activities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Activity" }],
 });
 
-export const Account = mongoose.model("Account", AccountSchema);
+export const Account = mongoose.model<AccountType>("Account", AccountSchema);

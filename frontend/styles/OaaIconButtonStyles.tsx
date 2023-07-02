@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { appColors } from "./StyleAttributes";
 
 export const OaaIconButtonStyles = StyleSheet.create({
   container: {
@@ -7,6 +8,14 @@ export const OaaIconButtonStyles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 200,
   },
+  rectangle: {
+    borderRadius: 8,
+  },
   ghost: {},
-  transparent: { backgroundColor: "rgba(0,0,0,0.4)" },
+  primary: {
+    backgroundColor: appColors.buttonPrimary,
+  },
+  transparent: {
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
 });

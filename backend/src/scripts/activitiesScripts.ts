@@ -38,7 +38,6 @@ export function constructPreferenceModel(account, id) {
     model = { ...model, categories: { $in: categoryIds } };
   }
   if (id) {
-    // model = { ...model, participants: { $nin: id } };
     model = { ...model, organizer: { $nin: id } };
   }
   return model;

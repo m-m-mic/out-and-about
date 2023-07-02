@@ -4,15 +4,17 @@ import { PageStyles } from "../styles/PageStyles";
 import { OaaButton } from "../components/OaaButton";
 import { appColors } from "../styles/StyleAttributes";
 import { useEffect, useState } from "react";
-import { ActivityType } from "../scripts/types";
+import { ActivityType, LoggedOutStackType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { backendUrl } from "../scripts/backendConnection";
 import { OaaActivityPreviewCard } from "../components/OaaActivityPreviewCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-// @ts-ignore
-export default function LandingPage({ navigation }) {
+type LandingPageProps = NativeStackScreenProps<LoggedOutStackType, "LandingPage">;
+
+export default function LandingPage({ navigation }: LandingPageProps) {
   const [activities, setActivities] = useState<ActivityType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [flatListIndex, setFlatListIndex] = useState<number>(0);

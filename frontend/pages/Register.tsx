@@ -4,15 +4,16 @@ import { useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
 import { registrationTemplate, registrationValidatorTemplate } from "../scripts/templates";
 import { emailPattern, setPasswordInput, setPasswordRepeatInput, setUsernameInput } from "../scripts/inputValidators";
-import { AccountType, AccountValidatorType } from "../scripts/types";
+import { AccountType, AccountValidatorType, LoggedOutStackType } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaInput } from "../components/OaaInput";
 import { OaaButton } from "../components/OaaButton";
 import { OaaIconButton } from "../components/OaaIconButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-// @ts-ignore TODO
-export default function Register({ navigation }) {
+type RegisterProps = NativeStackScreenProps<LoggedOutStackType, "Register">;
+export default function Register({ navigation }: RegisterProps) {
   const [registrationData, setRegistrationData] = useState<AccountType>(registrationTemplate);
   const [registrationValidator, setRegistrationValidator] = useState<AccountValidatorType>(registrationValidatorTemplate);
   const [emailError, setEmailError] = useState<string>("Eingabe entspricht keiner validen E-Mail.");

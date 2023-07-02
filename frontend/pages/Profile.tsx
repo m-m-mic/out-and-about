@@ -8,7 +8,7 @@ import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
 import { useCallback, useState } from "react";
 import { appColors } from "../styles/StyleAttributes";
-import { AccountType, CategoryType } from "../scripts/types";
+import { AccountType, CategoryType, ProfileStackType } from "../scripts/types";
 import { OaaChip } from "../components/OaaChip";
 import { OaaActivityButton } from "../components/OaaActivityButton";
 import { OaaAccountImage } from "../components/OaaAccountImage";
@@ -16,8 +16,11 @@ import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-export default function Profile({ navigation }: any) {
+type ProfileProps = NativeStackScreenProps<ProfileStackType, "Profile">;
+
+export default function Profile({ navigation }: ProfileProps) {
   const [accountInfo, setAccountInfo] = useState<AccountType>();
   const [userCategories, setUserCategories] = useState<string[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
@@ -180,9 +183,7 @@ export default function Profile({ navigation }: any) {
               label="Aktivität erstellen"
               icon="plus"
               variant="outline"
-              onPress={() =>
-                navigation.navigate("ActivityStack", { screen: "CreateActivity", params: { stackOrigin: "Profile" } })
-              }
+              onPress={() => navigation.navigate("ActivityStack", { screen: "CreateActivity" })}
             />
             {accountInfo?.planned_activities &&
               accountInfo?.planned_activities.length > 0 &&
@@ -191,8 +192,10 @@ export default function Profile({ navigation }: any) {
                   key={activity._id}
                   label={activity.name}
                   active={activity.date > currentTime}
-                  id={activity._id}
-                  onPress={() => navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id } })}
+                  id={activity._id as string}
+                  onPress={() =>
+                    navigation.navigate("ActivityStack", { screen: "Activity", params: { id: activity._id as string } })
+                  }
                 />
               ))}
           </>

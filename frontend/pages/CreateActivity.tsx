@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActivityType } from "../scripts/types";
+import { ActivityStackType, ActivityType } from "../scripts/types";
 import { useCallback, useState } from "react";
 import { getItemAsync } from "expo-secure-store";
 import ModifyActivity from "../components/ModifyActivity";
@@ -7,9 +7,11 @@ import Loading from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { createActivityValidatorTemplate, newActivityTemplate } from "../scripts/templates";
 import { getLocation } from "../scripts/getLocation";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-//@ts-ignore
-export default function CreateActivity({ route, navigation }) {
+type CreateActivityProps = NativeStackScreenProps<ActivityStackType, "CreateActivity">;
+
+export default function CreateActivity({ navigation }: CreateActivityProps) {
   const [activityInfo, setActivityInfo] = useState<ActivityType>();
   const [validator, setValidator] = useState(createActivityValidatorTemplate);
 

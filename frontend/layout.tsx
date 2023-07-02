@@ -6,7 +6,7 @@ import Profile from "./pages/Profile";
 import Activity from "./pages/Activity";
 import EditActivity from "./pages/EditActivity";
 import Participants from "./pages/Participants";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
 import ChoosePreferences from "./pages/ChoosePreferences";
@@ -18,10 +18,16 @@ import { appColors } from "./styles/StyleAttributes";
 import { TabBarStyles } from "./styles/TabBarStyles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Settings } from "./pages/Settings";
+import {
+  ActivityStackType,
+  LoggedInStackType,
+  LoggedOutStackType,
+  OverviewStackType,
+  ProfileStackType,
+  SearchStackType,
+} from "./scripts/types";
 
-const OverviewStack = createStackNavigator();
-
-const ActivityStack = createStackNavigator();
+const ActivityStack = createStackNavigator<ActivityStackType>();
 export function ActivityStackScreen() {
   return (
     <ActivityStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
@@ -49,6 +55,8 @@ export function ActivityStackScreen() {
   );
 }
 
+const OverviewStack = createStackNavigator<OverviewStackType>();
+
 export function OverviewStackScreen() {
   return (
     <OverviewStack.Navigator screenOptions={{ cardStyle: { backgroundColor: appColors.background } }}>
@@ -62,7 +70,7 @@ export function OverviewStackScreen() {
   );
 }
 
-const SearchStack = createStackNavigator();
+const SearchStack = createStackNavigator<SearchStackType>();
 
 export function SearchStackScreen() {
   return (
@@ -77,7 +85,7 @@ export function SearchStackScreen() {
   );
 }
 
-const ProfileStack = createStackNavigator();
+const ProfileStack = createStackNavigator<ProfileStackType>();
 
 export function ProfileStackScreen() {
   return (
@@ -97,7 +105,7 @@ export function ProfileStackScreen() {
   );
 }
 
-const LoggedOutStack = createStackNavigator();
+const LoggedOutStack = createStackNavigator<LoggedOutStackType>();
 
 export function loggedOutStack() {
   return (
@@ -118,29 +126,23 @@ export function loggedOutStack() {
         component={Login}
         options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
       />
-      <LoggedOutStack.Screen
-        name="Overview"
-        component={Overview}
-        options={{ headerShown: false, cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS }}
-      />
     </LoggedOutStack.Navigator>
   );
 }
 
-const Tab = createBottomTabNavigator();
+const LoggedInStack = createBottomTabNavigator<LoggedInStackType>();
 
 export function loggedInStack() {
   return (
-    <Tab.Navigator tabBar={(props) => <OaaTabBar {...props} />}>
-      <Tab.Screen name="OverviewStack" component={OverviewStackScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="SearchStack" component={SearchStackScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="ProfileStack" component={ProfileStackScreen} options={{ headerShown: false }} />
-    </Tab.Navigator>
+    <LoggedInStack.Navigator tabBar={(props) => <OaaTabBar {...props} />}>
+      <LoggedInStack.Screen name="OverviewStack" component={OverviewStackScreen} options={{ headerShown: false }} />
+      <LoggedInStack.Screen name="SearchStack" component={SearchStackScreen} options={{ headerShown: false }} />
+      <LoggedInStack.Screen name="ProfileStack" component={ProfileStackScreen} options={{ headerShown: false }} />
+    </LoggedInStack.Navigator>
   );
 }
 
-// @ts-ignore
-function OaaTabBar({ state, descriptors, navigation }) {
+function OaaTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const tabAttributes = [
     {
       tabName: "OverviewStack",
@@ -180,7 +182,8 @@ function OaaTabBar({ state, descriptors, navigation }) {
         const onPress = () => {
           const event = navigation.emit({
             type: "tabPress",
-            target: route.key,
+            target: route.key as string,
+            canPreventDefault: true,
           });
 
           if (!isFocused && !event.defaultPrevented) {
@@ -191,7 +194,7 @@ function OaaTabBar({ state, descriptors, navigation }) {
         const onLongPress = () => {
           navigation.emit({
             type: "tabLongPress",
-            target: route.key,
+            target: route.key as string,
           });
         };
 

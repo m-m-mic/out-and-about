@@ -4,7 +4,7 @@ import { appColors, typefaces } from "./StyleAttributes";
 export const OaaInputStyles = StyleSheet.create({
   container: {
     display: "flex",
-    width: "100%",
+    flex: 1,
     gap: 5,
   },
   wrapper: {

@@ -3,17 +3,19 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { AuthContext } from "../App";
 import { backendUrl } from "../scripts/backendConnection";
-import { CategoryType } from "../scripts/types";
+import { AccountType, CategoryType, LoggedOutStackType } from "../scripts/types";
 import { PageStyles } from "../styles/PageStyles";
 import { OaaIconButton } from "../components/OaaIconButton";
 import { OaaButton } from "../components/OaaButton";
 import { OaaChip } from "../components/OaaChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { showToast } from "../scripts/showToast";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-// @ts-ignore
-export default function ChoosePreferences({ route, navigation }) {
-  const [registrationData, setRegistrationData] = useState(route.params.data);
+type ChoosePreferencesProps = NativeStackScreenProps<LoggedOutStackType, "ChoosePreferences">;
+
+export default function ChoosePreferences({ route, navigation }: ChoosePreferencesProps) {
+  const [registrationData, setRegistrationData] = useState<AccountType>(route.params.data);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const insets = useSafeAreaInsets();
   const { signUp } = React.useContext(AuthContext);

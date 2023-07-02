@@ -9,9 +9,12 @@ import { OaaButton } from "../components/OaaButton";
 import { appColors, typefaces } from "../styles/StyleAttributes";
 import { Icon } from "@react-native-material/core";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
+import { LoggedOutStackType } from "../scripts/types";
 
-// @ts-ignore
-export default function Login({ navigation }: any) {
+type LoginProps = NativeStackScreenProps<LoggedOutStackType, "Login">;
+
+export default function Login({ navigation }: LoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDisclaimerVisible, setIsDisclaimerVisible] = useState(false);

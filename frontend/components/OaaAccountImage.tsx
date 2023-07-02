@@ -3,7 +3,7 @@ import { Image, StyleSheet } from "react-native";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
 
-export function OaaAccountImage({ size }: { size: number }) {
+export function OaaAccountImage({ size, id }: { size: number; id?: string }) {
   const [imageSrc, setImageSrc] = useState<string | null>();
 
   const styles = StyleSheet.create({
@@ -21,8 +21,9 @@ export function OaaAccountImage({ size }: { size: number }) {
 
   // Gets image from backend
   const getImageUri = async () => {
-    const id = await getItemAsync("userId");
-    setImageSrc(backendUrl + "/images/accounts/" + id + ".jpg");
+    let accountId: string | undefined = id;
+    if (!id) accountId = (await getItemAsync("userId")) as string;
+    setImageSrc(backendUrl + "/images/accounts/" + accountId + ".jpg");
   };
 
   // Placeholder fallback if account image is unavailable

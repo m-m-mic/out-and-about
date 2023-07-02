@@ -1,18 +1,17 @@
-// TODO: Interface an neue Struktur von Aktivität anpassen (GeoJSON)
 // TypeScript Interface mit allen Typen für values in einer Aktivität
+import { Document, PopulatedDoc } from "mongoose";
+
 export interface ActivityType {
   _id: string;
   name: string;
-  categories: PreselectOption[];
+  categories: PopulatedDoc<CategoryType & Document>[];
   date: number;
-  active: boolean;
   maximum_participants: number;
   information_text: string;
   location: GeoType;
   only_logged_in: boolean;
-  organizer: AccountType[];
-  participants: AccountType[];
-  //distance in meters
+  organizer: PopulatedDoc<AccountType & Document>;
+  participants: PopulatedDoc<AccountType & Document>[];
   distance?: number;
 }
 
@@ -20,11 +19,16 @@ export interface AccountType {
   _id: string;
   name: string;
   email: string;
+  password: string;
+  categories: PopulatedDoc<CategoryType & Document>[];
+  saved_activities: PopulatedDoc<ActivityType & Document>[];
+  planned_activities: PopulatedDoc<ActivityType & Document>[];
 }
 
-interface PreselectOption {
+export interface CategoryType {
   _id: string;
   name: string;
+  activities: PopulatedDoc<ActivityType & Document>[];
 }
 
 interface GeoType {

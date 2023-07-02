@@ -5,7 +5,7 @@ import { OaaInput } from "../components/OaaInput";
 import { useContext, useEffect, useState } from "react";
 import { backendUrl } from "../scripts/backendConnection";
 import { getItemAsync } from "expo-secure-store";
-import { ActivityType } from "../scripts/types";
+import { ActivityType, SearchStackType } from "../scripts/types";
 import Loading from "../components/Loading";
 import { OaaActivityCard } from "../components/OaaActivityCard";
 import { OaaIconButton } from "../components/OaaIconButton";
@@ -22,8 +22,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { OaaButton } from "../components/OaaButton";
 import { showToast } from "../scripts/showToast";
 import { AuthContext } from "../App";
+import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 
-export default function Search({ navigation }: any) {
+type SearchProps = NativeStackScreenProps<SearchStackType, "Search">;
+
+export default function Search({ navigation }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isSearchFiltered, setIsSearchFiltered] = useState<boolean>(true);
   const [isSearchResults, setIsSearchResults] = useState<boolean>(false);
@@ -141,6 +144,7 @@ export default function Search({ navigation }: any) {
     }
     setIsSearchFiltered(filtered);
     setLoading(false);
+    setRefreshing(false);
   };
 
   // Prompts user to enable location permissions
@@ -165,7 +169,10 @@ export default function Search({ navigation }: any) {
                   <OaaActivityCard key={activity._id} activity={activity} navigation={navigation} expanded />
                 ))
               ) : (
-                <Text>Keine Ergebnisse gefunden.</Text>
+                <View style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 300, gap: 16 }}>
+                  <Icon name="alert-circle" size={48} color={appColors.body} />
+                  <Text style={PageStyles.h2}>Keine Ergebnisse gefunden.</Text>
+                </View>
               )}
             </View>
             {!isLastPage && <OaaButton label="Weitere Ergebnisse laden" variant="ghost" onPress={() => getResults()} />}
@@ -218,7 +225,7 @@ export default function Search({ navigation }: any) {
               longitudeDelta: 0.00001,
             }}
             onRegionChange={(region) => setMapCoordinates(region)}
-            style={{ width: "100%", height: "100%", minHeight: 400 }}>
+            style={{ width: "100%", height: "100%" }}>
             {results.length > 0 &&
               results.map((activity: ActivityType) => (
                 <Marker
@@ -253,15 +260,18 @@ export default function Search({ navigation }: any) {
           },
         ]}>
         <Text style={PageStyles.h1}>Suche</Text>
-        <OaaInput
-          icon="magnify"
-          placeholder="Hier Suchbegriff eingeben..."
-          onChangeText={(value: string) => setSearchTerm(value)}
-          onEndEditing={() => {
-            setCurrentPage(0);
-            getResults(0);
-          }}
-        />
+        <View style={{ display: "flex", flexDirection: "row" }}>
+          <OaaInput
+            icon="magnify"
+            placeholder="Hier Suchbegriff eingeben..."
+            onChangeText={(value: string) => setSearchTerm(value)}
+            onEndEditing={() => {
+              setCurrentPage(0);
+              getResults(0);
+            }}
+          />
+        </View>
+
         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={PageStyles.h2}>{isSearchResults ? "Ergebnisse" : "In deiner Nähe"}</Text>
           <OaaIconButton
