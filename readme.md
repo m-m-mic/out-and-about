@@ -1,4 +1,4 @@
-![image](https://github.com/mobileappdevhm23/app-app-37/assets/85286401/044475c6-996a-433d-87b4-b2ace847970f)
+![image](assets/readme_image0.png)
 
 Raus aus dem Haus! Bei uns findest du schnell und einfach Aktivitäten und Events in deiner Nähe. 
 <br />
@@ -7,7 +7,7 @@ Wir zeigen dabei Nutzern Empfehlungen in ihrer Umgebung anhand ihrer Präferenze
 
 <br />
 
-![readme_image4](https://github.com/mobileappdevhm23/app-app-37/assets/85286401/2efecda8-f6d7-498a-b739-d4c2555e432a)
+![readme_image4](assets/readme_image1.png)
 <small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Horizontal-Prototype) </small>
 
 Bevor wir mit dem Entwicklungsprozess unserer App angefangen haben, erstellten wir einen Prototyp in Figma.
@@ -15,7 +15,7 @@ Der Prototyp enthält alle für unsere App relevanten Screens und Komponenten. A
 
 <br />
 
-![image](https://github.com/mobileappdevhm23/app-app-37/assets/85286401/c2e18834-7547-4b98-8ad2-095ef33aa3da)
+![image](assets/readme_image2.png)
 <small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Frontend) </small>
 
 Wir haben unsere App mit react-native gebaut und mit Expo Go deployt und getestet. Unsere App besteht dabei aus zwei Flows,
@@ -27,7 +27,7 @@ und Präferenzen Empfehlungen gestellt, welche sie auch in einer Kartenansicht s
 
 <br />
 
-![image](https://github.com/mobileappdevhm23/app-app-37/assets/85286401/d259fcfe-740a-4f4a-a319-845a5a8b4c43)
+![image](assets/readme_image3.png)
 <small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Backend) </small>
 
 Für unser Projekt haben wir das Backend aus dem Kurs "Projektmodul Web" als Basis verwendet, um Zeit zu sparen.
