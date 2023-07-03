@@ -8,7 +8,7 @@ Wir zeigen dabei Nutzern Empfehlungen in ihrer Umgebung anhand ihrer Präferenze
 <br />
 
 ![readme_image4](assets/readme_image1.png)
-<small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Horizontal-Prototype) </small>
+<small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Horizontal-Prototype) | [Link zum Prototyp](https://www.figma.com/file/szutNTPw0fV6Or757aoZsL/Out-%26-About?type=design&node-id=0-1&t=AlwzI9RIDRQnX8Vo-0) </small>
 
 Bevor wir mit dem Entwicklungsprozess unserer App angefangen haben, erstellten wir einen Prototyp in Figma.
 Der Prototyp enthält alle für unsere App relevanten Screens und Komponenten. Außerdem haben wir die Struktur anhand des Prototyps festgelegt.
