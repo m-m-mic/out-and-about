@@ -8,7 +8,7 @@ Wir zeigen dabei Nutzern Empfehlungen in ihrer Umgebung anhand ihrer Präferenze
 <br />
 
 ![readme_image4](assets/readme_image1.png)
-<small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Horizontal-Prototype) | [Link zum Prototyp](https://www.figma.com/file/szutNTPw0fV6Or757aoZsL/Out-%26-About?type=design&node-id=0-1&t=AlwzI9RIDRQnX8Vo-0) </small>
+<small>Vollständige Dokumentation: [Wiki](https://github.com/m-m-mic/out-and-about/wiki/Horizontal-Prototype) | [Link zum Prototyp](https://www.figma.com/file/szutNTPw0fV6Or757aoZsL/Out-%26-About?type=design&node-id=0-1&t=AlwzI9RIDRQnX8Vo-0) </small>
 
 Bevor wir mit dem Entwicklungsprozess unserer App angefangen haben, erstellten wir einen Prototyp in Figma.
 Der Prototyp enthält alle für unsere App relevanten Screens und Komponenten. Außerdem haben wir die Struktur anhand des Prototyps festgelegt.
@@ -16,7 +16,7 @@ Der Prototyp enthält alle für unsere App relevanten Screens und Komponenten. A
 <br />
 
 ![image](assets/readme_image2.png)
-<small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Frontend) </small>
+<small>Vollständige Dokumentation: [Wiki](https://github.com/m-m-mic/out-and-about/wiki/Frontend) </small>
 
 Wir haben unsere App mit react-native gebaut und mit Expo Go deployt und getestet. Unsere App besteht dabei aus zwei Flows,
 einen für angemeldete und einen für abgemeldete Nutzer. Der Flow für abgemeldete Nutzer besteht aus einem Stack Navigator,
@@ -28,7 +28,7 @@ und Präferenzen Empfehlungen gestellt, welche sie auch in einer Kartenansicht s
 <br />
 
 ![image](assets/readme_image3.png)
-<small>Vollständige Dokumentation: [Wiki](https://github.com/mobileappdevhm23/app-app-37/wiki/Backend) </small>
+<small>Vollständige Dokumentation: [Wiki](https://github.com/m-m-mic/out-and-about/wiki/Backend) </small>
 
 Für unser Projekt haben wir das Backend aus dem Kurs "Projektmodul Web" als Basis verwendet, um Zeit zu sparen.
 Es handelt sich dabei um ein node.js-Backend, welches express.js verwendet, um Requests vom Frontend anzunehmen. Als Datenbank
